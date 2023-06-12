@@ -6,7 +6,7 @@ async function getData(): Promise<Log[]> {
     {
         timestamp: "2021-08-01T00:00:00.000Z",
         level: "info",
-        message: "This is an info message",
+        message: "This is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info message",
 
     },
   ]
