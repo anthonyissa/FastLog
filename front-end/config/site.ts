@@ -15,4 +15,7 @@ export const siteConfig = {
     github: "https://github.com/shadcn/ui",
     docs: "https://ui.shadcn.com",
   },
+  api: {
+    baseUrl: "http://localhost:3000",
+  }
 }

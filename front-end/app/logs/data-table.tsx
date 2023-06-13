@@ -1,12 +1,24 @@
 "use client"
 
+import { useState } from "react"
 import {
   ColumnDef,
+  Row,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table"
+import { X } from "lucide-react"
 
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 import {
   Table,
   TableBody,
@@ -31,8 +43,38 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
   })
 
+  const [sheetOpen, setSheetOpen] = useState(false)
+  const [selectedRow, setSelectedRow] = useState<Row<TData> | null>(null)
+
+  const openSheet = (row: Row<TData>) => {
+    setSelectedRow(row)
+    setSheetOpen(true)
+  }
+
   return (
     <div className="rounded-md border">
+      <Sheet open={sheetOpen}>
+        <SheetContent size={"lg"}>
+          <SheetHeader>
+            <SheetClose onClick={() => setSheetOpen(false)}>
+              <div className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+                <X className="h-4 w-4" />
+                <span className="sr-only">Close</span>
+              </div>
+            </SheetClose>
+            <SheetTitle>Are you sure absolutely sure?</SheetTitle>
+            <SheetDescription>
+              {selectedRow?.getVisibleCells().map((cell, index) => {
+                return flexRender(cell.column.columnDef.cell, {
+                  ...cell.getContext(),
+                  key: index,
+                })
+              })}
+            </SheetDescription>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
+
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -56,10 +98,11 @@ export function DataTable<TData, TValue>({
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
+                onClick={() => openSheet(row)}
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >
-                {row.getVisibleCells().map((cell) => (
+                {row.getVisibleCells().map((cell, index) => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>

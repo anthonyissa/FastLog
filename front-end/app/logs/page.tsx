@@ -1,15 +1,11 @@
+import { siteConfig } from "@/config/site"
 import { Log, columns } from "./columns"
 import { DataTable } from "./data-table"
+import axios from "axios"
 
 async function getData(): Promise<Log[]> {
-  return [
-    {
-        timestamp: "2021-08-01T00:00:00.000Z",
-        level: "info",
-        message: "This is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info messageThis is an info message",
-
-    },
-  ]
+  const res = await axios.get(`${siteConfig.api.baseUrl}/logs`)
+  return res.data
 }
 
 export default async function DemoPage() {

@@ -7,18 +7,20 @@ function fastLogger(message) {
   sendToFastLog(message);
 }
 
-async function sendToFastLog(message) {
+function sendToFastLog(message) {
   const body = JSON.stringify({
     message: message,
     level: "INFO",
     timestamp: new Date().toISOString(),
   });
- await axios("http://localhost:3000/logs/add", {
+  axios("http://localhost:3000/logs/add", {
     method: "POST",
     data: body,
     headers: {
       "Content-Type": "application/json",
     },
+  }).catch((err) => {
+    console.error(err);
   });
 }
 console.log = fastLogger;
