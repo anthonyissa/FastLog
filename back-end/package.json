@@ -28,6 +28,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.24.0",
     "@types/body-parser": "^1.19.2",
+    "cors": "^2.8.5",
     "dotenv": "^16.1.4"
   }
 }

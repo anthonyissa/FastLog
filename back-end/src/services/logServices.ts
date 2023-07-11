@@ -9,6 +9,7 @@ export const addLogToSupabase = async ({
     level: 'INFO' | 'WARN' | 'ERROR',
     message: string
 }) => {
+    console.log(level)
     const { error } = await supabase.from('logs').insert({
         timestamp,
         level,

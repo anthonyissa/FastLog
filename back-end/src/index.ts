@@ -1,8 +1,10 @@
 import express, { Request, Response } from "express";
 import logRouter from "./routes/logRoutes";
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: "*" }));
 const port = 3000;
 
 app.use("/logs", logRouter);
