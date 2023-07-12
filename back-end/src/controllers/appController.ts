@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import {
   addNewAppToSupabase,
+  deleteAppFromSupabase,
+  editStatusThresholdInSupabase,
   getAppsFromSupabase,
 } from "../services/appServices";
-import { MissingRequiredFieldsError } from "../model/errors";
+import { MissingRequiredFieldsError } from "../model/error";
 
 export const createApp = async (req: Request, res: Response) => {
   try {
@@ -13,7 +15,7 @@ export const createApp = async (req: Request, res: Response) => {
     await addNewAppToSupabase(user, name);
     res.json(true);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error });
   }
 };
@@ -25,7 +27,37 @@ export const getApps = async (req: Request, res: Response) => {
     const apps = await getAppsFromSupabase(user as string);
     res.json(apps);
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    res.status(500).json({ error });
+  }
+};
+
+export const deleteApp = async (req: Request, res: Response) => {
+  try {
+    const { user, app } = req.body;
+    if (!user || !app) throw new MissingRequiredFieldsError();
+
+    await deleteAppFromSupabase(user as string, app as string);
+    res.json(true);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error });
+  }
+};
+
+export const editStatusThreshold = async (req: Request, res: Response) => {
+  try {
+    const { user, app, threshold } = req.body;
+    if (!user || !app || !threshold) throw new MissingRequiredFieldsError();
+
+    await editStatusThresholdInSupabase(
+      user as string,
+      app as string,
+      threshold as number
+    );
+    res.json(true);
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ error });
   }
 };
