@@ -1,10 +1,12 @@
 const { default: axios } = require("axios");
 
 const originalLogger = console.log;
+let app = "default";
 
 function sendToFastLog(level, message) {
   const body = JSON.stringify({
     message: message,
+    app,
     level,
     timestamp: new Date().toISOString(),
   });
@@ -27,11 +29,16 @@ function fastLogger(level) {
   };
 }
 
-console.log = fastLogger("INFO");
-console.error = fastLogger("ERROR");
-console.warn = fastLogger("WARN");
-console.info = fastLogger("INFO");
-console.debug = fastLogger("DEBUG");
-console.trace = fastLogger("TRACE");
+export const activateFastLog = ({
+  appName,
+}) => {
+  app = appName;
+  console.log = fastLogger("INFO");
+  console.error = fastLogger("ERROR");
+  console.warn = fastLogger("WARN");
+  console.info = fastLogger("INFO");
+  console.debug = fastLogger("DEBUG");
+  console.trace = fastLogger("TRACE");
+}
 
 module.exports = { sendToFastLog, fastLogger };

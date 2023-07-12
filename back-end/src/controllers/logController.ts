@@ -3,10 +3,11 @@ import { addLogToSupabase, getLogsFromSupabase } from "../services/logServices";
 
 export const addLog = async (req: Request, res: Response) => {
   try {
-    const { timestamp, level, message } = req.body;
+    const { timestamp, level, app, message } = req.body;
     await addLogToSupabase({
       timestamp,
       level,
+      app,
       message: JSON.stringify(message),
     });
     res.json(true);
