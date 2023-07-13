@@ -2,9 +2,6 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 
-import { Badge } from "@/components/ui/badge"
-import { Checkbox } from "@/components/ui/checkbox"
-
 export type Log = {
   id: number
   timestamp: string
@@ -14,27 +11,9 @@ export type Log = {
 
 export const columns: ColumnDef<Log>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: "level",
     header: "Level",
+    enableResizing: true
   },
   {
     accessorKey: "timestamp",
@@ -43,5 +22,6 @@ export const columns: ColumnDef<Log>[] = [
   {
     accessorKey: "message",
     header: "Message",
+
   },
 ]
