@@ -6,12 +6,12 @@ import { DataTable } from "./data-table"
 import axios from "axios"
 import { useEffect, useState } from "react"
 
-
+// Todo clean page + /app/[name]
 export default function DemoPage() {
   const [logs, setLogs] = useState<Log[]>([])
 
   async function getData(): Promise<Log[]> {
-    const res = await axios.get(`${siteConfig.api.baseUrl}/logs`)
+    const res = await axios.get(`${siteConfig.api.baseUrl}/logs?user=antho&app=test-app`)
     return res.data
   }
   
