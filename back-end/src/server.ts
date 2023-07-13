@@ -7,7 +7,6 @@ import { launchStatusWatcher } from "./lib/statusWatcher";
 const app = express();
 app.use(express.json());
 app.use(cors({ origin: "*" }));
-const port = 3000;
 (async () => {
   await launchStatusWatcher();
 })();
@@ -19,6 +18,8 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello, World!");
 });
 
-app.listen(port, () => {
+const port = process.env.PORT || 3000;
+
+app.listen(port , () => {
   console.log(`Server is running on port ${port}`);
 });
