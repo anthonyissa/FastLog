@@ -3,9 +3,9 @@ import axios from "axios";
 const originalLogger = console.log;
 let app = "default";
 
-function sendToFastLog(level, ...args) {
+function sendToFastLog(level, message) {
   const body = JSON.stringify({
-    ...args,
+    message,
     app,
     level,
     timestamp: new Date().toISOString(),
@@ -23,9 +23,9 @@ function sendToFastLog(level, ...args) {
 
 
 function fastLogger(level) {
-  return function (...args) {
+  return function (message) {
     originalLogger.apply(console, arguments);
-    sendToFastLog(level, ...args);
+    sendToFastLog(level, message);
   };
 }
 
