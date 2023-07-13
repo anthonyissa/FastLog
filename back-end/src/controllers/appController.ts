@@ -4,7 +4,7 @@ import {
   deleteAppFromSupabase,
   editStatusThresholdInSupabase,
   getAppsFromSupabase,
-} from "../services/appServices";
+} from "../services/apps/appServices";
 import { MissingRequiredFieldsError } from "../model/error";
 
 export const createApp = async (req: Request, res: Response) => {

@@ -10,7 +10,7 @@ function sendToFastLog(level, ...args) {
     level,
     timestamp: new Date().toISOString(),
   });
-  axios("https://fastlog-production.up.railway.app/logs/add", {
+  axios("http://localhost:3000/logs/add", {
     method: "POST",
     data: body,
     headers: {

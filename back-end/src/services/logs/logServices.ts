@@ -1,18 +1,21 @@
-import supabase from "../lib/supabase";
+import supabase from "../../lib/supabase";
+import { concatLogArgs } from "./utils";
 
 export const addLogToSupabase = async ({
   timestamp,
   level,
   app,
   user,
-  message,
+  ...args
 }: {
   timestamp: string;
   level: "INFO" | "WARN" | "ERROR";
   app: string;
   user: string;
-  message: string;
+  [key: string]: any;
 }) => {
+  const message =
+    Object.keys(args).length === 1 ? args[Object.keys(args)[0]] : concatLogArgs(args);
   const { error } = await supabase.from("logs").insert({
     timestamp,
     level,

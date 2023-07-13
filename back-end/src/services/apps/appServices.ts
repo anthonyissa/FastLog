@@ -1,4 +1,4 @@
-import supabase from "../lib/supabase";
+import supabase from "../../lib/supabase";
 
 export const addNewAppToSupabase = async (user: string, app: string) => {
   const { error } = await supabase.from("apps").insert({
