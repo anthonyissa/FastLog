@@ -4,7 +4,7 @@ import { addLog, getLogs } from "../controllers/logController";
 
 const logRouter = express.Router();
 
-logRouter.post("/create", addLog);
+logRouter.post("/add", addLog);
 logRouter.get("/", getLogs);
 
 export default logRouter;

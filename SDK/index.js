@@ -1,5 +1,5 @@
-const logs = require("./src/logs.js");
+import * as logs from "./src/logs.js";
 
-module.exports = {
+export default {
   ...logs,
 };

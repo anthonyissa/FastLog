@@ -1,16 +1,16 @@
-const { default: axios } = require("axios");
+import axios from "axios";
 
 const originalLogger = console.log;
 let app = "default";
 
-function sendToFastLog(level, message) {
+function sendToFastLog(level, ...args) {
   const body = JSON.stringify({
-    message: message,
+    ...args,
     app,
     level,
     timestamp: new Date().toISOString(),
   });
-  axios("https://fastlog-production.up.railway.app/", {
+  axios("https://fastlog-production.up.railway.app/logs/add", {
     method: "POST",
     data: body,
     headers: {
@@ -23,9 +23,9 @@ function sendToFastLog(level, message) {
 
 
 function fastLogger(level) {
-  return function (message) {
+  return function (...args) {
     originalLogger.apply(console, arguments);
-    sendToFastLog(level, message);
+    sendToFastLog(level, ...args);
   };
 }
 
@@ -41,4 +41,3 @@ export const activateFastLog = ({
   console.trace = fastLogger("TRACE");
 }
 
-module.exports = { sendToFastLog, fastLogger };

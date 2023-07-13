@@ -1,3 +1,3 @@
-require('./index.js');
+import './index.js';
 
 console.log("test")
