@@ -1,30 +1,29 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import axios from "axios"
+import { fetchLogs } from "@/services/logs"
 
-import { siteConfig } from "@/config/site"
-
-import { Log, columns } from "./columns"
+import { columns } from "./columns"
 import { DataTable } from "./data-table"
+import { Log } from "@/model/Log"
 
 // Todo clean page + /app/[name]
 export default function DemoPage() {
   const [logs, setLogs] = useState<Log[]>([])
   const [loading, setLoading] = useState<boolean>(true)
-  async function getData(): Promise<Log[]> {
+
+  const getLogs = async (user: string, app: string) => {
     setLoading(true)
-    const res = await axios.get(
-      `${siteConfig.api.baseUrl}/logs?user=antho&app=eth-gas-alert`
-    )
+    const data = await fetchLogs(user, app)
     setLoading(false)
-    return res.data
+    setLogs(data)
   }
 
   useEffect(() => {
-    getData().then((data) => {
-      setLogs(data)
-    })
+    const fetchData = async () => {
+      await getLogs("antho", "eth-gas-alert")
+    }
+    fetchData().catch(console.error)
   }, [])
 
   return (

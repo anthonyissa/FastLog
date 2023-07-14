@@ -1,13 +1,7 @@
 "use client"
 
+import { Log } from "@/model/Log"
 import { ColumnDef } from "@tanstack/react-table"
-
-export type Log = {
-  id: number
-  timestamp: string
-  level: string
-  message: string
-}
 
 export const columns: ColumnDef<Log>[] = [
   {
