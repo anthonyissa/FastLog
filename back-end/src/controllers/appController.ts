@@ -9,10 +9,10 @@ import { MissingRequiredFieldsError } from "../model/error";
 
 export const createApp = async (req: Request, res: Response) => {
   try {
-    const { user, name } = req.body;
-    if (!user || !name) throw new MissingRequiredFieldsError();
+    const { name } = req.body;
+    if (!name) throw new MissingRequiredFieldsError();
 
-    await addNewAppToSupabase(user, name);
+    await addNewAppToSupabase("antho", name); // TODO replace with user from auth
     res.json(true);
   } catch (error) {
     console.error(error);
@@ -34,10 +34,10 @@ export const getApps = async (req: Request, res: Response) => {
 
 export const deleteApp = async (req: Request, res: Response) => {
   try {
-    const { user, app } = req.body;
-    if (!user || !app) throw new MissingRequiredFieldsError();
+    const { name } = req.body;
+    if (!name) throw new MissingRequiredFieldsError();
 
-    await deleteAppFromSupabase(user as string, app as string);
+    await deleteAppFromSupabase("antho", name as string); // TODO replace with user from auth
     res.json(true);
   } catch (error) {
     console.error(error);

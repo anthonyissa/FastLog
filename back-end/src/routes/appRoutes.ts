@@ -5,7 +5,7 @@ import { createApp, deleteApp, editStatusThreshold, getApps } from "../controlle
 const appRouter = express.Router();
 
 appRouter.post("/create", createApp);
-appRouter.delete("/delete", deleteApp)
+appRouter.post("/delete", deleteApp)
 appRouter.post("/editStatusThreshold", editStatusThreshold)
 appRouter.get("/", getApps);
 

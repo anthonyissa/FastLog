@@ -5,10 +5,10 @@ import { fetchLogs } from "@/services/logs"
 
 import { columns } from "./columns"
 import { DataTable } from "./data-table"
-import { Log } from "@/model/Log"
+import { Log } from "@/types/Log"
+import { Loader2Icon } from "lucide-react"
 
-// Todo clean page + /app/[name]
-export default function DemoPage() {
+export default function AppPage({ params } : { params: { app: string } }) {
   const [logs, setLogs] = useState<Log[]>([])
   const [loading, setLoading] = useState<boolean>(true)
 
@@ -21,14 +21,14 @@ export default function DemoPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getLogs("antho", "eth-gas-alert")
+      await getLogs("antho", params.app)
     }
     fetchData().catch(console.error)
   }, [])
 
   return (
     <div className="container mx-auto py-10">
-      {(loading && <div className="text-center">Loading...</div>) || (
+      {(loading && <div className="text-center"><Loader2Icon className="w-10 h-10"></Loader2Icon></div>) || (
         <DataTable columns={columns} data={logs} />
       )}
     </div>

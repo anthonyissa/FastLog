@@ -33,7 +33,8 @@ export const getLogsFromSupabase = async (user: string, app: string) => {
     .from("logs")
     .select("*")
     .eq("user", user)
-    .eq("app", app);
+    .eq("app", app)
+    .order("timestamp", { ascending: false })
   if (error) {
     throw error;
   }

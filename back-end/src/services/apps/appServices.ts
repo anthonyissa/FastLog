@@ -1,9 +1,9 @@
 import supabase from "../../lib/supabase";
 
-export const addNewAppToSupabase = async (user: string, app: string) => {
+export const addNewAppToSupabase = async (user: string, name: string) => {
   const { error } = await supabase.from("apps").insert({
     user,
-    app,
+    name,
   });
   if (error) {
     throw error;
@@ -21,12 +21,12 @@ export const getAppsFromSupabase = async (user: string) => {
   return data;
 };
 
-export const deleteAppFromSupabase = async (user: string, app: string) => {
+export const deleteAppFromSupabase = async (user: string, appName: string) => {
   const { error } = await supabase
     .from("apps")
     .delete()
     .eq("user", user)
-    .eq("name", app);
+    .eq("name", appName);
   if (error) {
     throw error;
   }
@@ -34,14 +34,14 @@ export const deleteAppFromSupabase = async (user: string, app: string) => {
 
 export const editStatusThresholdInSupabase = async (
   user: string,
-  app: string,
+  appName: string,
   threshold: number
 ) => {
   const { error } = await supabase
     .from("apps")
     .update({ status_threshold: threshold })
     .eq("user", user)
-    .eq("name", app);
+    .eq("name", appName);
   if (error) {
     throw error;
   }

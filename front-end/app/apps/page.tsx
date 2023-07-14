@@ -1,18 +1,72 @@
 "use client"
 
-import { App } from "@/model/App"
-import { fetchApps } from "@/services/apps"
 import { useEffect, useState } from "react"
+import { createNewApp, deleteUserApp, fetchApps } from "@/services/apps"
+import { Loader2Icon, Plus, Settings2, Trash, Trash2, Trash2Icon } from "lucide-react"
+
+import { App } from "@/types/App"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
 
 export default function AppsPage() {
   const [apps, setApps] = useState<App[]>([])
+  const [newApp, setNewApp] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(true)
 
-  const getApps = async (user: string) => {
+  const getApps = async (user: string) => { 
     setLoading(true)
-    const data = await fetchApps(user)
-    setLoading(false)
-    setApps(data)
+    try {
+      setApps(await fetchApps(user))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const openApp = (name: string) => {
+    window.location.href = "/apps/"+name
+  }
+
+  const createApp = async () => {
+    try {
+      await createNewApp(newApp)
+    } finally {
+      setNewApp("")
+      await getApps("antho")
+    }
+  }
+
+  const deleteApp = async (name: string) => {
+    try {
+      await deleteUserApp(name)
+    } finally {
+      await getApps("antho")
+    }
   }
 
   useEffect(() => {
@@ -22,14 +76,85 @@ export default function AppsPage() {
     fetchData().catch(console.error)
   }, [])
 
-  return <div className="container mx-auto py-10">
-    {(loading && <div className="text-center">Loading...</div>) || (
-        <div className="grid grid-cols-3 gap-4">
-            {apps.map(app => <div className="bg-white shadow-md rounded-md p-4">
-                <div className="text-xl font-bold">{app.name}</div>
-                <div className="text-gray-500">{app.description}</div>
-            </div>)}
+  return (
+    <div className="container mx-auto">
+      {(loading && <div className="w-full mt-5 flex items-center justify-center"><Loader2Icon className="w-10 h-10"></Loader2Icon></div>) || (
+        <div className="flex flex-col">
+          <div className="w-full flex justify-end py-3">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline">
+                  <Plus className="mr-2 w-5 h-5"></Plus> New App
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="mb-3">
+                    Create a brand new app to monitor
+                  </AlertDialogTitle>
+                  <Input
+                    type="text"
+                    placeholder="Name"
+                    value={newApp}
+                    onChange={(e) => {
+                      setNewApp(e.target.value)
+                    }}
+                  />
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => createApp()}
+                  >
+                    Create
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {apps.map((app) => (
+              <Card >
+                <CardHeader onClick={() => openApp(app.name)} className="cursor-pointer">
+                  <CardTitle>
+                    {app.name.substring(0, 15)}
+                    {app.name.length > 15 ? "..." : ""}
+                  </CardTitle>
+                </CardHeader>
+                <CardFooter className="flex justify-between">
+                  {app.status === "UP" && (
+                    <Badge
+                      variant="default"
+                      className="bg-green-500 hover:bg-green-500"
+                    >
+                      {app.status}
+                    </Badge>
+                  )}
+                  {app.status === "DOWN" && (
+                    <Badge
+                      variant="destructive"
+                      className="bg-red-700 hover:bg-red-700"
+                    >
+                      {app.status}
+                    </Badge>
+                  )}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="outline-none">
+                      <Settings2 className="h-6 w-6 dark:text-gray-300" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem onClick={() => deleteApp(app.name)} className="cursor-pointer">
+                        <Trash2 className="mr-2 w-4 h-4 z-50"></Trash2>Delete
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>...</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
         </div>
-    )}
-  </div>
+      )}
+    </div>
+  )
 }
