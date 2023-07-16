@@ -2,7 +2,14 @@
 
 import { useEffect, useState } from "react"
 import { createNewApp, deleteUserApp, fetchApps } from "@/services/apps"
-import { Loader2Icon, Plus, Settings2, Trash, Trash2, Trash2Icon } from "lucide-react"
+import {
+  Loader2Icon,
+  Plus,
+  Settings2,
+  Trash,
+  Trash2,
+  Trash2Icon,
+} from "lucide-react"
 
 import { App } from "@/types/App"
 import {
@@ -18,12 +25,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,7 +41,7 @@ export default function AppsPage() {
   const [newApp, setNewApp] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(true)
 
-  const getApps = async (user: string) => { 
+  const getApps = async (user: string) => {
     setLoading(true)
     try {
       setApps(await fetchApps(user))
@@ -49,7 +51,7 @@ export default function AppsPage() {
   }
 
   const openApp = (name: string) => {
-    window.location.href = "/apps/"+name
+    window.location.href = "/apps/" + name
   }
 
   const createApp = async () => {
@@ -78,7 +80,11 @@ export default function AppsPage() {
 
   return (
     <div className="container mx-auto">
-      {(loading && <div className="w-full mt-5 flex items-center justify-center"><Loader2Icon className="w-10 h-10"></Loader2Icon></div>) || (
+      {(loading && (
+        <div className="w-full mt-5 flex items-center justify-center">
+          <img src="/loading.svg" className="w-10 h-10"></img>
+        </div>
+      )) || (
         <div className="flex flex-col">
           <div className="w-full flex justify-end py-3">
             <AlertDialog>
@@ -103,9 +109,7 @@ export default function AppsPage() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => createApp()}
-                  >
+                  <AlertDialogAction onClick={() => createApp()}>
                     Create
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -114,8 +118,11 @@ export default function AppsPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {apps.map((app) => (
-              <Card >
-                <CardHeader onClick={() => openApp(app.name)} className="cursor-pointer">
+              <Card>
+                <CardHeader
+                  onClick={() => openApp(app.name)}
+                  className="cursor-pointer"
+                >
                   <CardTitle>
                     {app.name.substring(0, 15)}
                     {app.name.length > 15 ? "..." : ""}
@@ -143,7 +150,10 @@ export default function AppsPage() {
                       <Settings2 className="h-6 w-6 dark:text-gray-300" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem onClick={() => deleteApp(app.name)} className="cursor-pointer">
+                      <DropdownMenuItem
+                        onClick={() => deleteApp(app.name)}
+                        className="cursor-pointer"
+                      >
                         <Trash2 className="mr-2 w-4 h-4 z-50"></Trash2>Delete
                       </DropdownMenuItem>
                       <DropdownMenuItem>...</DropdownMenuItem>

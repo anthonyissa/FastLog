@@ -9,7 +9,10 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { X } from "lucide-react"
+import { ArrowLeft, RefreshCcwIcon, X } from "lucide-react"
+
+import { convertLogMessageToMap, getTimeAgo, isObjectString } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
   Select,
   SelectContent,
@@ -19,8 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
-import { Button } from "@/components/ui/button"
 import {
   Sheet,
   SheetClose,
@@ -46,8 +47,12 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
-  const [size, setSize] = useState(50)
+  refreshFunction
+}: {
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[],
+  refreshFunction: Function
+}) {
   const table = useReactTable({
     data,
     columns,
@@ -56,10 +61,29 @@ export function DataTable<TData, TValue>({
   })
 
   const [sheetOpen, setSheetOpen] = useState(false)
-  const [selectedRow, setSelectedRow] = useState<Row<TData> | null>(null)
+  const [formattedLog, setFormattedLog] = useState<{}>({})
 
   const openSheet = (row: Row<TData>) => {
-    setSelectedRow(row)
+    setFormattedLog({})
+    let newLog = {}
+    row.getVisibleCells().forEach((cell) => {
+      newLog = {
+        ...newLog,
+        [cell.column.id]: cell.getValue(),
+      }
+    })
+    // @ts-ignore
+    if (isObjectString(newLog["message"])) {
+      // @ts-ignore
+      const detailedMessage = convertLogMessageToMap(newLog["message"])
+      detailedMessage.forEach((value, key) => {
+        newLog = {
+          ...newLog, // @ts-ignore
+          ["log." + key]: value,
+        }
+      })
+    }
+    setFormattedLog(newLog)
     setSheetOpen(true)
   }
 
@@ -68,48 +92,68 @@ export function DataTable<TData, TValue>({
       <Sheet open={sheetOpen}>
         <SheetContent size={"lg"}>
           <SheetHeader>
+            <SheetClose className=""></SheetClose>
             <SheetClose
               onClick={() => setSheetOpen(false)}
               className="outline-none"
             >
-              <div className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-                <X className="h-4 w-4" />
+              <div className="">
+                <ArrowLeft className="h-5 w-5 hover:scale-[1.1]" />
                 <span className="sr-only">Close</span>
               </div>
             </SheetClose>
-            <SheetTitle>Are you sure absolutely sure?</SheetTitle>
-            <SheetDescription>
-              {selectedRow?.getVisibleCells().map((cell, index) => {
-                return flexRender(cell.column.columnDef.cell, {
-                  ...cell.getContext(),
-                  key: index,
-                })
-              })}
+            {/* @ts-ignore */}
+            <SheetTitle>{formattedLog["timestamp"]} - {getTimeAgo(new Date(formattedLog["timestamp"]).getTime())}
+              </SheetTitle>
+            <SheetDescription className="flex flex-col">
+              {Object.keys(formattedLog).map((key) => (
+                <div className="flex flex-row justify-between">
+                  <span className="font-bold">
+                    {key === "---------message---------" ? "message" : key}
+                  </span>
+                  {/* @ts-ignore */}
+                  <span>{formattedLog[key]}</span>
+                </div>
+              ))}
             </SheetDescription>
           </SheetHeader>
         </SheetContent>
       </Sheet>
 
       <div className="w-full flex justify-end py-3 gap-3 items-center">
-        <Select defaultValue="10" onValueChange={
-          (value) => {
+        <Button variant={"outline"} onClick={() => refreshFunction()}><RefreshCcwIcon class="w-4 h-4"></RefreshCcwIcon></Button>
+        <Select
+          defaultValue="10"
+          onValueChange={(value) => {
             table.setPageSize(parseInt(value))
-          }
-        }>
+          }}
+        >
           <SelectTrigger className="w-[110px]">
             <SelectValue placeholder="Page size" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="10" className="cursor-pointer">10</SelectItem>
-              <SelectItem value="50" className="cursor-pointer">50</SelectItem>
-              <SelectItem value="100" className="cursor-pointer">100</SelectItem>
+              <SelectItem value="10" className="cursor-pointer">
+                10
+              </SelectItem>
+              <SelectItem value="50" className="cursor-pointer">
+                50
+              </SelectItem>
+              <SelectItem value="100" className="cursor-pointer">
+                100
+              </SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Button variant={"secondary"} onClick={() => table.previousPage()}>Previous</Button>
-        <Button variant={"secondary"} onClick={() => table.nextPage()}>Next</Button>
-        <span className="text-gray-500">Page {table.getState().pagination.pageIndex + 1}</span>
+        <Button variant={"secondary"} onClick={() => table.previousPage()}>
+          Previous
+        </Button>
+        <Button variant={"secondary"} onClick={() => table.nextPage()}>
+          Next
+        </Button>
+        <span className="text-gray-500">
+          Page {table.getState().pagination.pageIndex + 1}
+        </span>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -140,12 +184,9 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  {row.getVisibleCells().map((cell, index) => (
+                  {row.getVisibleCells().map((cell: any, index) => (
                     <TableCell key={cell.id} className="w-2 cursor-pointer">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {cell.getValue()}
                     </TableCell>
                   ))}
                 </TableRow>
