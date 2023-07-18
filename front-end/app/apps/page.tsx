@@ -35,6 +35,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
+import { StatusBadge } from "@/components/status-badge"
 
 export default function AppsPage() {
   const [apps, setApps] = useState<App[]>([])
@@ -85,8 +86,8 @@ export default function AppsPage() {
           <img src="/loading.svg" className="w-10 h-10"></img>
         </div>
       )) || (
-        <div className="flex flex-col">
-          <div className="w-full flex justify-end py-3">
+        <div className="flex flex-col py-5">
+          <div className="w-full flex justify-start py-3">
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="outline">
@@ -96,8 +97,11 @@ export default function AppsPage() {
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle className="mb-3">
-                    Create a brand new app to monitor
+                    New app
                   </AlertDialogTitle>
+                  <AlertDialogDescription className="mb-5">
+                    Enter the name of your new app
+                    </AlertDialogDescription>
                   <Input
                     type="text"
                     placeholder="Name"
@@ -129,22 +133,7 @@ export default function AppsPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardFooter className="flex justify-between">
-                  {app.status === "UP" && (
-                    <Badge
-                      variant="default"
-                      className="bg-green-500 hover:bg-green-500"
-                    >
-                      {app.status}
-                    </Badge>
-                  )}
-                  {app.status === "DOWN" && (
-                    <Badge
-                      variant="destructive"
-                      className="bg-red-700 hover:bg-red-700"
-                    >
-                      {app.status}
-                    </Badge>
-                  )}
+                <StatusBadge status={app.status} />
                   <DropdownMenu>
                     <DropdownMenuTrigger className="outline-none">
                       <Settings2 className="h-6 w-6 dark:text-gray-300" />
@@ -156,7 +145,6 @@ export default function AppsPage() {
                       >
                         <Trash2 className="mr-2 w-4 h-4 z-50"></Trash2>Delete
                       </DropdownMenuItem>
-                      <DropdownMenuItem>...</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </CardFooter>

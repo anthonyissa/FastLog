@@ -3,6 +3,7 @@ import {
   addNewAppToSupabase,
   deleteAppFromSupabase,
   editStatusThresholdInSupabase,
+  getAppFromSupabase,
   getAppsFromSupabase,
 } from "../services/apps/appServices";
 import { MissingRequiredFieldsError } from "../model/error";
@@ -61,3 +62,16 @@ export const editStatusThreshold = async (req: Request, res: Response) => {
     res.status(500).json({ error });
   }
 };
+
+export const getApp = async (req: Request, res: Response) => {
+  try {
+    const { name } = req.params;
+    if (!name) throw new MissingRequiredFieldsError();
+
+    const app = await getAppFromSupabase("antho", name as string); // TODO replace with user from auth
+    res.json(app);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error });
+  }
+}

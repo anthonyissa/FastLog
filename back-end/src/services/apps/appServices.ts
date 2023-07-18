@@ -21,6 +21,18 @@ export const getAppsFromSupabase = async (user: string) => {
   return data;
 };
 
+export const getAppFromSupabase = async (user: string, name: string) => {
+  const { data, error } = await supabase
+    .from("apps")
+    .select("*")
+    .eq("user", user)
+    .eq("name", name);
+  if (error) {
+    throw error;
+  }
+  return data[0];
+};
+
 export const deleteAppFromSupabase = async (user: string, appName: string) => {
   const { error } = await supabase
     .from("apps")

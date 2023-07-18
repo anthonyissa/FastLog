@@ -148,11 +148,11 @@ export function DataTable<TData, TValue>({
         <Button variant={"secondary"} onClick={() => table.previousPage()}>
           Previous
         </Button>
-        <Button variant={"secondary"} onClick={() => table.nextPage()}>
+        <Button variant={"secondary"} onClick={() => table.getState().pagination.pageIndex + 1 != table.getPageCount() ? table.nextPage() : ""}>
           Next
         </Button>
         <span className="text-gray-500">
-          Page {table.getState().pagination.pageIndex + 1}
+          Page {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
         </span>
       </div>
       <div className="rounded-md border">

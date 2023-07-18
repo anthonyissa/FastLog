@@ -7,6 +7,11 @@ export const fetchApps = async (user: string) => {
   return res.data
 }
 
+export const fetchApp = async (name: string) => {
+  const res = await axios.get(`${siteConfig.api.baseUrl}/apps/${name}`)
+  return res.data
+}
+
 export const createNewApp = async (name: string) => {
   const res = await axios.post(`${siteConfig.api.baseUrl}/apps/create`, {
     name,
