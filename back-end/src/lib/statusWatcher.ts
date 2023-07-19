@@ -1,4 +1,7 @@
 import supabase from "./supabase";
+import { sendTelegramNotification } from "@aitox/notifications";
+import dotenv from "dotenv"; 
+dotenv.config();
 
 export const launchStatusWatcher = async () => {
   setInterval(async () => {
@@ -8,9 +11,9 @@ export const launchStatusWatcher = async () => {
         .select("*");
       if (appsError) throw appsError;
 
-      const thresholdsMap = new Map<string, number>();
+      const thresholdsMap = new Map<string, {status_threshold:number, status: "UP" | "DOWN"}>();
       for (const app of apps) {
-        thresholdsMap.set(app.name, app.status_threshold);
+        thresholdsMap.set(app.name, {status_threshold:app.status_threshold, status: app.status});
       }
 
       const { data: logs, error: logsError } = await supabase.rpc(
@@ -20,10 +23,17 @@ export const launchStatusWatcher = async () => {
 
       const downApps: string[] = [];
       for (const log of logs) {
+        if(!thresholdsMap.has(log.app)) continue;
         const timestamp = new Date(log.timestamp).getTime();
         const timeSince = Date.now() - timestamp;
-        if (timeSince > thresholdsMap.get(log.app)) {
+        if (timeSince > thresholdsMap.get(log.app).status_threshold) {
           downApps.push(log.app);
+          if (thresholdsMap.get(log.app).status === "UP")
+            await sendTelegramNotification(
+              process.env.TELEGRAM_BOT_TOKEN,
+              process.env.TELEGRAM_CHAT_ID,
+              `🔴 ${log.app} is down!`
+            );
         }
       }
       const upApps = apps
