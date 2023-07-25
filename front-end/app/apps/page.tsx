@@ -36,11 +36,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { StatusBadge } from "@/components/status-badge"
+import { useRouter } from "next/navigation"
 
 export default function AppsPage() {
   const [apps, setApps] = useState<App[]>([])
   const [newApp, setNewApp] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(true)
+  const router = useRouter()
 
   const getApps = async (user: string) => {
     setLoading(true)
@@ -52,7 +54,7 @@ export default function AppsPage() {
   }
 
   const openApp = (name: string) => {
-    window.location.href = "/apps/" + name
+    router.push(`/apps/${name}`)
   }
 
   const createApp = async () => {

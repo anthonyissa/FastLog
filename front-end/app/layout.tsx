@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/command"
 import { SiteHeader } from "@/components/site-header"
 import { ThemeProvider } from "@/components/theme-provider"
+import { useRouter } from "next/navigation"
 
 export const metadata: Metadata = {
   title: {
@@ -44,6 +45,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   const [open, setOpen] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -74,7 +76,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <CommandItem>
                   <span
                     className={commandButtonStyle}
-                    onClick={() => (window.location.href = "/apps")}
+                    onClick={() => router.push("/apps")}
                   >
                     Apps
                   </span>

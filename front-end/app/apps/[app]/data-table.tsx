@@ -3,9 +3,11 @@
 import { useState } from "react"
 import {
   ColumnDef,
+  ColumnFiltersState,
   Row,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table"
@@ -13,6 +15,7 @@ import { ArrowLeft, RefreshCcwIcon, X } from "lucide-react"
 
 import { convertLogMessageToMap, getTimeAgo, isObjectString } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -47,21 +50,34 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  refreshFunction
+  refreshFunction,
 }: {
   columns: ColumnDef<TData, TValue>[]
-  data: TData[],
+  data: TData[]
   refreshFunction: Function
 }) {
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
+    []
+  )
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      columnFilters,
+    },
   })
 
   const [sheetOpen, setSheetOpen] = useState(false)
   const [formattedLog, setFormattedLog] = useState<{}>({})
+
+  const filter = (value: string) => {
+    table.getColumn("message")!.setFilterValue(value)
+  }
 
   const openSheet = (row: Row<TData>) => {
     setFormattedLog({})
@@ -103,8 +119,8 @@ export function DataTable<TData, TValue>({
               </div>
             </SheetClose>
             {/* @ts-ignore */}
-            <SheetTitle>{formattedLog["timestamp"]} - {getTimeAgo(new Date(formattedLog["timestamp"]).getTime())}
-              </SheetTitle>
+            <SheetTitle>              {formattedLog["timestamp"]} -{" "}           {getTimeAgo(new Date(formattedLog["timestamp"]).getTime())}
+            </SheetTitle>
             <SheetDescription className="flex flex-col">
               {Object.keys(formattedLog).map((key) => (
                 <div className="flex flex-row justify-between">
@@ -121,7 +137,15 @@ export function DataTable<TData, TValue>({
       </Sheet>
 
       <div className="w-full flex justify-end py-3 gap-3 items-center">
-        <Button variant={"outline"} onClick={() => refreshFunction()}><RefreshCcwIcon class="w-4 h-4"></RefreshCcwIcon></Button>
+        <Input
+          type="text"
+          placeholder="Search logs"
+          value={(table.getColumn("message")?.getFilterValue() as string) ?? ""}
+          onChange={(e) => filter(e.target.value)}
+        />
+        <Button variant={"outline"} onClick={() => refreshFunction()}>
+          <RefreshCcwIcon class="w-4 h-4"></RefreshCcwIcon>
+        </Button>
         <Select
           defaultValue="10"
           onValueChange={(value) => {
@@ -148,11 +172,19 @@ export function DataTable<TData, TValue>({
         <Button variant={"secondary"} onClick={() => table.previousPage()}>
           Previous
         </Button>
-        <Button variant={"secondary"} onClick={() => table.getState().pagination.pageIndex + 1 != table.getPageCount() ? table.nextPage() : ""}>
+        <Button
+          variant={"secondary"}
+          onClick={() =>
+            table.getState().pagination.pageIndex + 1 != table.getPageCount()
+              ? table.nextPage()
+              : ""
+          }
+        >
           Next
         </Button>
-        <span className="text-gray-500">
-          Page {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
+        <span className="text-gray-500 whitespace-nowrap">
+          Page {table.getState().pagination.pageIndex + 1} /{" "}
+          {table.getPageCount()}
         </span>
       </div>
       <div className="rounded-md border">
