@@ -44,16 +44,15 @@ export const deleteAppFromSupabase = async (user: string, appName: string) => {
   }
 }
 
-export const editStatusThresholdInSupabase = async (
-  user: string,
+export const editAppInSupabase = async (
+  id: number,
   appName: string,
   threshold: number
 ) => {
   const { error } = await supabase
     .from("apps")
-    .update({ status_threshold: threshold })
-    .eq("user", user)
-    .eq("name", appName);
+    .update({ status_threshold: threshold, name: appName })
+    .eq("id", id);
   if (error) {
     throw error;
   }

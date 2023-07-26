@@ -80,7 +80,7 @@ export default function AppPage({ params }: { params: { app: string } }) {
               )}
             </TabsContent>
             <TabsContent value="settings">
-              <Settings />
+              <Settings app={app} changeSettingsCallback={getApp} />
             </TabsContent>
           </Tabs>
         </div>

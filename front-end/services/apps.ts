@@ -25,3 +25,12 @@ export const deleteUserApp = async (name: string) => {
   })
   return res.data
 }
+
+export const editUserApp = async (id: number, name: string, threshold: number) => {
+  const res = await axios.post(`${siteConfig.api.baseUrl}/apps/edit`, {
+    id,
+    name,
+    threshold,
+  })
+  return res.data
+}

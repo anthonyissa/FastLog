@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
+import { App } from "@/types/App"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -15,28 +16,36 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { toast } from "@/components/ui/use-toast"
+import { editUserApp } from "@/services/apps"
 
-const FormSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-})
 
-export function Settings() {
+
+export function Settings({ app, changeSettingsCallback }: { app: App, changeSettingsCallback: Function }) {
+  const FormSchema = z.object({
+    "app-name": z
+      .string()
+      .min(4, {
+        message: "App name must be at least 2 characters.",
+      }).max(20, {
+        message: "App name must be at most 20 characters.",
+      }).default(app.name),
+    "status-threshold": z.number().min(30, {
+      message: "Status threshold must be at least 30 seconds.",
+    }).default(app.status_threshold / 1000),
+  })
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
+  const { register } = form
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (data["app-name"] === app.name && data["status-threshold"] === app.status_threshold / 1000) {
+      return
+    }
+    await editUserApp(app.id, data["app-name"], data["status-threshold"] * 1000)
+    await changeSettingsCallback()
   }
 
   return (
@@ -48,15 +57,20 @@ export function Settings() {
         <div>
           <FormField
             control={form.control}
-            name="username"
+            name="app-name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>App name</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input
+                    defaultValue={app.name}
+                    placeholder="App name"
+                    {...register("app-name")}
+                  />
                 </FormControl>
                 <FormDescription>
-                  This is your public display name.
+                  This is your app's name. It will be displayed in the
+                  dashboard.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -66,22 +80,30 @@ export function Settings() {
         <div>
           <FormField
             control={form.control}
-            name="username"
+            name="status-threshold"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Status threshold</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input
+                    defaultValue={app.status_threshold / 1000}
+                    type="number"
+                    placeholder="Status threshold in seconds"
+                    {...register("status-threshold", { valueAsNumber: true })}
+                  />
                 </FormControl>
                 <FormDescription>
-                  This is your public display name.
+                  Select the status threshold, if we don't receive a status
+                  update within this time, we will consider the app as down.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-          <Button type="submit" className="mt-3 w-20">Save</Button>
+        <Button type="submit" className="mt-3 w-20">
+          Save
+        </Button>
       </form>
     </Form>
   )

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import {
   addNewAppToSupabase,
   deleteAppFromSupabase,
-  editStatusThresholdInSupabase,
+  editAppInSupabase,
   getAppFromSupabase,
   getAppsFromSupabase,
 } from "../services/apps/appServices";
@@ -46,14 +46,14 @@ export const deleteApp = async (req: Request, res: Response) => {
   }
 };
 
-export const editStatusThreshold = async (req: Request, res: Response) => {
+export const editApp = async (req: Request, res: Response) => {
   try {
-    const { user, app, threshold } = req.body;
-    if (!user || !app || !threshold) throw new MissingRequiredFieldsError();
+    const { id, name, threshold } = req.body;
+    if (!id || !name || !threshold) throw new MissingRequiredFieldsError();
 
-    await editStatusThresholdInSupabase(
-      user as string,
-      app as string,
+    await editAppInSupabase(
+      id as number,
+      name as string,
       threshold as number
     );
     res.json(true);
