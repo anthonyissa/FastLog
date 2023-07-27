@@ -47,7 +47,7 @@ export const launchStatusWatcher = async () => {
         }
       }
       const upApps = apps
-        .map((app) => app.name)
+        .map((app) => app.id)
         .filter((app) => !downApps.includes(app));
       await updateAppsStatus(downApps, upApps);
     } catch (error) {
