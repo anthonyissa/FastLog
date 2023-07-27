@@ -7,8 +7,8 @@ export const fetchApps = async (user: string) => {
   return res.data
 }
 
-export const fetchApp = async (name: string) => {
-  const res = await axios.get(`${siteConfig.api.baseUrl}/apps/${name}`)
+export const fetchApp = async (id: string) => {
+  const res = await axios.get(`${siteConfig.api.baseUrl}/apps/${id}`)
   return res.data
 }
 
@@ -19,14 +19,14 @@ export const createNewApp = async (name: string) => {
   return res.data
 }
 
-export const deleteUserApp = async (name: string) => {
+export const deleteUserApp = async (id: string) => {
   const res = await axios.post(`${siteConfig.api.baseUrl}/apps/delete`, {
-    name,
+    id,
   })
   return res.data
 }
 
-export const editUserApp = async (id: number, name: string, threshold: number) => {
+export const editUserApp = async (id: string, name: string, threshold: number) => {
   const res = await axios.post(`${siteConfig.api.baseUrl}/apps/edit`, {
     id,
     name,

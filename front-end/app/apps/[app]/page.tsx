@@ -5,22 +5,21 @@ import { fetchApp } from "@/services/apps"
 import { fetchLogs } from "@/services/logs"
 import { Loader2Icon } from "lucide-react"
 
+import { App } from "@/types/App"
 import { Log } from "@/types/Log"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CustomBarChart } from "@/components/barchart"
 import { Loading } from "@/components/loading"
 
 import { columns } from "./columns"
 import { DataTable } from "./data-table"
 import { AppHeader } from "./header"
-import { Separator } from "@radix-ui/react-dropdown-menu"
 import { Settings } from "./settings"
 
 export default function AppPage({ params }: { params: { app: string } }) {
   const [logs, setLogs] = useState<Log[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [loadingTable, setLoadingTable] = useState<boolean>(true)
-  const [app, setApp] = useState<any>({})
+  const [app, setApp] = useState<App>()
   const [chartData, setChartData] = useState<any[]>([])
 
   const getApp = async () => {
@@ -64,7 +63,7 @@ export default function AppPage({ params }: { params: { app: string } }) {
     <div className="container mx-auto py-10">
       {(loading && <Loading />) || (
         <div>
-          <AppHeader params={params} app={app} />
+          {app && <AppHeader app={app} />}
           <Tabs defaultValue="logs" className="w-full">
             <TabsList className="grid w-auto grid-cols-4">
               <TabsTrigger value="logs">Logs</TabsTrigger>
@@ -80,7 +79,7 @@ export default function AppPage({ params }: { params: { app: string } }) {
               )}
             </TabsContent>
             <TabsContent value="settings">
-              <Settings app={app} changeSettingsCallback={getApp} />
+              {app && <Settings app={app} changeSettingsCallback={getApp} />}
             </TabsContent>
           </Tabs>
         </div>

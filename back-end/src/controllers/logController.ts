@@ -4,12 +4,12 @@ import { MissingRequiredFieldsError } from "../model/error";
 
 export const addLog = async (req: Request, res: Response) => {
   try {
-    const { timestamp, level, app, user, ...args } = req.body;
-    if (!timestamp || !level || !app) throw new MissingRequiredFieldsError();
+    const { timestamp, level, id, user, ...args } = req.body;
+    if (!timestamp || !level || !id) throw new MissingRequiredFieldsError();
     await addLogToSupabase({
       timestamp,
       level,
-      app,
+      id,
       user,
       ...args,
     });
@@ -22,10 +22,10 @@ export const addLog = async (req: Request, res: Response) => {
 
 export const getLogs = async (req: Request, res: Response) => {
   try {
-    const { user, app } = req.query;
-    if (!user || !app) throw new MissingRequiredFieldsError();
+    const { user, id } = req.query;
+    if (!user || !id) throw new MissingRequiredFieldsError();
 
-    const logs = await getLogsFromSupabase(user as string, app as string);
+    const logs = await getLogsFromSupabase(user as string, id as string);
     res.json(logs);
   } catch (error) {
     console.error(error);

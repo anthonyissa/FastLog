@@ -35,10 +35,10 @@ export const getApps = async (req: Request, res: Response) => {
 
 export const deleteApp = async (req: Request, res: Response) => {
   try {
-    const { name } = req.body;
-    if (!name) throw new MissingRequiredFieldsError();
+    const { id } = req.body;
+    if (!id) throw new MissingRequiredFieldsError();
 
-    await deleteAppFromSupabase("antho", name as string); // TODO replace with user from auth
+    await deleteAppFromSupabase("antho", id as string); // TODO replace with user from auth
     res.json(true);
   } catch (error) {
     console.error(error);
@@ -52,7 +52,7 @@ export const editApp = async (req: Request, res: Response) => {
     if (!id || !name || !threshold) throw new MissingRequiredFieldsError();
 
     await editAppInSupabase(
-      id as number,
+      id as string,
       name as string,
       threshold as number
     );
@@ -65,10 +65,10 @@ export const editApp = async (req: Request, res: Response) => {
 
 export const getApp = async (req: Request, res: Response) => {
   try {
-    const { name } = req.params;
-    if (!name) throw new MissingRequiredFieldsError();
+    const { id } = req.params;
+    if (!id) throw new MissingRequiredFieldsError();
 
-    const app = await getAppFromSupabase("antho", name as string); // TODO replace with user from auth
+    const app = await getAppFromSupabase("antho", id as string); // TODO replace with user from auth
     res.json(app);
   } catch (error) {
     console.error(error);

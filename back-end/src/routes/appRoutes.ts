@@ -7,7 +7,7 @@ const appRouter = express.Router();
 appRouter.post("/create", createApp);
 appRouter.post("/delete", deleteApp)
 appRouter.post("/edit", editApp)
-appRouter.get("/:name", getApp)
+appRouter.get("/:id", getApp)
 appRouter.get("/", getApps);
 
 export default appRouter;

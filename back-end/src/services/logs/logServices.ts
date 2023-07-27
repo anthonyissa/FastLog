@@ -4,13 +4,13 @@ import { concatLogArgs } from "./utils";
 export const addLogToSupabase = async ({
   timestamp,
   level,
-  app,
+  id,
   user,
   ...args
 }: {
   timestamp: string;
   level: "INFO" | "WARN" | "ERROR";
-  app: string;
+  id: string;
   user: string;
   [key: string]: any;
 }) => {
@@ -19,7 +19,7 @@ export const addLogToSupabase = async ({
   const { error } = await supabase.from("logs").insert({
     timestamp,
     level,
-    app,
+    app:id,
     user,
     message,
   });
@@ -28,12 +28,12 @@ export const addLogToSupabase = async ({
   }
 };
 
-export const getLogsFromSupabase = async (user: string, app: string) => {
+export const getLogsFromSupabase = async (user: string, id: string) => {
   const { data, error } = await supabase
     .from("logs")
     .select("*")
     .eq("user", user)
-    .eq("app", app)
+    .eq("app", id)
     .order("timestamp", { ascending: false })
   if (error) {
     throw error;

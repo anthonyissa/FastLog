@@ -21,31 +21,31 @@ export const getAppsFromSupabase = async (user: string) => {
   return data;
 };
 
-export const getAppFromSupabase = async (user: string, name: string) => {
+export const getAppFromSupabase = async (user: string, id: string) => {
   const { data, error } = await supabase
     .from("apps")
     .select("*")
     .eq("user", user)
-    .eq("name", name);
+    .eq("id", id);
   if (error) {
     throw error;
   }
   return data[0];
 };
 
-export const deleteAppFromSupabase = async (user: string, appName: string) => {
+export const deleteAppFromSupabase = async (user: string, id: string) => {
   const { error } = await supabase
     .from("apps")
     .delete()
     .eq("user", user)
-    .eq("name", appName);
+    .eq("id", id);
   if (error) {
     throw error;
   }
 }
 
 export const editAppInSupabase = async (
-  id: number,
+  id: string,
   appName: string,
   threshold: number
 ) => {

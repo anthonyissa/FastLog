@@ -1,5 +1,5 @@
 export type App = {
-  id: number
+  id: string
   status_threshold: number
   name: string
   status: "UP" | "DOWN",

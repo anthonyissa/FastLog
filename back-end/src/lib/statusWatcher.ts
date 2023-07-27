@@ -16,7 +16,7 @@ export const launchStatusWatcher = async () => {
         { status_threshold: number; status: "UP" | "DOWN" }
       >();
       for (const app of apps) {
-        thresholdsMap.set(app.name, {
+        thresholdsMap.set(app.id, {
           status_threshold: app.status_threshold,
           status: app.status,
         });

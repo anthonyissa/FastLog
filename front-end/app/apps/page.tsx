@@ -53,8 +53,8 @@ export default function AppsPage() {
     }
   }
 
-  const openApp = (name: string) => {
-    router.push(`/apps/${name}`)
+  const openApp = (id: string) => {
+    router.push(`/apps/${id}`)
   }
 
   const createApp = async () => {
@@ -66,9 +66,9 @@ export default function AppsPage() {
     }
   }
 
-  const deleteApp = async (name: string) => {
+  const deleteApp = async (id: string) => {
     try {
-      await deleteUserApp(name)
+      await deleteUserApp(id)
     } finally {
       await getApps("antho")
     }
@@ -126,7 +126,7 @@ export default function AppsPage() {
             {apps.map((app) => (
               <Card>
                 <CardHeader
-                  onClick={() => openApp(app.name)}
+                  onClick={() => openApp(app.id)}
                   className="cursor-pointer"
                 >
                   <CardTitle>
@@ -142,7 +142,7 @@ export default function AppsPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuItem
-                        onClick={() => deleteApp(app.name)}
+                        onClick={() => deleteApp(app.id)}
                         className="cursor-pointer"
                       >
                         <Trash2 className="mr-2 w-4 h-4 z-50"></Trash2>Delete

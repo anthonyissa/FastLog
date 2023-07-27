@@ -1,12 +1,12 @@
 import axios from "axios";
 
 const originalLogger = console.log;
-let app = "default";
+let id = "default";
 
 function sendToFastLog(level, ...args) {
   const body = JSON.stringify({
     ...args,
-    app,
+    id,
     level,
     timestamp: new Date().toISOString(),
   });
@@ -30,9 +30,10 @@ function fastLogger(level) {
 }
 
 export const activateFastLog = ({
-  appName,
+  app_id,
 }) => {
-  app = appName;
+  if(!app_id) throw new Error("App ID is required");
+  id = app_id;
   console.log = fastLogger("INFO");
   console.error = fastLogger("ERROR");
   console.warn = fastLogger("WARN");
