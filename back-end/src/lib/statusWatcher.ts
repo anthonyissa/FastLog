@@ -65,14 +65,14 @@ export const updateAppsStatus = async (
       .from("apps")
       .update({ status: "DOWN" })
       .eq("status", "UP")
-      .in("name", downApps);
+      .in("id", downApps);
     if (error) throw error;
 
     const { error: error2 } = await supabase
       .from("apps")
       .update({ status: "UP" })
       .eq("status", "DOWN")
-      .in("name", upApps);
+      .in("id", upApps);
     if (error2) throw error2;
   } catch (error) {
     console.error("Error in updateAppsStatus - statusWatcher.ts :", error);
