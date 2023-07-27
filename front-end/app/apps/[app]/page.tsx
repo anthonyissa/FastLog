@@ -54,7 +54,7 @@ export default function AppPage({ params }: { params: { app: string } }) {
     await getLogs()
     await getApp()
   }
-  
+
   useEffect(() => {
     setLoading(true)
     fetchData().catch(console.error)
@@ -65,7 +65,7 @@ export default function AppPage({ params }: { params: { app: string } }) {
     <div className="container mx-auto py-10">
       {(loading && <Loading />) || (
         <div>
-          {logs && <ActivityChart logs={logs}></ActivityChart>}
+          {logs.length != 0 && <ActivityChart logs={logs}></ActivityChart>}
           {app && <AppHeader app={app} />}
           <Tabs defaultValue="logs" className="w-full">
             <TabsList className="grid w-auto grid-cols-4">
