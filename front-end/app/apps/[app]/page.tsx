@@ -10,6 +10,7 @@ import { Log } from "@/types/Log"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Loading } from "@/components/loading"
 
+import { ActivityChart } from "./activity-chart"
 import { columns } from "./columns"
 import { DataTable } from "./data-table"
 import { AppHeader } from "./header"
@@ -49,20 +50,22 @@ export default function AppPage({ params }: { params: { app: string } }) {
     setLoadingTable(false)
   }
 
+  const fetchData = async () => {
+    await getLogs()
+    await getApp()
+  }
+  
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true)
-      await getLogs()
-      await getApp()
-      setLoading(false)
-    }
+    setLoading(true)
     fetchData().catch(console.error)
+    setLoading(false)
   }, [])
 
   return (
     <div className="container mx-auto py-10">
       {(loading && <Loading />) || (
         <div>
+          {logs && <ActivityChart logs={logs}></ActivityChart>}
           {app && <AppHeader app={app} />}
           <Tabs defaultValue="logs" className="w-full">
             <TabsList className="grid w-auto grid-cols-4">
@@ -74,7 +77,7 @@ export default function AppPage({ params }: { params: { app: string } }) {
                 <DataTable
                   columns={columns}
                   data={logs}
-                  refreshFunction={getLogs}
+                  refreshFunction={fetchData}
                 />
               )}
             </TabsContent>
