@@ -13,12 +13,13 @@ export const launchStatusWatcher = async () => {
 
       const thresholdsMap = new Map<
         string,
-        { status_threshold: number; status: "UP" | "DOWN" }
+        { status_threshold: number; status: "UP" | "DOWN", name: string }
       >();
       for (const app of apps) {
         thresholdsMap.set(app.id, {
           status_threshold: app.status_threshold,
           status: app.status,
+          name: app.name,
         });
       }
 
@@ -42,7 +43,7 @@ export const launchStatusWatcher = async () => {
             await sendTelegramNotification(
               process.env.TELEGRAM_BOT_TOKEN,
               process.env.TELEGRAM_CHAT_ID,
-              `🔴 ${log.app} is down!`
+              `🔴 ${thresholdsMap.get(log.app).name} is down!`
             );
         }
       }
