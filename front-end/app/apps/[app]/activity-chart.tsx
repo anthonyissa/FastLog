@@ -111,10 +111,16 @@ export function ActivityChart({ logs }: { logs: Log[] }) {
 
     return countMap
   }
+
+  const getTimeString = (date: Date) => {
+    return `${date.getUTCDate()}/${date.getUTCMonth() + 1}/${date.getUTCFullYear()} - ${date.getUTCHours()}:${date.getUTCMinutes()}`
+  } 
+
   useEffect(() => {
     let countMap: any = {}
     logs.forEach((log: Log) => {
       const date = new Date(log.timestamp)
+      const timestring = getTimeString(date)
       let hours = date.getUTCHours()
       let minutes = date.getUTCMinutes()
 
