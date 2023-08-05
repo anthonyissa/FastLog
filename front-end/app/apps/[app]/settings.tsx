@@ -132,7 +132,7 @@ export function Settings({
                         />
                       </FormControl>
                       <FormDescription>
-                        This is your app's name. It will be displayed in the
+                        This is your app&apos;s name. It will be displayed in the
                         dashboard.
                       </FormDescription>
                       <FormMessage />
@@ -158,7 +158,7 @@ export function Settings({
                         />
                       </FormControl>
                       <FormDescription>
-                        Select the status threshold, if we don't receive a
+                        Select the status threshold, if we don&apos;t receive a
                         status update within this time, we will consider the app
                         as down.
                       </FormDescription>
