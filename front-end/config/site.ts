@@ -14,6 +14,6 @@ export const siteConfig = {
     docs: "https://ui.shadcn.com",
   },
   api: {
-    baseUrl: "http://localhost:3000",
+    baseUrl: process.env.NEXT_PUBLIC_API_URL,
   }
 }

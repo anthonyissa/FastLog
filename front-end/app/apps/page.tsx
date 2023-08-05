@@ -67,14 +67,6 @@ function AppsPage() {
     }
   }
 
-  const deleteApp = async (id: string) => {
-    try {
-      await deleteUserApp(id)
-    } finally {
-      await getApps()
-    }
-  }
-
   useEffect(() => {
     if (!userId) return
     const fetchData = async () => {
@@ -140,14 +132,14 @@ function AppsPage() {
                     <DropdownMenuTrigger className="outline-none">
                       <Settings2 className="h-6 w-6 dark:text-gray-300" />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
+                    {/* <DropdownMenuContent>
                       <DropdownMenuItem
                         onClick={() => deleteApp(app.id)}
                         className="cursor-pointer"
                       >
                         <Trash2 className="mr-2 w-4 h-4 z-50"></Trash2>Delete
                       </DropdownMenuItem>
-                    </DropdownMenuContent>
+                    </DropdownMenuContent> */}
                   </DropdownMenu>
                 </CardFooter>
               </Card>
