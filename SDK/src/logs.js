@@ -2,12 +2,14 @@ import axios from "axios";
 
 const originalLogger = console.log;
 let id = "default";
+let userId = "default";
 
 function sendToFastLog(level, ...args) {
   const body = JSON.stringify({
     ...args,
     id,
     level,
+    userId,
     timestamp: new Date().toISOString(),
   });
   axios("https://fastlog-production.up.railway.app/logs/add", {
@@ -31,8 +33,11 @@ function fastLogger(level) {
 
 export const activateFastLog = ({
   app_id,
+  user_id,
 }) => {
   if(!app_id) throw new Error("App ID is required");
+  if(!user_id) throw new Error("User ID is required");
+  userId = user_id;
   id = app_id;
   console.log = fastLogger("INFO");
   console.error = fastLogger("ERROR");
