@@ -13,7 +13,7 @@ export const createApp = async (req: Request, res: Response) => {
     const { name } = req.body;
     if (!name) throw new MissingRequiredFieldsError();
 
-    await addNewAppToSupabase("antho", name); // TODO replace with user from auth
+    await addNewAppToSupabase(req["userId"], name);
     res.json(true);
   } catch (error) {
     console.error(error);
@@ -23,9 +23,7 @@ export const createApp = async (req: Request, res: Response) => {
 
 export const getApps = async (req: Request, res: Response) => {
   try {
-    const { user } = req.query;
-    if (!user) throw new MissingRequiredFieldsError();
-    const apps = await getAppsFromSupabase(user as string);
+    const apps = await getAppsFromSupabase(req["userId"]);
     res.json(apps);
   } catch (error) {
     console.error(error);
@@ -38,7 +36,7 @@ export const deleteApp = async (req: Request, res: Response) => {
     const { id } = req.body;
     if (!id) throw new MissingRequiredFieldsError();
 
-    await deleteAppFromSupabase("antho", id as string); // TODO replace with user from auth
+    await deleteAppFromSupabase(req["userId"], id as string);
     res.json(true);
   } catch (error) {
     console.error(error);
@@ -68,7 +66,7 @@ export const getApp = async (req: Request, res: Response) => {
     const { id } = req.params;
     if (!id) throw new MissingRequiredFieldsError();
 
-    const app = await getAppFromSupabase("antho", id as string); // TODO replace with user from auth
+    const app = await getAppFromSupabase(req["userId"], id as string);
     res.json(app);
   } catch (error) {
     console.error(error);

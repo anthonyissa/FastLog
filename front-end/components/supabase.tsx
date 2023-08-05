@@ -33,13 +33,7 @@ export const Supabase = () => {
       router.push("/apps")
     }
   })
-
-  supabase.auth.onAuthStateChange((event) => {
-    if (event === "SIGNED_IN") {
-      window.location.reload()
-    }
-  })
-
+  
   return (
     <div className="w-80 mx-auto">
       <Auth

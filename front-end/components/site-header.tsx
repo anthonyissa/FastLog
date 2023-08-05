@@ -13,15 +13,8 @@ import { useRouter } from "next/navigation"
 
 export function SiteHeader() {
 
-  const { session, setSession } = useAppContext()
+  const { session } = useAppContext()
   const router = useRouter()
-
-  useEffect(() => {
-    const getSession = async () => {
-      setSession((await supabase.auth.getSession()).data.session)
-    }
-    getSession()
-  }, [])
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">

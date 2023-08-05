@@ -144,7 +144,7 @@ export function DataTable<TData, TValue>({
           onChange={(e) => filter(e.target.value)}
         />
         <Button variant={"outline"} onClick={() => refreshFunction()}>
-          <RefreshCcwIcon class="w-4 h-4"></RefreshCcwIcon>
+          <RefreshCcwIcon className="w-4 h-4"></RefreshCcwIcon>
         </Button>
         <Select
           defaultValue="10"

@@ -15,13 +15,16 @@ import { columns } from "./columns"
 import { DataTable } from "./data-table"
 import { AppHeader } from "./header"
 import { Settings } from "./settings"
+import withAuth from "@/app/auth/auth"
+import { useAppContext } from "@/app/session-context"
 
-export default function AppPage({ params }: { params: { app: string } }) {
+function AppPage({ params }: { params: { app: string } }) {
   const [logs, setLogs] = useState<Log[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [loadingTable, setLoadingTable] = useState<boolean>(true)
   const [app, setApp] = useState<App>()
   const [chartData, setChartData] = useState<any[]>([])
+  const { userId } = useAppContext()
 
   const getApp = async () => {
     const data = await fetchApp(params.app)
@@ -30,8 +33,7 @@ export default function AppPage({ params }: { params: { app: string } }) {
 
   const getLogs = async () => {
     setLoadingTable(true)
-    const user = "antho"
-    const data = await fetchLogs(user, params.app)
+    const data = await fetchLogs(params.app)
     setLogs(data)
     // // calculate how many logs per minute (use log.timestamp)
     // const logCountMap = data.reduce((countMap: any, log: any) => {
@@ -56,10 +58,11 @@ export default function AppPage({ params }: { params: { app: string } }) {
   }
 
   useEffect(() => {
+    if (!userId) return
     setLoading(true)
     fetchData().catch(console.error)
     setLoading(false)
-  }, [])
+  }, [userId])
 
   return (
     <div className="container mx-auto py-10">
@@ -90,3 +93,5 @@ export default function AppPage({ params }: { params: { app: string } }) {
     </div>
   )
 }
+
+export default withAuth(AppPage)

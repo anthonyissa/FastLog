@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { createNewApp, deleteUserApp, fetchApps } from "@/services/apps"
 import {
   Loader2Icon,
@@ -23,31 +24,31 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { StatusBadge } from "@/components/status-badge"
-import { useRouter } from "next/navigation"
 
-export default function AppsPage() {
+import withAuth, { getAccessToken } from "../auth/auth"
+import { useAppContext } from "../session-context"
+
+function AppsPage() {
   const [apps, setApps] = useState<App[]>([])
   const [newApp, setNewApp] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(true)
+  const { userId } = useAppContext()
   const router = useRouter()
 
-  const getApps = async (user: string) => {
+  const getApps = async () => {
     setLoading(true)
     try {
-      setApps(await fetchApps(user))
+      setApps(await fetchApps())
     } finally {
       setLoading(false)
     }
@@ -62,7 +63,7 @@ export default function AppsPage() {
       await createNewApp(newApp)
     } finally {
       setNewApp("")
-      await getApps("antho")
+      await getApps()
     }
   }
 
@@ -70,16 +71,17 @@ export default function AppsPage() {
     try {
       await deleteUserApp(id)
     } finally {
-      await getApps("antho")
+      await getApps()
     }
   }
 
   useEffect(() => {
+    if (!userId) return
     const fetchData = async () => {
-      await getApps("antho")
+      await getApps()
     }
     fetchData().catch(console.error)
-  }, [])
+  }, [userId])
 
   return (
     <div className="container mx-auto">
@@ -98,12 +100,10 @@ export default function AppsPage() {
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="mb-3">
-                    New app
-                  </AlertDialogTitle>
+                  <AlertDialogTitle className="mb-3">New app</AlertDialogTitle>
                   <AlertDialogDescription className="mb-5">
                     Enter the name of your new app
-                    </AlertDialogDescription>
+                  </AlertDialogDescription>
                   <Input
                     type="text"
                     placeholder="Name"
@@ -123,8 +123,8 @@ export default function AppsPage() {
             </AlertDialog>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {apps.map((app) => (
-              <Card>
+            {apps.map((app, index) => (
+              <Card key={index}>
                 <CardHeader
                   onClick={() => openApp(app.id)}
                   className="cursor-pointer"
@@ -135,7 +135,7 @@ export default function AppsPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardFooter className="flex justify-between">
-                <StatusBadge status={app.status} />
+                  <StatusBadge status={app.status} />
                   <DropdownMenu>
                     <DropdownMenuTrigger className="outline-none">
                       <Settings2 className="h-6 w-6 dark:text-gray-300" />
@@ -158,3 +158,5 @@ export default function AppsPage() {
     </div>
   )
 }
+
+export default withAuth(AppsPage)
