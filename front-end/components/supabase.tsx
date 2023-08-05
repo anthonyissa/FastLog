@@ -37,6 +37,7 @@ export const Supabase = () => {
   return (
     <div className="w-80 mx-auto">
       <Auth
+      redirectTo="/"
         supabaseClient={supabase}
         appearance={{
           extend: true,
