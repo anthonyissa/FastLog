@@ -8,12 +8,14 @@ const AppContext = createContext<any>({
     session: null,
     setSession: () => { },
     userId: "",
-    setUserId: () => { }
+    setUserId: () => { },
+    ready: false,
 })
 
 export function AppWrapper({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<any>(null)
   const [userId, setUserId] = useState<string>("")
+  const [ready, setReady] = useState<boolean>(false)
 
   const updateSession = async () => {
     const s = await supabase.auth.getSession()
@@ -29,10 +31,11 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     updateSession()
+    setReady(true)
   }, [])
 
   return (
-    <AppContext.Provider value={{session, setSession, userId, setUserId}}>
+    <AppContext.Provider value={{session, setSession, userId, setUserId, ready}}>
       {children}
     </AppContext.Provider>
   )

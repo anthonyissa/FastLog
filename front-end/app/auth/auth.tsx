@@ -11,9 +11,10 @@ export const getAccessToken = () => {
 const withAuth = (Component : any) => {
   const Auth = (props : any) => {
     const router = useRouter();
-    const { session } = useAppContext();
+    const { session, ready } = useAppContext();
 
     useEffect(() => {
+      if (!ready) return;
       if (!session) router.push("/auth");
     });
 

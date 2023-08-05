@@ -1,3 +1,4 @@
+import { rateLimit } from 'express-rate-limit';
 import jwt from 'jsonwebtoken';
 
 export const verifyJwt = (req, res, next)=> {
@@ -15,3 +16,9 @@ export const verifyJwt = (req, res, next)=> {
         return res.status(401).json({ error: "Invalid JWT" });
     }
 }
+
+export const rateLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: 'Too many requests, please try again later',
+});
