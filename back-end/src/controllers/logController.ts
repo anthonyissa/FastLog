@@ -4,13 +4,13 @@ import { MissingRequiredFieldsError } from "../model/error";
 
 export const addLog = async (req: Request, res: Response) => {
   try {
-    const { timestamp, level, id, ...args } = req.body;
-    if (!timestamp || !level || !id) throw new MissingRequiredFieldsError();
+    const { timestamp, level, userId, id, ...args } = req.body;
+    if (!timestamp || !level || !id || !userId) throw new MissingRequiredFieldsError();
     await addLogToSupabase({
       timestamp,
       level,
       id,
-      user: req["userId"],
+      user: userId,
       ...args,
     });
     res.json(true);

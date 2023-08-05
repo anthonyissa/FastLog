@@ -12,7 +12,7 @@ app.use(cors({ origin: "*" }));
   await launchStatusWatcher();
 })();
 
-app.use("/logs", verifyJwt, logRouter);
+app.use("/logs", logRouter);
 app.use("/apps", verifyJwt, appRouter);
 
 app.get("/", verifyJwt, (req: Request, res: Response) => {
