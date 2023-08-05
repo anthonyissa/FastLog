@@ -41,6 +41,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { siteConfig } from "@/config/site"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -229,7 +230,8 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No logs for now.<br></br>
+                  <Button variant={"outline"} className="mt-3" onClick={() => window.open(siteConfig.links.docs)}>Get Started</Button>
                 </TableCell>
               </TableRow>
             )}

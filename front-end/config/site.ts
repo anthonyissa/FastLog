@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
-  name: "FastLog",
+  name: "🚀 FastLog",
   description:
     "Beautifully designed components built with Radix UI and Tailwind CSS.",
   mainNav: [
@@ -11,9 +11,9 @@ export const siteConfig = {
   links: {
     twitter: "https://twitter.com/shadcn",
     github: "https://github.com/shadcn/ui",
-    docs: "https://ui.shadcn.com",
+    docs: "https://personal-88.gitbook.io/fastlog/",
   },
   api: {
     baseUrl: process.env.NEXT_PUBLIC_API_URL,
-  }
+  },
 }

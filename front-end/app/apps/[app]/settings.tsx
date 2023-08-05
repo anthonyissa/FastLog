@@ -8,7 +8,9 @@ import { DialogDescription } from "@radix-ui/react-dialog"
 import {
   AlertCircle,
   AlertTriangle,
+  Check,
   Cog,
+  Copy,
   FileWarning,
   Terminal,
 } from "lucide-react"
@@ -35,6 +37,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import Head from "next/head"
 
 export function Settings({
   app,
@@ -44,6 +47,7 @@ export function Settings({
   changeSettingsCallback: Function
 }) {
   const [tab, setTab] = useState<"general" | "danger">("general")
+  const [idCopied, setIdCopied] = useState(false)
   const router = useRouter()
 
   const FormSchema = z.object({
@@ -83,16 +87,23 @@ export function Settings({
 
   const deleteApp = async (id: string) => {
     try {
-      // await deleteUserApp(id)
-      console.log("delete app" + id)
+      await deleteUserApp(id)
     } finally {
       router.push("/apps")
     }
   }
 
+  const copyId = () => {
+    navigator.clipboard.writeText(app.id)
+    setIdCopied(true)
+    setTimeout(() => {
+      setIdCopied(false)
+    }, 2000)
+  }
+
   return (
     <div className="flex">
-      <div className="w-3/12 mt-3 px-5 flex flex-col items-start">
+      <div className="w-3/12 px-5 flex flex-col items-start border-r mr-8">
         <Button
           variant="ghost"
           className="mb-2 w-full flex justify-start"
@@ -112,6 +123,23 @@ export function Settings({
       </div>
       {tab === "general" && (
         <div className="w-9/12">
+          <Alert variant="default">
+            <AlertTitle>{app.name}</AlertTitle>
+            <AlertDescription className="flex items-center">
+              {app.id}
+              {
+                idCopied ? (
+                  <Check width={15} className="ml-3" />
+                ) : (
+                  <Copy
+                    width={15}
+                    className="ml-3 cursor-pointer"
+                    onClick={() => copyId()}
+                  />
+                )
+              }
+            </AlertDescription>
+          </Alert>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -132,8 +160,8 @@ export function Settings({
                         />
                       </FormControl>
                       <FormDescription>
-                        This is your app&apos;s name. It will be displayed in the
-                        dashboard.
+                        This is your app&apos;s name. It will be displayed in
+                        the dashboard.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -175,7 +203,7 @@ export function Settings({
         </div>
       )}
       {tab === "danger" && (
-        <div className="w-9/12 mt-3">
+        <div className="w-9/12">
           <Alert variant="destructive">
             <AlertTitle>Delete this app</AlertTitle>
             <AlertDescription>

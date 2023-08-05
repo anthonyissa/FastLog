@@ -1,9 +1,8 @@
 "use client"
 
 import "@/styles/globals.css"
-import React, { Component, useEffect, useState } from "react"
+import React from "react"
 
-import { siteConfig } from "@/config/site"
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
 import { SiteHeader } from "@/components/site-header"

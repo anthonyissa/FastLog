@@ -36,6 +36,7 @@ import {
 import { useRouter } from "next/navigation"
 import { useAppContext } from "@/app/session-context"
 import { signOut } from "./supabase"
+import { siteConfig } from "@/config/site"
 
 export function ProfileDropdown() {
   const { session } = useAppContext()
@@ -46,7 +47,7 @@ export function ProfileDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost">
-        My Account <ChevronDown className="ml-2 h-4 w-4" />
+        Dashboard <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
@@ -57,15 +58,11 @@ export function ProfileDropdown() {
             <LayoutDashboard className="mr-2 h-4 w-4" />
             <span>Applications</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem disabled>
             <CreditCard className="mr-2 h-4 w-4" />
             <span>Billing</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("/settings")}>
             <Settings className="mr-2 h-4 w-4" />
             <span>Settings</span>
           </DropdownMenuItem>
@@ -101,11 +98,11 @@ export function ProfileDropdown() {
           </DropdownMenuSub>
         </DropdownMenuGroup> */}
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem disabled>
           <LifeBuoy className="mr-2 h-4 w-4" />
           <span>Support</span>
         </DropdownMenuItem>
-        <DropdownMenuItem disabled>
+        <DropdownMenuItem onClick={() => window.open(siteConfig.links.docs)}>
           <Paperclip className="mr-2 h-4 w-4" />
           <span>Docs</span>
         </DropdownMenuItem>

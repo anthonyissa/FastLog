@@ -71,7 +71,7 @@ function AppPage({ params }: { params: { app: string } }) {
           {logs.length != 0 && <ActivityChart logs={logs}></ActivityChart>}
           {app && <AppHeader app={app} />}
           <Tabs defaultValue="logs" className="w-full">
-            <TabsList className="grid w-auto grid-cols-4">
+            <TabsList className="grid w-auto grid-cols-4 mb-7">
               <TabsTrigger value="logs">Logs</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
