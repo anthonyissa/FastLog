@@ -36,6 +36,7 @@ import {
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -60,6 +61,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     []
   )
+  const [filterValue, setFilterValue] = useState<string>("")
 
   const table = useReactTable({
     data,
@@ -77,8 +79,12 @@ export function DataTable<TData, TValue>({
   const [formattedLog, setFormattedLog] = useState<{}>({})
 
   const filter = (value: string) => {
-    table.getColumn("message")!.setFilterValue(value)
+    setFilterValue(value)
+    table.setGlobalFilter(value)
   }
+
+  // const toggleTimestampOrder = () => {
+  //   table.setColumnOrder("timestamp", table.ord === "asc" ? "desc" : "asc")
 
   const openSheet = (row: Row<TData>) => {
     setFormattedLog({})
@@ -141,7 +147,7 @@ export function DataTable<TData, TValue>({
         <Input
           type="text"
           placeholder="Search logs"
-          value={(table.getColumn("message")?.getFilterValue() as string) ?? ""}
+          value={filterValue}
           onChange={(e) => filter(e.target.value)}
         />
         <Button variant={"outline"} onClick={() => refreshFunction()}>
@@ -202,6 +208,9 @@ export function DataTable<TData, TValue>({
                             header.column.columnDef.header,
                             header.getContext()
                           )}
+                          {/* {header.column.columnDef.header === "Timestamp" && (
+                            "test"
+                          )} */}
                     </TableHead>
                   )
                 })}

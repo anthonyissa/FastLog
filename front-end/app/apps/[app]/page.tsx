@@ -89,7 +89,7 @@ function AppPage({ params }: { params: { app: string } }) {
               {(loadingTable && <Loading />) || (
                 <DataTable
                   columns={columns}
-                  data={logs}
+                  data={logs.reverse()}
                   refreshFunction={fetchData}
                 />
               )}
