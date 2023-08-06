@@ -103,7 +103,7 @@ export function Settings({
   }
 
   return (
-    <div className="flex">
+    <div className="flex mt-6">
       <div className="w-3/12 px-5 flex flex-col items-start border-r mr-8">
         <Button
           variant="ghost"
