@@ -17,12 +17,16 @@ import { AppHeader } from "./header"
 import { Settings } from "./settings"
 import withAuth from "@/app/auth/auth"
 import { useAppContext } from "@/app/session-context"
+import { Events } from "./events"
+import { fetchEvents } from "@/services/events"
 
 function AppPage({ params }: { params: { app: string } }) {
-  const [logs, setLogs] = useState<Log[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [loadingTable, setLoadingTable] = useState<boolean>(true)
+
+  const [logs, setLogs] = useState<Log[]>([])
   const [app, setApp] = useState<App>()
+  const [events, setEvents] = useState<any[]>([])
   const [chartData, setChartData] = useState<any[]>([])
   const { userId } = useAppContext()
 
@@ -31,8 +35,12 @@ function AppPage({ params }: { params: { app: string } }) {
     setApp(data)
   }
 
+  const getEvents = async () => {
+    const data = await fetchEvents(params.app)
+    setEvents(data)
+  }
+
   const getLogs = async () => {
-    setLoadingTable(true)
     const data = await fetchLogs(params.app)
     setLogs(data)
     // // calculate how many logs per minute (use log.timestamp)
@@ -49,12 +57,14 @@ function AppPage({ params }: { params: { app: string } }) {
     // const orderedLogCount = Object.entries(logCountMap)
     //   .sort((a, b) => Number(a[0]) - Number(b[0]))
     //   .map(([minute, count]) => ({ minute: Number(minute), count }))
-    setLoadingTable(false)
   }
 
   const fetchData = async () => {
+    setLoadingTable(true)
     await getLogs()
+    await getEvents()
     await getApp()
+    setLoadingTable(false)
   }
 
   useEffect(() => {
@@ -71,21 +81,27 @@ function AppPage({ params }: { params: { app: string } }) {
           {logs.length != 0 && <ActivityChart logs={logs}></ActivityChart>}
           {app && <AppHeader app={app} />}
           <Tabs defaultValue="logs" className="w-full">
-            <TabsList className="grid w-auto grid-cols-4 mb-7">
+            <TabsList className="grid w-auto grid-cols-4 mb-3">
               <TabsTrigger value="logs">Logs</TabsTrigger>
+              <TabsTrigger value="events">Events</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
             <TabsContent value="logs">
               {(loadingTable && <Loading />) || (
                 <DataTable
                   columns={columns}
-                  data={logs}
+                  data={logs.reverse()}
                   refreshFunction={fetchData}
                 />
               )}
             </TabsContent>
             <TabsContent value="settings">
               {app && <Settings app={app} changeSettingsCallback={getApp} />}
+            </TabsContent>
+            <TabsContent value="events">
+            {(loadingTable && <Loading />) || (
+              app && <Events events={events} refreshFunction={fetchData} />
+            )}
             </TabsContent>
           </Tabs>
         </div>

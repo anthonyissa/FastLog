@@ -5,6 +5,7 @@ import cors from "cors";
 import { launchStatusWatcher } from "./lib/statusWatcher";
 import { rateLimiter, verifyJwt } from "./lib/middlewares";
 import dotenv from "dotenv";
+import eventRouter from "./routes/eventRoutes";
 dotenv.config();
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(cors({ origin: [process.env.FRONT_URL], credientials:true }));
 })();
 
 app.use("/logs", logRouter);
+app.use("/events", eventRouter)
 app.use("/apps", verifyJwt, rateLimiter, appRouter);
 
 app.get("/", verifyJwt, rateLimiter, (req: Request, res: Response) => {
