@@ -6,7 +6,8 @@ import { sendNotification } from "../lib/notifications";
 export const addEvent = async (req: Request, res: Response) => {
     try {
         const { timestamp, message, title, userId, id, notify } = req.body;
-        if (!timestamp || !message || !title || !id || !userId || !notify) throw new MissingRequiredFieldsError();
+        const notification = !notify ? false : true;
+        if (!timestamp || !message || !title || !id || !userId) throw new MissingRequiredFieldsError();
         await sendEventToSupabase({
             timestamp,
             app: id,
@@ -14,7 +15,7 @@ export const addEvent = async (req: Request, res: Response) => {
             message,
             title,
         });
-        if (notify) {
+        if (notification) {
             await sendNotification({
                 appId: id,
                 userId,

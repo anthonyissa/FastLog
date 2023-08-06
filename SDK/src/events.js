@@ -1,5 +1,5 @@
 import axios from "axios";
-import { id, userId } from "./logs.js";
+import { id, originalLogger, userId } from "./logs.js";
 import { apiUrl } from "./utils.js";
 
 export const monitor = ({

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { apiUrl } from "./utils.js";
 
-const originalLogger = console.log;
+export const originalLogger = console.log;
 export let id = undefined;
 export let userId = undefined;
 
