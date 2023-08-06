@@ -17,18 +17,26 @@ import { AppHeader } from "./header"
 import { Settings } from "./settings"
 import withAuth from "@/app/auth/auth"
 import { useAppContext } from "@/app/session-context"
+import { Events } from "./events"
+import { fetchEvents } from "@/services/events"
 
 function AppPage({ params }: { params: { app: string } }) {
   const [logs, setLogs] = useState<Log[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [loadingTable, setLoadingTable] = useState<boolean>(true)
   const [app, setApp] = useState<App>()
+  const [events, setEvents] = useState<any[]>([])
   const [chartData, setChartData] = useState<any[]>([])
   const { userId } = useAppContext()
 
   const getApp = async () => {
     const data = await fetchApp(params.app)
     setApp(data)
+  }
+
+  const getEvents = async () => {
+    const data = await fetchEvents(params.app)
+    setEvents(data)
   }
 
   const getLogs = async () => {
@@ -54,6 +62,7 @@ function AppPage({ params }: { params: { app: string } }) {
 
   const fetchData = async () => {
     await getLogs()
+    await getEvents()
     await getApp()
   }
 
@@ -73,6 +82,7 @@ function AppPage({ params }: { params: { app: string } }) {
           <Tabs defaultValue="logs" className="w-full">
             <TabsList className="grid w-auto grid-cols-4 mb-7">
               <TabsTrigger value="logs">Logs</TabsTrigger>
+              <TabsTrigger value="events">Events</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
             <TabsContent value="logs">
@@ -86,6 +96,9 @@ function AppPage({ params }: { params: { app: string } }) {
             </TabsContent>
             <TabsContent value="settings">
               {app && <Settings app={app} changeSettingsCallback={getApp} />}
+            </TabsContent>
+            <TabsContent value="events">
+              {app && <Events events={events} />}
             </TabsContent>
           </Tabs>
         </div>

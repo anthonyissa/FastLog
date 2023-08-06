@@ -1,8 +1,9 @@
 import axios from "axios";
+import { apiUrl } from "./utils.js";
 
 const originalLogger = console.log;
-let id = "default";
-let userId = "default";
+export let id = undefined;
+export let userId = undefined;
 
 function sendToFastLog(level, ...args) {
   const body = JSON.stringify({
@@ -12,7 +13,7 @@ function sendToFastLog(level, ...args) {
     userId,
     timestamp: new Date().toISOString(),
   });
-  axios("https://fastlog-production.up.railway.app/logs/add", {
+  axios(apiUrl+"/logs/add", {
     method: "POST",
     data: body,
     headers: {

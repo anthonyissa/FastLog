@@ -8,6 +8,7 @@ import { DialogDescription } from "@radix-ui/react-dialog"
 import {
   AlertCircle,
   AlertTriangle,
+  Bell,
   Check,
   Cog,
   Copy,
@@ -46,7 +47,7 @@ export function Settings({
   app: App
   changeSettingsCallback: Function
 }) {
-  const [tab, setTab] = useState<"general" | "danger">("general")
+  const [tab, setTab] = useState<"general" | "danger" | "notifications">("general")
   const [idCopied, setIdCopied] = useState(false)
   const router = useRouter()
 
@@ -111,6 +112,14 @@ export function Settings({
         >
           <Cog className="mr-2" size={16} />
           General
+        </Button>
+        <Button
+          variant="ghost"
+          className="mb-2 w-full flex justify-start"
+          onClick={() => setTab("notifications")}
+        >
+          <Bell className="mr-2" size={16} />
+          Notifications
         </Button>
         <Button
           variant="ghost"
