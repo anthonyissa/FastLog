@@ -13,9 +13,15 @@ import {
 } from "@tanstack/react-table"
 import { ArrowLeft, RefreshCcwIcon, X } from "lucide-react"
 
+import { siteConfig } from "@/config/site"
 import { convertLogMessageToMap, getTimeAgo, isObjectString } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import {
   Select,
   SelectContent,
@@ -42,7 +48,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { siteConfig } from "@/config/site"
+import { Calendar } from "@/components/ui/calendar"
+import { DateRange } from "react-day-picker"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -58,10 +65,10 @@ export function DataTable<TData, TValue>({
   data: TData[]
   refreshFunction: Function
 }) {
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
-    []
-  )
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [filterValue, setFilterValue] = useState<string>("")
+  const [timeframe, setTimeframe] = useState<DateRange>()
+  const [savedData, setSavedData] = useState<TData[]>(data)
 
   const table = useReactTable({
     data,
@@ -82,9 +89,6 @@ export function DataTable<TData, TValue>({
     setFilterValue(value)
     table.setGlobalFilter(value)
   }
-
-  // const toggleTimestampOrder = () => {
-  //   table.setColumnOrder("timestamp", table.ord === "asc" ? "desc" : "asc")
 
   const openSheet = (row: Row<TData>) => {
     setFormattedLog({})
@@ -108,6 +112,16 @@ export function DataTable<TData, TValue>({
     }
     setFormattedLog(newLog)
     setSheetOpen(true)
+  }
+
+  const changeTimeframe = (selected: DateRange | undefined) => {
+    setTimeframe(selected)
+    if (!selected || !selected.to) return;
+    if (selected.from === selected.to) selected.to = new Date(selected!.from!.getTime() + 86400000) // add 1 day
+    table.setColumnFilters([{
+      id: "timestamp",
+      value: selected
+    }])
   }
 
   return (
@@ -150,9 +164,31 @@ export function DataTable<TData, TValue>({
           value={filterValue}
           onChange={(e) => filter(e.target.value)}
         />
+
         <Button variant={"outline"} onClick={() => refreshFunction()}>
           <RefreshCcwIcon className="w-4 h-4"></RefreshCcwIcon>
         </Button>
+        <Popover>
+          <PopoverTrigger>
+            <Button variant={"outline"} className="w-max">
+              {timeframe && timeframe.from && timeframe.to ? (
+                timeframe.from.toLocaleDateString() +
+                " - " +
+                timeframe.to.toLocaleDateString()
+              ) : (
+                <span>Timeframe</span>
+              )}
+              </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto">
+          <Calendar
+            mode="range"
+            selected={timeframe}
+            onSelect={(range) => changeTimeframe(range)}
+          />
+          </PopoverContent>
+        </Popover>
+
         <Select
           defaultValue="10"
           onValueChange={(value) => {
@@ -208,7 +244,7 @@ export function DataTable<TData, TValue>({
                             header.column.columnDef.header,
                             header.getContext()
                           )}
-                          {/* {header.column.columnDef.header === "Timestamp" && (
+                      {/* {header.column.columnDef.header === "Timestamp" && (
                             "test"
                           )} */}
                     </TableHead>
@@ -240,7 +276,13 @@ export function DataTable<TData, TValue>({
                   className="h-24 text-center"
                 >
                   No logs for now.<br></br>
-                  <Button variant={"outline"} className="mt-3" onClick={() => window.open(siteConfig.links.docs)}>Get Started</Button>
+                  <Button
+                    variant={"outline"}
+                    className="mt-3"
+                    onClick={() => window.open(siteConfig.links.docs)}
+                  >
+                    Get Started
+                  </Button>
                 </TableCell>
               </TableRow>
             )}
