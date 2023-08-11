@@ -11,7 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Loading } from "@/components/loading"
 
 import { ActivityChart } from "./activity-chart"
-import { columns } from "./columns"
 import { DataTable } from "./data-table"
 import { AppHeader } from "./header"
 import { Settings } from "./settings"
@@ -89,8 +88,7 @@ function AppPage({ params }: { params: { app: string } }) {
             <TabsContent value="logs">
               {(loadingTable && <Loading />) || (
                 <DataTable
-                  columns={columns}
-                  data={logs.reverse()}
+                  data={logs}
                   refreshFunction={fetchData}
                 />
               )}

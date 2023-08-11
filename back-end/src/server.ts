@@ -10,7 +10,7 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-console.log(process.env.FRONT_URL)
+
 app.use(cors({ origin: [process.env.FRONT_URL], credientials:true }));
 (async () => {
   await launchStatusWatcher();

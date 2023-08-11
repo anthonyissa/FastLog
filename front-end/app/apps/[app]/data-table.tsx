@@ -12,10 +12,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { ArrowLeft, RefreshCcwIcon, X } from "lucide-react"
+import { DateRange } from "react-day-picker"
 
 import { siteConfig } from "@/config/site"
 import { convertLogMessageToMap, getTimeAgo, isObjectString } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
 import {
   Popover,
@@ -48,8 +50,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Calendar } from "@/components/ui/calendar"
-import { DateRange } from "react-day-picker"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -57,18 +57,40 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({
-  columns,
   data,
   refreshFunction,
 }: {
-  columns: ColumnDef<TData, TValue>[]
   data: TData[]
   refreshFunction: Function
 }) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [filterValue, setFilterValue] = useState<string>("")
   const [timeframe, setTimeframe] = useState<DateRange>()
-  const [savedData, setSavedData] = useState<TData[]>(data)
+  const [savedData, setSavedData] = useState<TData[]>(data.reverse())
+
+  const columns: ColumnDef<TData, TValue>[] = [
+    {
+      accessorKey: "level",
+      header: "Level",
+      enableResizing: true,
+    },
+    {
+      accessorKey: "timestamp",
+      header: "Timestamp",
+      filterFn: (row, filterValue) => {
+        if (timeframe) {
+          // @ts-ignore
+          return (new Date(row.original.timestamp).getTime() >= new Date(timeframe.from).getTime() && new Date(row.original.timestamp).getTime() <= new Date(timeframe.to).getTime())
+        } else {
+          return true
+        }
+      },
+    },
+    {
+      accessorKey: "message",
+      header: "Message",
+    },
+  ]
 
   const table = useReactTable({
     data,
@@ -116,12 +138,18 @@ export function DataTable<TData, TValue>({
 
   const changeTimeframe = (selected: DateRange | undefined) => {
     setTimeframe(selected)
-    if (!selected || !selected.to) return;
-    if (selected.from === selected.to) selected.to = new Date(selected!.from!.getTime() + 86400000) // add 1 day
-    table.setColumnFilters([{
-      id: "timestamp",
-      value: selected
-    }])
+    table.resetColumnFilters()
+    if (!selected || !selected.to) return
+    if (new Date(selected!.from!).getTime() === new Date(selected!.to!).getTime()) {
+      selected.to = new Date(selected!.from!.getTime() + 86399000)
+    } // add 23:59:59 to the selected date
+    setTimeframe(selected)
+    table.setColumnFilters([
+      {
+        id: "timestamp",
+        value: selected,
+      },
+    ])
   }
 
   return (
@@ -178,14 +206,14 @@ export function DataTable<TData, TValue>({
               ) : (
                 <span>Timeframe</span>
               )}
-              </Button>
+            </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto">
-          <Calendar
-            mode="range"
-            selected={timeframe}
-            onSelect={(range) => changeTimeframe(range)}
-          />
+            <Calendar
+              mode="range"
+              selected={timeframe}
+              onSelect={(range) => changeTimeframe(range)}
+            />
           </PopoverContent>
         </Popover>
 
