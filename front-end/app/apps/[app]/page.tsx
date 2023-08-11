@@ -74,7 +74,7 @@ function AppPage({ params }: { params: { app: string } }) {
   }, [userId])
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-5">
       {(loading && <Loading />) || (
         <div>
           {logs.length != 0 && <ActivityChart logs={logs}></ActivityChart>}
@@ -88,7 +88,7 @@ function AppPage({ params }: { params: { app: string } }) {
             <TabsContent value="logs">
               {(loadingTable && <Loading />) || (
                 <DataTable
-                  data={logs}
+                  data={logs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())}
                   refreshFunction={fetchData}
                 />
               )}

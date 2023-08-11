@@ -12,6 +12,7 @@ import {
 import { Line } from "react-chartjs-2"
 
 import { Log } from "@/types/Log"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 ChartJS.register(
   CategoryScale,
@@ -55,101 +56,93 @@ export const options = {
 
 export function ActivityChart({ logs }: { logs: Log[] }) {
   const [chartData, setChartData] = useState<any>()
+  const [hours, setHours] = useState<number>(3)
 
-  const fillMissingMinutes = (logs: Log[], countMap: any) => {
-    const sortedLogs = logs.sort(
-      (a, b) =>
-        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-    )
-    const firstLogTimestamp = new Date(sortedLogs[0].timestamp)
-    console.log(firstLogTimestamp)
-    const firstLogUTC = Date.UTC(
-      firstLogTimestamp.getUTCFullYear(),
-      firstLogTimestamp.getUTCMonth(),
-      firstLogTimestamp.getUTCDate(),
-      firstLogTimestamp.getUTCHours(),
-      firstLogTimestamp.getUTCMinutes(),
-      firstLogTimestamp.getUTCSeconds()
-    )
-    console.log(firstLogUTC)
-    const firstLog = new Date(firstLogUTC)
-    const lastLogTimestamp = new Date(
-      sortedLogs[sortedLogs.length - 1].timestamp
-    )
-    const lastLogUTC = Date.UTC(
-      lastLogTimestamp.getUTCFullYear(),
-      lastLogTimestamp.getUTCMonth(),
-      lastLogTimestamp.getUTCDate(),
-      lastLogTimestamp.getUTCHours(),
-      lastLogTimestamp.getUTCMinutes(),
-      lastLogTimestamp.getUTCSeconds()
-    )
-    const lastLog = new Date(lastLogUTC)
-    for (let hour = firstLog.getHours(); hour <= lastLog.getHours(); hour++) {
-      for (let minute = 0; minute < 60; minute++) {
-        const date = new Date(
-          firstLog.getFullYear(),
-          firstLog.getMonth(),
-          firstLog.getDate(),
-          hour,
-          minute
-        )
-        let hours = date.getUTCHours()
-        let minutes = date.getUTCMinutes()
-
-        // Pad single digit hour and minute values with a leading zero
-        const h = hours < 10 ? "0" + hours : hours
-        const m = minutes < 10 ? "0" + minutes : minutes
-
-        const time = `${h}:${m}`
-
-        if (!countMap[time]) {
-          countMap[time] = 0
-        }
-      }
-    }
-
+  const formatLogs = (logs: Log[], countMap: any) => {
+    logs.forEach((log) => {
+      const timestring = getTimestring(new Date(log.timestamp).getTime() + new Date().getTimezoneOffset() * 60 * 1000)
+      countMap[timestring] = (countMap[timestring] || 0) + 1
+    })
     return countMap
   }
 
-  const getTimeString = (date: Date) => {
-    return `${date.getUTCDate()}/${date.getUTCMonth() + 1}/${date.getUTCFullYear()} - ${date.getUTCHours()}:${date.getUTCMinutes()}`
-  } 
+  const getTimestring = (timestamp:number) => {
+    const date = new Date(timestamp)
+    return `${date.getHours() < 10 ? "0" + date.getHours() : date.getHours()}:${date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()}`
+  }
 
-  useEffect(() => {
+  const updateChartData = () => {
     let countMap: any = {}
-    logs.forEach((log: Log) => {
-      const date = new Date(log.timestamp)
-      const timestring = getTimeString(date)
-      let hours = date.getUTCHours()
-      let minutes = date.getUTCMinutes()
-
-      // Pad single digit hour and minute values with a leading zero
-      const h = hours < 10 ? "0" + hours : hours
-      const m = minutes < 10 ? "0" + minutes : minutes
-
-      const timeString = `${h}:${m}`
-      countMap[timeString] = (countMap[timeString] || 0) + 1
-    })
-    countMap = fillMissingMinutes(logs, countMap)
-    const labels = Object.keys(countMap).sort()
+    for (let i = 0; i < hours; i++) {
+      for (let j = 0; j < 60; j++) {
+      const date = new Date(new Date().getTime() - i * 3600 * 1000 - j * 60 * 1000)
+      countMap[getTimestring(date.getTime() + new Date().getTimezoneOffset() * 60 * 1000)] = 0
+    }
+    }
+    const lastLogs = logs.filter(
+      (log) =>
+        new Date(log.timestamp).getTime() > new Date().getTime() - hours * 3600 * 1000
+    )
+    countMap = formatLogs(lastLogs, countMap)
+    const labels = Object.keys(countMap).reverse()
     const data = labels.map((label) => countMap[label])
     setChartData({
       labels,
       datasets: [
         {
-          label: "Dataset 1",
+          label: "Log Count",
           data,
           borderColor: "#f0f0f0",
           backgroundColor: "#678cc7",
         },
       ],
     })
-  }, [logs])
+  }
+
+  useEffect(() => {
+    updateChartData()   
+  }, [logs, hours])
 
   return (
     <>
-      {chartData && <Line height={"50px"} options={options} data={chartData} />}
+      {chartData && (
+        <div className="flex flex-col">
+          <div className="flex flex-row justify-end">
+          <Select
+          defaultValue={hours.toString()}
+          onValueChange={
+            (value) => {
+              setHours(parseInt(value))
+            }
+          }
+        >
+          <SelectTrigger className="w-[130px] mr-3">
+            <SelectValue placeholder="Activity" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="1" className="cursor-pointer">
+                Last 1 hour
+              </SelectItem>
+              <SelectItem value="3" className="cursor-pointer">
+                Last 3 hours
+              </SelectItem>
+              <SelectItem value="6" className="cursor-pointer">
+                Last 6 hours
+              </SelectItem>
+              <SelectItem value="12" className="cursor-pointer">
+                Last 12 hours
+              </SelectItem>
+              <SelectItem value="24" className="cursor-pointer">
+                Last 24 hours
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+          </div>
+          <Line height={"50px"} options={options} data={chartData} />
+        </div>
+      )}
     </>
   )
 }

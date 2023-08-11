@@ -66,7 +66,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [filterValue, setFilterValue] = useState<string>("")
   const [timeframe, setTimeframe] = useState<DateRange>()
-  const [savedData, setSavedData] = useState<TData[]>(data.reverse())
+  const [savedData, setSavedData] = useState<TData[]>(data)
 
   const columns: ColumnDef<TData, TValue>[] = [
     {
