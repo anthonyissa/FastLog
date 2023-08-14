@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { addLogToSupabase, getLogsFromSupabase } from "../services/logs/logServices";
-import { MissingRequiredFieldsError } from "../model/error";
+import { MissingRequiredFieldsError } from "../model/errors";
 
 export const addLog = async (req: Request, res: Response) => {
   try {

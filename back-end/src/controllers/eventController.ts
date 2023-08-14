@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { MissingRequiredFieldsError } from "../model/error";
+import { MissingRequiredFieldsError } from "../model/errors";
 import { getEventsFromSupabase, sendEventToSupabase } from "../services/events/eventServices";
 import { sendNotification } from "../lib/notifications";
 

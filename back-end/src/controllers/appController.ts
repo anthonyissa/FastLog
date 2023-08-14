@@ -6,7 +6,7 @@ import {
   getAppFromSupabase,
   getAppsFromSupabase,
 } from "../services/apps/appServices";
-import { MissingRequiredFieldsError } from "../model/error";
+import { MissingRequiredFieldsError } from "../model/errors";
 
 export const createApp = async (req: Request, res: Response) => {
   try {

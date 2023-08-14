@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { User, Webhook } from "lucide-react"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -11,38 +12,44 @@ import { useToast } from "@/components/ui/use-toast"
 
 import withAuth from "../auth/auth"
 import { useAppContext } from "../session-context"
+import { Profile } from "./profile"
+import { Webhooks } from "./webhooks"
 
 const Settings = () => {
   const { session } = useAppContext()
-  const [idCopied, setIdCopied] = useState(false)
-
-  const handleCopyId = () => {
-    navigator.clipboard.writeText(session.user.id)
-    setIdCopied(true)
-    setTimeout(() => setIdCopied(false), 2000)
-  }
+  const [tab, setTab] = useState<"profile" | "webhooks">("profile")
 
   return (
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
-        {!session && (
-            <div className="w-full mt-5 flex items-center justify-center">
-            <img src="/loading.svg" className="w-10 h-10"></img>
-          </div>
-          )}
+      {!session && (
+        <div className="w-full mt-5 flex items-center justify-center">
+          <img src="/loading.svg" className="w-10 h-10"></img>
+        </div>
+      )}
       {session && (
-        <div>
-          <Alert>
-            <AlertTitle>{session.user.email}</AlertTitle>
-            <AlertDescription>
-              Manage your account settings and set e-mail preferences.
-            </AlertDescription>
-          </Alert>
-          <div className="mt-3">
-
-          <Button onClick={handleCopyId} variant="ghost" className="w-32">
-            {idCopied ? "Copied ✅" : "Copy User ID"}
-          </Button>
+        <div className="flex">
+          <div className="w-3/12 px-5 flex flex-col items-start border-r mr-8">
+            <Button
+              variant="ghost"
+              className="mb-2 w-full flex justify-start"
+              onClick={() => setTab("profile")}
+            >
+              <User className="mr-2" size={16} />
+              Profile
+            </Button>
+            <Button
+              variant="ghost"
+              className="mb-2 w-full flex justify-start"
+              onClick={() => setTab("webhooks")}
+            >
+              <Webhook className="mr-2" size={16} />
+              Webhooks
+            </Button>
           </div>
+        <div className="w-9/12">
+          {tab === "profile" && <Profile session={session} />}
+          {tab === "webhooks" && (<Webhooks session={session} />)}
+        </div>
         </div>
       )}
     </section>
