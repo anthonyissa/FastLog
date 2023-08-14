@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { MissingRequiredFieldsError } from "../model/errors";
 import { getEventsFromSupabase, sendEventToSupabase } from "../services/events/eventServices";
 import { sendNotification } from "../lib/notifications";
+import { getUserWebhook } from "../services/apps/appServices";
 
 export const addEvent = async (req: Request, res: Response) => {
     try {
@@ -15,11 +16,13 @@ export const addEvent = async (req: Request, res: Response) => {
             message,
             title,
         });
-        if (notification) {
+        const webhook:any = await getUserWebhook(id);
+        console.log({webhook});
+        if (notification && webhook) {
             await sendNotification({
-                appId: id,
-                userId,
-                message: `${title}: ${message}`,
+                url: webhook.url,
+                method: webhook.method,
+                body: webhook.body
             })
         }
         res.json(true);

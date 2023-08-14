@@ -1,8 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import Head from "next/head"
 import { useRouter } from "next/navigation"
-import { deleteUserApp, editUserApp } from "@/services/apps"
+import { deleteUserApp, editUserApp, setWebhook } from "@/services/apps"
+import { fetchWebhooks } from "@/services/settings"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DialogDescription } from "@radix-ui/react-dialog"
 import {
@@ -10,6 +12,7 @@ import {
   AlertTriangle,
   Bell,
   Check,
+  ChevronsUpDown,
   Cog,
   Copy,
   FileWarning,
@@ -19,8 +22,18 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 
 import { App } from "@/types/App"
+import { Webhook } from "@/types/Webhook"
+import { cn } from "@/lib/utils"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command"
 import {
   Dialog,
   DialogContent,
@@ -38,7 +51,11 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import Head from "next/head"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 export function Settings({
   app,
@@ -47,8 +64,13 @@ export function Settings({
   app: App
   changeSettingsCallback: Function
 }) {
-  const [tab, setTab] = useState<"general" | "danger" | "notifications">("general")
+  const [tab, setTab] = useState<"general" | "danger" | "notifications">(
+    "general"
+  )
   const [idCopied, setIdCopied] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [webhookStatus, setWebhookStatus] = useState<string>("")
+  const [webhooks, setWebhooks] = useState<Webhook[]>([])
   const router = useRouter()
 
   const FormSchema = z.object({
@@ -102,6 +124,28 @@ export function Settings({
     }, 2000)
   }
 
+  const getWebhooks = async () => {
+    setWebhooks(await fetchWebhooks())
+  }
+
+  const handleWebhookSelect = (currentValue: string) => {
+    setWebhookStatus(
+      currentValue === webhookStatus ? "" : currentValue
+    )
+    setWebhook(app.id, webhooks.find((webhook) => webhook.id === app.webhook_id)?.url || "")
+    setOpen(false)
+  }
+
+  useEffect(() => {
+    getWebhooks()
+  }, [])
+
+  useEffect(() => {
+    if (app.webhook_id){
+      setWebhookStatus(webhooks.find((webhook) => webhook.id === app.webhook_id)?.url || "")
+    }
+  }, [webhooks])
+
   return (
     <div className="flex mt-6">
       <div className="w-3/12 px-5 flex flex-col items-start border-r mr-8">
@@ -136,17 +180,15 @@ export function Settings({
             <AlertTitle>{app.name}</AlertTitle>
             <AlertDescription className="flex items-center">
               {app.id}
-              {
-                idCopied ? (
-                  <Check width={15} className="ml-3" />
-                ) : (
-                  <Copy
-                    width={15}
-                    className="ml-3 cursor-pointer"
-                    onClick={() => copyId()}
-                  />
-                )
-              }
+              {idCopied ? (
+                <Check width={15} className="ml-3" />
+              ) : (
+                <Copy
+                  width={15}
+                  className="ml-3 cursor-pointer"
+                  onClick={() => copyId()}
+                />
+              )}
             </AlertDescription>
           </Alert>
           <Form {...form}>
@@ -243,6 +285,67 @@ export function Settings({
                 </Button>
               </DialogContent>
             </Dialog>
+          </Alert>
+        </div>
+      )}
+      {tab === "notifications" && (
+        <div className="w-9/12 flex flex-col">
+          <Alert variant="default">
+            <AlertTitle>Status notifications</AlertTitle>
+            <AlertDescription className="mb-3">
+              Choose the webhook you want to use to receive status updates for
+              this app.
+            </AlertDescription>
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="w-[200px] justify-between"
+                >
+                  {webhookStatus
+                    ? webhookStatus.length > 20
+                      ? webhookStatus.substring(0, 20) + "..."
+                      : webhookStatus
+                    : "Select a webhook"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-0">
+                <Command>
+                  <CommandInput placeholder="Search webhook..." />
+                  <CommandEmpty>
+                    No webhooks found.<br></br>
+                    <Button
+                      variant={"secondary"}
+                      className="mt-3"
+                      onClick={() => router.push("/settings")}
+                    >
+                      Create webhook
+                    </Button>
+                  </CommandEmpty>
+                  <CommandGroup>
+                    {webhooks.map((webhook) => (
+                      <CommandItem
+                        key={webhook.url}
+                        onSelect={(currentValue) => handleWebhookSelect(currentValue)}
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            webhookStatus === webhook.url
+                              ? "opacity-100"
+                              : "opacity-0"
+                          )}
+                        />
+                        {webhook.url}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </Alert>
         </div>
       )}

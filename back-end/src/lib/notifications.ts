@@ -1,12 +1,15 @@
-import { sendTelegramNotification } from "@aitox/notifications";
+import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
 
-export const sendNotification = async ({userId, appId, message}:{userId: string, appId: string, message: string}) => {
-    // TODO get user notifications preferences from supabase and send
-    await sendTelegramNotification(
-        process.env.TELEGRAM_BOT_TOKEN,
-        process.env.TELEGRAM_CHAT_ID,
-        message
-      );
+export const sendNotification = async ({url, method, body}:{ 
+    url: string,
+    method: string,
+    body: string
+}) => {
+  return await axios({
+    url,
+    method,
+    data: body
+  })
 }

@@ -27,7 +27,7 @@ const Settings = () => {
         </div>
       )}
       {session && (
-        <div className="flex">
+        <div className="flex w-full">
           <div className="w-3/12 px-5 flex flex-col items-start border-r mr-8">
             <Button
               variant="ghost"
@@ -46,10 +46,10 @@ const Settings = () => {
               Webhooks
             </Button>
           </div>
-        <div className="w-9/12">
-          {tab === "profile" && <Profile session={session} />}
-          {tab === "webhooks" && (<Webhooks session={session} />)}
-        </div>
+          <div className="w-9/12">
+            {tab === "profile" && <Profile session={session} />}
+            {tab === "webhooks" && <Webhooks session={session} />}
+          </div>
         </div>
       )}
     </section>

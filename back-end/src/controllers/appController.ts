@@ -5,6 +5,7 @@ import {
   editAppInSupabase,
   getAppFromSupabase,
   getAppsFromSupabase,
+  setWebhookOnApp,
 } from "../services/apps/appServices";
 import { MissingRequiredFieldsError } from "../model/errors";
 
@@ -68,6 +69,19 @@ export const getApp = async (req: Request, res: Response) => {
 
     const app = await getAppFromSupabase(req["userId"], id as string);
     res.json(app);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error });
+  }
+}
+
+export const setWebhook = async (req: Request, res: Response) => {
+  try {
+    const { appId, webhookId } = req.body;
+    if (!appId) throw new MissingRequiredFieldsError();
+
+    await setWebhookOnApp(req["userId"], appId as string, webhookId as string);
+    res.json(true);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error });

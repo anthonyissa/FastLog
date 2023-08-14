@@ -3,5 +3,6 @@ export type App = {
   status_threshold: number
   name: string
   status: "UP" | "DOWN",
-  user: string
+  user: string,
+  webhook_id: string
 }

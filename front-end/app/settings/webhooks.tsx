@@ -180,7 +180,11 @@ export const Webhooks = ({ session }: { session: any }) => {
             return (
               <AccordionItem key={index} value={`${`${index}`}`}>
                 <AccordionTrigger className="flex justify-between w-full">
-                    <h1>{webhook.url}</h1>
+                    <h1 className="w-64">
+                        {
+                            webhook.url.length > 64 ? webhook.url.substring(0, 64) + "..." : webhook.url
+                        }
+                    </h1>
                     <Badge className="ml-auto mr-3 bg-blue-500">{webhook.method}</Badge>
                 </AccordionTrigger>
                 <AccordionContent>

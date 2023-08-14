@@ -57,3 +57,25 @@ export const editAppInSupabase = async (
     throw error;
   }
 }
+
+export const setWebhookOnApp = async (user: string, appId: string, webhookId: string) => {
+  const { error } = await supabase
+    .from("apps")
+    .update({ webhook_id: webhookId })
+    .eq("id", appId)
+    .eq("user", user);
+  if (error) {
+    throw error;
+  }
+}
+
+export const getUserWebhook = async (appId:string) => {
+  const { data, error } = await supabase
+    .from("apps")
+    .select("user_webhooks (*)")
+    .eq("id", appId).single() // TODO - check if this is not hackable (id can be confounded with webhook id)
+  if (error) {
+    throw error;
+  }
+  return data.user_webhooks;
+}

@@ -8,21 +8,22 @@ export const launchStatusWatcher = async () => {
     try {
       const { data: apps, error: appsError } = await supabase
         .from("apps")
-        .select("*");
+        .select("*, user_webhooks (*)");
       if (appsError) throw appsError;
 
       const thresholdsMap = new Map<
         string,
-        { status_threshold: number; status: "UP" | "DOWN", name: string }
+        { status_threshold: number; status: "UP" | "DOWN", name: string, user_webhooks: { url: string, method: string, body: string }}
       >();
       for (const app of apps) {
         thresholdsMap.set(app.id, {
           status_threshold: app.status_threshold,
           status: app.status,
           name: app.name,
+          user_webhooks: app.user_webhooks
         });
       }
-
+      
       const { data: logs, error: logsError } = await supabase.rpc(
         "get_latest_logs"
       );
@@ -37,12 +38,13 @@ export const launchStatusWatcher = async () => {
           continue;
         const timestamp = new Date(log.timestamp).getTime();
         const timeSince = Date.now() - timestamp;
-        if (timeSince > thresholdsMap.get(log.app).status_threshold) {
+        const app = thresholdsMap.get(log.app);
+        if (timeSince > app.status_threshold) {
           downApps.push(log.app);
-          if (thresholdsMap.get(log.app).status === "UP") await sendNotification({
-            appId: log.app,
-            userId: log.user,
-            message: `🔴 ${thresholdsMap.get(log.app).name} is down!`
+          if (app.status === "UP") await sendNotification({
+            url: app.user_webhooks.url,
+            method: app.user_webhooks.method,
+            body: app.user_webhooks.body
           })
         }
       }
