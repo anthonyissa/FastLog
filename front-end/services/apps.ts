@@ -59,7 +59,7 @@ export const editUserApp = async (id: string, name: string, threshold: number) =
   return res.data
 }
 
-export const setWebhook = async (appId:string, webhookId:string) => {
+export const setWebhook = async (appId:string, webhookId:string | null) => {
   const res = await axios.post(`${siteConfig.api.baseUrl}/apps/set-webhook`, {
     appId,
     webhookId

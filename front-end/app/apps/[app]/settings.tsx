@@ -16,6 +16,7 @@ import {
   Cog,
   Copy,
   FileWarning,
+  Plus,
   Terminal,
 } from "lucide-react"
 import { useForm } from "react-hook-form"
@@ -69,7 +70,7 @@ export function Settings({
   )
   const [idCopied, setIdCopied] = useState(false)
   const [open, setOpen] = useState(false)
-  const [webhookStatus, setWebhookStatus] = useState<string>("")
+  const [webhookStatus, setWebhookStatus] = useState<string | null>("")
   const [webhooks, setWebhooks] = useState<Webhook[]>([])
   const router = useRouter()
 
@@ -129,10 +130,18 @@ export function Settings({
   }
 
   const handleWebhookSelect = (currentValue: string) => {
-    setWebhookStatus(
-      currentValue === webhookStatus ? "" : currentValue
-    )
-    setWebhook(app.id, webhooks.find((webhook) => webhook.id === app.webhook_id)?.url || "")
+    const toReset = currentValue === webhookStatus
+    if (toReset) {
+      setWebhookStatus("")
+      setWebhook(app.id, null)
+      app.webhook_id = null
+    } else {
+      setWebhookStatus(currentValue)
+      const newWebhookdId =
+        webhooks.find((webhook) => webhook.url === currentValue)?.id || null
+      setWebhook(app.id, newWebhookdId)
+      app.webhook_id = newWebhookdId
+    }
     setOpen(false)
   }
 
@@ -141,8 +150,10 @@ export function Settings({
   }, [])
 
   useEffect(() => {
-    if (app.webhook_id){
-      setWebhookStatus(webhooks.find((webhook) => webhook.id === app.webhook_id)?.url || "")
+    if (app.webhook_id) {
+      setWebhookStatus(
+        webhooks.find((webhook) => webhook.id === app.webhook_id)?.url || ""
+      )
     }
   }, [webhooks])
 
@@ -296,56 +307,67 @@ export function Settings({
               Choose the webhook you want to use to receive status updates for
               this app.
             </AlertDescription>
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={open}
-                  className="w-[200px] justify-between"
-                >
-                  {webhookStatus
-                    ? webhookStatus.length > 20
-                      ? webhookStatus.substring(0, 20) + "..."
-                      : webhookStatus
-                    : "Select a webhook"}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0">
-                <Command>
-                  <CommandInput placeholder="Search webhook..." />
-                  <CommandEmpty>
-                    No webhooks found.<br></br>
-                    <Button
-                      variant={"secondary"}
-                      className="mt-3"
-                      onClick={() => router.push("/settings")}
-                    >
-                      Create webhook
-                    </Button>
-                  </CommandEmpty>
-                  <CommandGroup>
-                    {webhooks.map((webhook) => (
-                      <CommandItem
-                        key={webhook.url}
-                        onSelect={(currentValue) => handleWebhookSelect(currentValue)}
+            <div className="flex">
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-[200px] justify-between"
+                  >
+                    {webhookStatus
+                      ? webhookStatus.length > 20
+                        ? webhookStatus.substring(0, 20) + "..."
+                        : webhookStatus
+                      : "Select a webhook"}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Search webhook..." />
+                    <CommandEmpty>
+                      No webhooks found.<br></br>
+                      <Button
+                        variant={"secondary"}
+                        className="mt-3"
+                        onClick={() => router.push("/settings")}
                       >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            webhookStatus === webhook.url
-                              ? "opacity-100"
-                              : "opacity-0"
-                          )}
-                        />
-                        {webhook.url}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </Command>
-              </PopoverContent>
-            </Popover>
+                        Create webhook
+                      </Button>
+                    </CommandEmpty>
+                    <CommandGroup>
+                      {webhooks.map((webhook) => (
+                        <CommandItem
+                          key={webhook.url}
+                          onSelect={(currentValue) =>
+                            handleWebhookSelect(currentValue)
+                          }
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              webhookStatus === webhook.url
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                          {webhook.url}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <Button
+                variant="outline"
+                className="ml-3"
+                onClick={() => router.push("/settings")}
+              >
+                <Plus size={16} />
+              </Button>
+            </div>
           </Alert>
         </div>
       )}

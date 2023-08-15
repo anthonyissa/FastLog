@@ -69,7 +69,7 @@ export const setWebhookOnApp = async (user: string, appId: string, webhookId: st
   }
 }
 
-export const getUserWebhook = async (appId:string) => {
+export const getAppWebhook = async (appId:string) => {
   const { data, error } = await supabase
     .from("apps")
     .select("user_webhooks (*)")

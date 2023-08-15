@@ -4,5 +4,5 @@ export type App = {
   name: string
   status: "UP" | "DOWN",
   user: string,
-  webhook_id: string
+  webhook_id: string | null
 }

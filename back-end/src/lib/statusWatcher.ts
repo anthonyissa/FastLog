@@ -1,4 +1,4 @@
-import { sendNotification } from "./notifications";
+import { sendStatusNotification } from "./notifications";
 import supabase from "./supabase";
 import dotenv from "dotenv";
 dotenv.config();
@@ -41,7 +41,8 @@ export const launchStatusWatcher = async () => {
         const app = thresholdsMap.get(log.app);
         if (timeSince > app.status_threshold) {
           downApps.push(log.app);
-          if (app.status === "UP") await sendNotification({
+          if (app.status === "UP") await sendStatusNotification({
+            app: app.name,
             url: app.user_webhooks.url,
             method: app.user_webhooks.method,
             body: app.user_webhooks.body
