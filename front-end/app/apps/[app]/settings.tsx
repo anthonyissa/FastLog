@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { DialogDescription } from "@radix-ui/react-dialog"
 import {
   AlertCircle,
+  AlertCircleIcon,
   AlertTriangle,
   Bell,
   Check,
@@ -18,6 +19,7 @@ import {
   FileWarning,
   Plus,
   Terminal,
+  Webhook as WebhookIcon,
 } from "lucide-react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -57,6 +59,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { siteConfig } from "@/config/site"
 
 export function Settings({
   app,
@@ -267,7 +270,7 @@ export function Settings({
       {tab === "danger" && (
         <div className="w-9/12">
           <Alert variant="destructive">
-            <AlertTitle>Delete this app</AlertTitle>
+            <AlertTitle className="flex items-center"><AlertCircleIcon width={16} className="mr-2" /> Delete this app</AlertTitle>
             <AlertDescription>
               This action is irreversible. All data associated with this app
               will be deleted.
@@ -302,12 +305,13 @@ export function Settings({
       {tab === "notifications" && (
         <div className="w-9/12 flex flex-col">
           <Alert variant="default">
-            <AlertTitle>Status notifications</AlertTitle>
+            <AlertTitle className="flex items-center"><WebhookIcon width={16} className="mr-2" /> Notification webhook</AlertTitle>
             <AlertDescription className="mb-3">
               Choose the webhook you want to use to receive status updates for
-              this app.
+              this app.<br></br>
+              <a href={siteConfig.links.docs+ "webhooks"} target="_blank" className="text-blue-500 hover:underline">Learn more about webhooks</a>
             </AlertDescription>
-            <div className="flex">
+            <div className="flex" >
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <Button
