@@ -79,3 +79,14 @@ export const getAppWebhook = async (appId:string) => {
   }
   return data.user_webhooks;
 }
+
+export const heartbeatApp = async (appId: string, userId:string) => {
+  const { error } = await supabase
+    .from("apps")
+    .update({ last_heartbeat: new Date().getTime() })
+    .eq("id", appId)
+    .eq("user", userId);
+  if (error) {
+    throw error;
+  }
+}

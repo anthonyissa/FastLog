@@ -10,53 +10,38 @@ export const launchStatusWatcher = async () => {
         .from("apps")
         .select("*, user_webhooks (*)");
       if (appsError) throw appsError;
-
-      const thresholdsMap = new Map<
-        string,
-        { status_threshold: number; status: "UP" | "DOWN", name: string, user_webhooks: { url: string, method: string, body: string }}
-      >();
-      for (const app of apps) {
-        thresholdsMap.set(app.id, {
-          status_threshold: app.status_threshold,
-          status: app.status,
-          name: app.name,
-          user_webhooks: app.user_webhooks
-        });
-      }
       
-      const { data: logs, error: logsError } = await supabase.rpc(
-        "get_latest_logs"
-      );
-      if (logsError) throw logsError;
-
-      const downApps: string[] = [];
-      for (const log of logs) {
-        if (
-          !thresholdsMap.has(log.app) ||
-          !thresholdsMap.get(log.app).status_threshold
-        )
-          continue;
-        const timestamp = new Date(log.timestamp).getTime();
-        const timeSince = Date.now() - timestamp;
-        const app = thresholdsMap.get(log.app);
-        if (timeSince > app.status_threshold) {
-          downApps.push(log.app);
-          if (app.status === "UP") await sendStatusNotification({
-            app: app.name,
-            url: app.user_webhooks.url,
-            method: app.user_webhooks.method,
-            body: app.user_webhooks.body
-          })
-        }
-      }
-      const upApps = apps
-        .map((app) => app.id)
-        .filter((app) => !downApps.includes(app));
+      const { upApps, downApps } = await getUpAndDownApps(apps);
       await updateAppsStatus(downApps, upApps);
     } catch (error) {
       console.error("Error in launchStatusWatcher - statusWatcher.ts:", error);
     }
   }, 1000 * 60);
+};
+
+export const getUpAndDownApps = async (apps:any[]) => {
+  const upApps = [], downApps = [];
+  for (const app of apps) {
+    if (!app.last_heartbeat) continue;
+    if (app.status === "UP" && isHeartbeatStale(app.last_heartbeat)) {
+      downApps.push(app.id);
+      await sendStatusNotification({
+        app: app.name,
+        url: app.user_webhooks.url,
+        method: app.user_webhooks.method,
+        body: app.user_webhooks.body
+      })
+    } else if (app.status === "DOWN" && !isHeartbeatStale(app.last_heartbeat)) {
+      upApps.push(app.id);
+    }
+  }
+  return { upApps, downApps };
+}
+
+export const isHeartbeatStale = (lastHeartbeat: string) => {
+  const timestamp = new Date(lastHeartbeat).getTime();
+  const timeSince = Date.now() - timestamp;
+  return timeSince > 1000 * 60 * 2;
 };
 
 export const updateAppsStatus = async (

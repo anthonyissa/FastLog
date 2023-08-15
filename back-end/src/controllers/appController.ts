@@ -5,6 +5,7 @@ import {
   editAppInSupabase,
   getAppFromSupabase,
   getAppsFromSupabase,
+  heartbeatApp,
   setWebhookOnApp,
 } from "../services/apps/appServices";
 import { MissingRequiredFieldsError } from "../model/errors";
@@ -82,6 +83,18 @@ export const setWebhook = async (req: Request, res: Response) => {
 
     await setWebhookOnApp(req["userId"], appId as string, webhookId as string);
     res.json(true);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error });
+  }
+}
+
+export const heartbeat = async (req: Request, res: Response) => {
+  try {
+    const { id, userId } = req.body;
+    if (!id || !userId) throw new MissingRequiredFieldsError();
+
+    await heartbeatApp(id, userId);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error });

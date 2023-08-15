@@ -19,7 +19,7 @@ app.use(cors({ origin: [process.env.FRONT_URL], credientials:true }));
 
 app.use("/logs", logRouter);
 app.use("/events", eventRouter)
-app.use("/apps", verifyJwt, rateLimiter, appRouter);
+app.use("/apps", appRouter);
 app.use("/notifications", verifyJwt, rateLimiter, notificationRouter);
 
 app.get("/", verifyJwt, rateLimiter, (req: Request, res: Response) => {
