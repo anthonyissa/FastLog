@@ -83,7 +83,8 @@ export const WebhookDialog = ({
             {webhookToEdit ? "Edit webhook" : "Create a new webhook"}
           </AlertDialogTitle>
           <AlertDialogDescription>
-          <a href={siteConfig.links.docs+ "webhooks"} target="_blank" className="text-blue-500 hover:underline">Learn more about webhooks</a>
+          <a href={siteConfig.links.docs+ "webhooks"} 
+           rel="noreferrer" target="_blank" className="text-blue-500 hover:underline">Learn more about webhooks</a>
             <div className="flex gap-3 mb-3 mt-3">
               <Input
                 onChange={(e) => setUrl(e.target.value)}

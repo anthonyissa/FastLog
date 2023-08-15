@@ -335,7 +335,7 @@ export function Settings({
               this app.<br></br>
               <a
                 href={siteConfig.links.docs + "webhooks"}
-                target="_blank"
+                target="_blank" rel="noreferrer"
                 className="text-blue-500 hover:underline"
               >
                 Learn more about webhooks
