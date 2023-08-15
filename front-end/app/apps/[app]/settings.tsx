@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Head from "next/head"
 import { useRouter } from "next/navigation"
 import { deleteUserApp, editUserApp, setWebhook } from "@/services/apps"
-import { fetchWebhooks } from "@/services/settings"
+import { fetchWebhooks, testUserWebhook } from "@/services/settings"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DialogDescription } from "@radix-ui/react-dialog"
 import {
@@ -26,6 +26,7 @@ import * as z from "zod"
 
 import { App } from "@/types/App"
 import { Webhook } from "@/types/Webhook"
+import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -59,7 +60,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { siteConfig } from "@/config/site"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 export function Settings({
   app,
@@ -75,6 +81,8 @@ export function Settings({
   const [open, setOpen] = useState(false)
   const [webhookStatus, setWebhookStatus] = useState<string | null>("")
   const [webhooks, setWebhooks] = useState<Webhook[]>([])
+  const [testDone, setTestDone] = useState(false)
+  const [testResult, setTestResult] = useState<null | "success" | "error">(null)
   const router = useRouter()
 
   const FormSchema = z.object({
@@ -141,11 +149,23 @@ export function Settings({
     } else {
       setWebhookStatus(currentValue)
       const newWebhookdId =
-        webhooks.find((webhook) => webhook.url === currentValue)?.id || null
+        webhooks.find((webhook) => webhook.url.toLowerCase() === currentValue.toLowerCase())?.id || null
       setWebhook(app.id, newWebhookdId)
       app.webhook_id = newWebhookdId
     }
     setOpen(false)
+  }
+
+  const testNotification = async () => {
+    setTestDone(true)
+    const newWebhookdId = webhooks.find((webhook) => webhook.url.toLowerCase() === webhookStatus?.toLowerCase())!.id
+    try {
+      // @ts-ignore
+      await testUserWebhook(newWebhookdId)
+      setTestResult("success")
+    } catch (e) {
+      setTestResult("error")
+    }
   }
 
   useEffect(() => {
@@ -270,7 +290,9 @@ export function Settings({
       {tab === "danger" && (
         <div className="w-9/12">
           <Alert variant="destructive">
-            <AlertTitle className="flex items-center"><AlertCircleIcon width={16} className="mr-2" /> Delete this app</AlertTitle>
+            <AlertTitle className="flex items-center">
+              <AlertCircleIcon width={16} className="mr-2" /> Delete this app
+            </AlertTitle>
             <AlertDescription>
               This action is irreversible. All data associated with this app
               will be deleted.
@@ -305,13 +327,21 @@ export function Settings({
       {tab === "notifications" && (
         <div className="w-9/12 flex flex-col">
           <Alert variant="default">
-            <AlertTitle className="flex items-center"><WebhookIcon width={16} className="mr-2" /> Notification webhook</AlertTitle>
+            <AlertTitle className="flex items-center">
+              <WebhookIcon width={16} className="mr-2" /> Notification webhook
+            </AlertTitle>
             <AlertDescription className="mb-3">
               Choose the webhook you want to use to receive status updates for
               this app.<br></br>
-              <a href={siteConfig.links.docs+ "webhooks"} target="_blank" className="text-blue-500 hover:underline">Learn more about webhooks</a>
+              <a
+                href={siteConfig.links.docs + "webhooks"}
+                target="_blank"
+                className="text-blue-500 hover:underline"
+              >
+                Learn more about webhooks
+              </a>
             </AlertDescription>
-            <div className="flex" >
+            <div className="flex items-center">
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <Button
@@ -371,6 +401,36 @@ export function Settings({
               >
                 <Plus size={16} />
               </Button>
+              {webhookStatus && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                    <Button
+                        disabled={testDone}
+                        variant="outline"
+                        className="ml-3"
+                        onClick={() => testNotification()}
+                      >
+                        <Bell size={16} />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                    Send a test notification
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+              {
+                testDone && testResult === "success" && (
+                  <p className="ml-3 text-sm text-green-500">
+                  Notification sent successfully!
+                  </p>
+                ) || testDone && testResult === "error" && (
+                  <p className="ml-3 text-sm text-red-500">
+                  Failed to send notification, check your webhook.
+                  </p>
+                )                
+              }
             </div>
           </Alert>
         </div>

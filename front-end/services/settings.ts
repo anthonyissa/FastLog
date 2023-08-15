@@ -42,3 +42,15 @@ export const editUserWebhook = async (webhook: Webhook) => {
     })
     return res.data
 }
+
+export const testUserWebhook = async (webhook_id:string) => {
+    const res = await axios.post(
+        `${siteConfig.api.baseUrl}/notifications/test`, {
+            id: webhook_id,
+        }, {
+        headers: {
+            "x-api-key": getAccessToken()
+        }
+    })
+    return res.data
+}

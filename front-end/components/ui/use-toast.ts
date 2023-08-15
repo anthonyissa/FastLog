@@ -161,6 +161,7 @@ function toast({ ...props }: Toast) {
       },
     },
   })
+  console.log("test")
 
   return {
     id: id,

@@ -4,10 +4,10 @@ import { MissingRequiredFieldsError } from "../model/errors";
 
 export const testNotification = async (req: Request, res: Response) => {
     try {
-        const { id } = req.query;
+        const { id } = req.body;
         if (!id) throw new MissingRequiredFieldsError();
 
-        const resp = await sendTestNotification(req["userId"], id as string);
+        const resp = (await sendTestNotification(req["userId"], id as string)).data;
         res.json(resp);
     } catch (error) {
         console.error(error);
