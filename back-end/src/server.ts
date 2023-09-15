@@ -10,6 +10,8 @@ import notificationRouter from "./routes/notificationController";
 dotenv.config();
 
 const app = express();
+const http = require("http").Server(app);
+
 app.use(express.json());
 
 app.use(cors({ origin: [process.env.FRONT_URL], credientials:true }));
@@ -28,6 +30,6 @@ app.get("/", verifyJwt, rateLimiter, (req: Request, res: Response) => {
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
+http.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
