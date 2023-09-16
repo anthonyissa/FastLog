@@ -1,7 +1,10 @@
 "use client"
 
 import "@/styles/globals.css"
-import React from "react"
+import React, { useEffect } from "react"
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+
 
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
@@ -16,13 +19,22 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
+  useEffect(() => {
+    AOS.init({
+      once: true,
+      disable: 'phone',
+      duration: 600,
+      easing: 'ease-out-sine',
+    })
+  })
   return (
     <>
       <html lang="en" suppressHydrationWarning>
+        <title>Fastlog</title>
         <head />
         <body
           className={cn(
-            "min-h-screen bg-background font-sans antialiased",
+            "bg-background min-h-screen font-sans antialiased",
             fontSans.variable
           )}
         >

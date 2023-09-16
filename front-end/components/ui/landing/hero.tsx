@@ -1,12 +1,16 @@
+import { useEffect } from "react";
 import { Button } from "../button"
 
 export default function Hero() {
 
-  window.addEventListener('scroll', () => {
-    const scrollY = window.scrollY;
-    document.getElementById("pulse-image")!.style.transform = `translateY(-${scrollY * 0.3}px)`; 
-    document.getElementById("graph-image")!.style.transform = `translateY(+${scrollY * 0.4}px)`;
-});
+  useEffect(() => {
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      document.getElementById("pulse-image")!.style.transform = `translateY(-${scrollY * 0.3}px)`; 
+      document.getElementById("graph-image")!.style.transform = `translateY(+${scrollY * 0.4}px)`;
+      document.getElementById("graph-image-light")!.style.transform = `translateY(+${scrollY * 0.4}px)`;
+  });
+  }, [])
 
   return (
     <section className=" w-full overflow-hidden">
@@ -16,8 +20,6 @@ export default function Hero() {
         id="pulse-image"
           className="pointer-events-none absolute left-0 top-0 -ml-20 hidden lg:block"
           aria-hidden="true"
-          data-aos="fade-up"
-          data-aos-delay="400"
         >
           {" "}
           <img
@@ -31,8 +33,6 @@ export default function Hero() {
           id="graph-image"
           className="pointer-events-none absolute left-0 top-0 -ml-20 hidden lg:block"
           aria-hidden="true"
-          data-aos="fade-up"
-          data-aos-delay="400"
         >
           {" "}
           <img
@@ -43,10 +43,9 @@ export default function Hero() {
           ></img>
         </div>
         <div
+        id="graph-image-light"
           className="pointer-events-none visible absolute left-0 top-0 -ml-20 lg:block"
           aria-hidden="true"
-          data-aos="fade-up"
-          data-aos-delay="400"
         >
           {" "}
           <img
