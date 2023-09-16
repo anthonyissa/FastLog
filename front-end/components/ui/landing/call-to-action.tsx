@@ -1,6 +1,10 @@
 import { Button } from "../button";
+import { useRouter } from "next/navigation"
 
 export default function CallToAction() {
+
+    const router = useRouter()
+
     return (
       <section>
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -28,7 +32,7 @@ export default function CallToAction() {
                 <h3 className="h3 mb-2 text-xl font-bold text-white">Monitor your apps in seconds</h3>
                 <p className="text-lg text-purple-200">Try Fastlog for free and join the new way of monitoring.</p>
               </div>
-              <a href="/apps">
+              <a onClick={() => router.push("/apps")}>
               <Button  className="text-md bg-gradient-to-r from-purple-500 to-purple-700 px-8 py-6 text-white drop-shadow-xl transition-all hover:opacity-80">
                   Get Started
                 </Button>

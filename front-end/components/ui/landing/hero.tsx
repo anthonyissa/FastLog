@@ -1,7 +1,10 @@
 import { useEffect } from "react";
 import { Button } from "../button"
+import { useRouter } from "next/navigation"
 
 export default function Hero() {
+
+    const router = useRouter()
 
   useEffect(() => {
     window.addEventListener('scroll', () => {
@@ -72,11 +75,11 @@ export default function Hero() {
               Made for developers who are tired of wasting time on monitoring.<br /> Let us take care of the complexity while you focus on building your app.
             </p>
             <div className="mx-auto max-w-xs sm:flex sm:max-w-none sm:justify-center">
-              <div data-aos="fade-up" data-aos-delay="400">
+              <a onClick={() => router.push("/apps")} data-aos="fade-up" data-aos-delay="400">
                 <Button className="text-md bg-gradient-to-r from-purple-500 to-purple-700 px-8 py-6 text-white transition-all hover:opacity-80">
                   Start for free
                 </Button>
-              </div>
+              </a>
             </div>
           </div>
 
