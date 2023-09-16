@@ -1,13 +1,9 @@
-import { StatusBadge } from "@/components/status-badge"
 import { App } from "@/types/App"
+import { StatusBadge } from "@/components/status-badge"
 
-export function AppHeader({
-  app,
-}: {
-  app: App 
-}) {
+export function AppHeader({ app }: { app: App }) {
   return (
-    <div className="flex justify-between items-end p-5">
+    <div className="flex items-end justify-between p-5">
       <h1 className="text-4xl font-bold">{app.name}</h1>
       <StatusBadge status={app.status} />
     </div>
