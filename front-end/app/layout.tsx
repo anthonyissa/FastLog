@@ -12,7 +12,6 @@ import { SiteHeader } from "@/components/site-header"
 import { ThemeProvider } from "@/components/theme-provider"
 
 import { AppWrapper } from "./session-context"
-import Head from "next/head"
 import { siteConfig } from "@/config/site"
 
 
@@ -32,7 +31,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <>
       <html lang="en" suppressHydrationWarning>
-        <Head>
+        <head>
       <title>{siteConfig.title}</title>
       <meta name="robots" content="follow, index" />
       <meta name="description" content={siteConfig.description} />
@@ -50,7 +49,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={twImage} /> */}
-    </Head>
+    </head>
         <body
           className={cn(
             "bg-background min-h-screen font-sans antialiased",
