@@ -1,4 +1,4 @@
-import { BotIcon, Code} from "lucide-react";
+import { Bot, Code} from "lucide-react";
 
 export default function Features() {
     return (
@@ -19,7 +19,7 @@ export default function Features() {
   
               {/* 1st item */}
               <div className="relative flex flex-col items-center" data-aos="fade-up" data-aos-anchor="[data-aos-id-blocks]">
-              <BotIcon className="mb-4 h-16 w-16 rounded-full bg-purple-600 p-4 text-white" />
+              <Bot className="mb-4 h-16 w-16 rounded-full bg-purple-600 p-4 text-white" />
                 <h4 className="h4 mb-2 text-lg">Bots</h4>
                 <p className="text-md text-center text-gray-700 dark:text-gray-400">
                     Monitor your bots and get notified when they crash or find something interesting.
