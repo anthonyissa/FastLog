@@ -31,7 +31,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <>
       <html lang="en" suppressHydrationWarning>
         <title>Fastlog</title>
-        <head />
+        {/* <Head children={children} /> */}
         <body
           className={cn(
             "bg-background min-h-screen font-sans antialiased",
