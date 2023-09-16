@@ -12,6 +12,8 @@ import { SiteHeader } from "@/components/site-header"
 import { ThemeProvider } from "@/components/theme-provider"
 
 import { AppWrapper } from "./session-context"
+import Head from "next/head"
+import { siteConfig } from "@/config/site"
 
 
 interface RootLayoutProps {
@@ -30,8 +32,25 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <>
       <html lang="en" suppressHydrationWarning>
-        <title>Fastlog</title>
-        {/* <Head children={children} /> */}
+        <Head>
+      <title>{siteConfig.title}</title>
+      <meta name="robots" content="follow, index" />
+      <meta name="description" content={siteConfig.description} />
+      {/* <meta
+        property="og:url"
+        content={`${siteConfig.siteUrl}${router.asPath}`}
+      /> */}
+      <meta property="og:type" content={"website"} />
+      <meta property="og:site_name" content={siteConfig.title} />
+      <meta property="og:description" content={siteConfig.description} />
+      <meta property="og:title" content={siteConfig.title} />
+      <meta property="og:image" content={"/thumbnail.png"} key={"thumbnail.png"} />
+      {/* <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content={siteMetadata.twitter} />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={twImage} /> */}
+    </Head>
         <body
           className={cn(
             "bg-background min-h-screen font-sans antialiased",

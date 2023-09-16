@@ -2,8 +2,9 @@ export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
   name: "🚀 Fastlog",
+  title: "Fastlog",
   description:
-    "Beautifully designed components built with Radix UI and Tailwind CSS.",
+    "Fastlog is a simple monitoring tool that allows you to monitor your applications and APIs with ease. Monitor your apps in seconds today.",
   mainNav: [{}],
   links: {
     twitter: "https://twitter.com/shadcn",
