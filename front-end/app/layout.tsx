@@ -47,8 +47,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
       {/* <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content={siteMetadata.twitter} />
       <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={twImage} /> */}
+      <meta name="twitter:description" content={description} /> */}
+      <meta name="twitter:image"  content={"/thumbnail.png"} />
     </head>
         <body
           className={cn(
