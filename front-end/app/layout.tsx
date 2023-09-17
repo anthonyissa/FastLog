@@ -45,10 +45,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
             content={"/thumbnail.png"}
             key={"thumbnail.png"}
           />
-          {/* <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content={siteMetadata.twitter} />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} /> */}
+
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:site" content={"@fastlog_app"} />
+          <meta name="twitter:title" content={siteConfig.title} />
+          <meta name="twitter:description" content={siteConfig.description} />
           <meta name="twitter:image" content={"/thumbnail.png"} />
         </head>
         <body
