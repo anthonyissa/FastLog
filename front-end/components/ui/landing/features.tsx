@@ -1,59 +1,154 @@
-import { Bot, Code} from "lucide-react";
+import { Button } from "../button";
+import { siteConfig } from "@/config/site";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Features() {
-    return (
-      <section>
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="py-12 md:py-20">
-  
-            {/* Section header */}
-            <div className="mx-auto max-w-3xl pb-12 text-center md:pb-20">
-              <h2 className="h2 mb-4 text-4xl font-bold">Ideal for a wide range of use cases</h2>
-              <p className="text-xl text-gray-400">
-                Such as...
-              </p>
-            </div>
-  
-            {/* Items */}
-            <div className="mx-auto grid max-w-sm items-start gap-8 md:max-w-2xl md:grid-cols-2 lg:max-w-none lg:grid-cols-3 lg:gap-16" data-aos-id-blocks>
-  
-              {/* 1st item */}
-              <div className="relative flex flex-col items-center" data-aos="fade-up" data-aos-anchor="[data-aos-id-blocks]">
-              <Bot className="mb-4 h-16 w-16 rounded-full bg-purple-600 p-4 text-white" />
-                <h4 className="h4 mb-2 text-lg">Bots</h4>
-                <p className="text-md text-center text-gray-700 dark:text-gray-400">
-                    Monitor your bots and get notified when they crash or find something interesting.
-                </p>
-              </div>
-  
-              {/* 2nd item */}
-              <div className="relative flex flex-col items-center" data-aos="fade-up" data-aos-anchor="[data-aos-id-blocks]">
-             <Code className="mb-4 h-16 w-16 rounded-full bg-purple-600 p-4 text-white" />
-                <h4 className="h4 mb-2 text-lg">Backends</h4>
-                <p className="text-md text-center text-gray-700 dark:text-gray-400">
-                    Monitor your backends and explore logs to find the root cause of an issue.
-                </p>
-              </div>
-              
+  const router = useRouter();
 
-               {/* 3rd item */}
-               <div className="relative flex flex-col items-center" data-aos="fade-up" data-aos-anchor="[data-aos-id-blocks]">
-              <svg className="mb-4 h-16 w-16" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                <circle className="fill-current text-purple-600" cx="32" cy="32" r="32" />
-                <path className="stroke-current text-purple-100" strokeWidth="2" strokeLinecap="square" d="M21 23h22v18H21z" fill="none" fillRule="evenodd" />
-                <path className="stroke-current text-purple-300" d="M26 28h12M26 32h12M26 36h5" strokeWidth="2" strokeLinecap="square" />
-              </svg>
-                <h4 className="h4 mb-2 text-lg">Scrapers</h4>
-                <p className="text-md text-center text-gray-700 dark:text-gray-400">
-                    Index the data you scrape and get notified when something goes right or wrong.
-                </p>
-              </div>
-  
+  return (
+    <section>
+      <div className="mx-auto max-w-6xl border-t border-gray-200 px-4 dark:border-gray-600 sm:px-6">
+        <div className="py-12 md:py-20">
+          <div className="mx-auto max-w-3xl pb-12 text-center">
+            <h2 className="h2 mb-4 text-4xl font-bold" data-aos="fade-up">
+              Our Features
+            </h2>
+            <p className="mb-3 text-xl text-gray-400" data-aos="fade-up">
+              With a fast setup comes a great product.
+            </p>
+            <a
+              href={siteConfig.links.docs}
+              target="_blank"
+              className="text-purple-400 transition-all hover:opacity-80"
+              rel="noreferrer"
+              data-aos="fade-up"
+            >
+              Explore Docs
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div
+              className="overflow-hidden rounded-xl bg-gradient-to-b from-[#ece1f1] to-[#e7f0f6] p-7 dark:from-[#1e1639] dark:to-[#291337]"
+              data-aos="fade-right"
+            >
+              <h4 className="h4 mb-2 text-xl font-bold text-gray-800 dark:text-white">
+                Log explorer
+              </h4>
+              <p className="text-md text-gray-700 dark:text-gray-400 ">
+                Explore your logs caught by Fastlog and find the root cause of
+                an issue.
+              </p>
+
+              <Image
+                className="relative top-8 mx-auto rounded-lg shadow-xl shadow-black"
+                src={"/screenshot-logs-dark.png"}
+                width={250}
+                height={250}
+                alt="Features 02"
+              />
             </div>
-  
+
+            <div
+              className="overflow-hidden rounded-xl bg-gradient-to-b from-[#ece1f1] to-[#e7f0f6] p-7 dark:from-[#1e1639] dark:to-[#291337]"
+              data-aos="fade-up"
+            >
+              <h4 className="h4 mb-2 text-xl font-bold text-gray-800 dark:text-white">
+                App status
+              </h4>
+              <p className="text-md text-gray-700 dark:text-gray-400">
+                Keep track of your app status and get notified when something
+                goes wrong.
+              </p>
+              <Image
+                className="relative top-14 mx-auto rounded-lg  shadow-xl shadow-black"
+                src={"/screenshot-status-dark.png"}
+                width={250}
+                height={250}
+                alt="Features 02"
+              />
+            </div>
+
+            <div
+              className="overflow-hidden rounded-xl bg-gradient-to-b from-[#ece1f1] to-[#e7f0f6] p-7 dark:from-[#1e1639] dark:to-[#291337]"
+              data-aos="fade-left"
+            >
+              <h4 className="h4 mb-2 text-xl font-bold text-gray-800 dark:text-white">
+                Events as code
+              </h4>
+              <p className="text-md text-gray-700 dark:text-gray-400">
+                Keep track of your app status and get notified when something
+                goes wrong.
+              </p>
+              <Image
+                className="relative top-14 mx-auto rounded-lg shadow-xl shadow-black"
+                src={"/screenshot-events-dark.png"}
+                width={250}
+                height={250}
+                alt="Features 02"
+              />
+            </div>
+
+            <div
+              className="overflow-hidden rounded-xl bg-gradient-to-b from-[#ece1f1] to-[#e7f0f6] p-7 dark:from-[#1e1639] dark:to-[#291337]"
+              data-aos="fade-right"
+            >
+              <h4 className="h4 mb-2 text-xl font-bold text-gray-800 dark:text-white">
+                Data visualization
+              </h4>
+              <p className="text-md text-gray-700 dark:text-gray-400">
+                Build charts and dashboards to visualize your data.
+              </p>
+              <Image
+                className="relative top-10 mx-auto rounded-lg shadow-xl shadow-black sm:top-24 lg:top-14"
+                src={"/screenshot-chart-dark.png"}
+                width={250}
+                height={250}
+                alt="Features 02"
+              />
+            </div>
+
+            <div
+              className="max-h-56 overflow-hidden rounded-xl bg-gradient-to-b from-[#ece1f1] to-[#e7f0f6] p-7 dark:from-[#1e1639] dark:to-[#291337]"
+              data-aos="fade-up"
+            >
+              <h4 className="h4 mb-2 text-xl font-bold text-gray-800 dark:text-white">
+                Notifications
+              </h4>
+              <p className="text-md text-gray-700 dark:text-gray-400">
+                Link events to notifications and get alerted when you need to.
+              </p>
+              <Image
+                className="relative mx-auto rounded-lg"
+                src={"/phone.png"}
+                width={250}
+                height={250}
+                alt="Features 02"
+              />
+            </div>
+
+            <div
+              className="max-h-56 overflow-hidden rounded-xl bg-gradient-to-b from-[#ece1f1] to-[#e7f0f6] p-7 dark:from-[#1e1639] dark:to-[#291337]"
+              data-aos="fade-left"
+            >
+              <h4 className="h4 mb-2 text-xl font-bold text-gray-800 dark:text-white">
+                Issues
+              </h4>
+              <p className="text-md text-gray-700 dark:text-gray-400">
+                View all issues linked to your app{"'"}s errors in one place.
+              </p>
+              <Image
+                className="relative mx-auto rounded-lg top-14"
+                src={"/screenshot-events-dark.png"}
+                width={250}
+                height={250}
+                alt="Features 02"
+              />
+            </div>
           </div>
         </div>
-      </section>
-    )
-  }
-  
+      </div>
+    </section>
+  );
+}
