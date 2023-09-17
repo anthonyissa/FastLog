@@ -2,10 +2,14 @@
 
 export const Loading = () => {
   return (
-    <div className="text-center block">
+    <div className="block text-center">
       <img
         src="/fastlog-logo.png"
-        className="w-10 h-10 mx-auto animate-ping"
+        className="mx-auto hidden h-10 w-10 animate-ping dark:block"
+      ></img>
+      <img
+        src="/fastlog-logo-dark.png"
+        className="mx-auto block h-10 w-10 animate-ping dark:hidden"
       ></img>
     </div>
   );
