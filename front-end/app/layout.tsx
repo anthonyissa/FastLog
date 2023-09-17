@@ -26,7 +26,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   });
   return (
     <>
-      <html lang="en" suppressHydrationWarning>
+      <html lang="en" suppressHydrationWarning className="dark">
         <head>
           <title>{siteConfig.title}</title>
           <link rel="icon" href="/fastlog-logo-full.png" />
