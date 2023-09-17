@@ -1,10 +1,11 @@
 "use client"
 
 import CallToAction from "@/components/ui/landing/call-to-action"
-import Features from "@/components/ui/landing/features"
 import Footer from "@/components/ui/landing/footer"
 import Hero from "@/components/ui/landing/hero"
 import Zigzag from "@/components/ui/landing/zigzag"
+import UseCases from "@/components/ui/landing/usecases"
+import Features from "@/components/ui/landing/features"
 
 export default function IndexPage() {
   return (
@@ -12,6 +13,7 @@ export default function IndexPage() {
       <Hero />
       <Zigzag />
       <Features />
+      <UseCases />
       <CallToAction />
       <Footer />
     </section>
