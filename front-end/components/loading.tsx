@@ -1,9 +1,12 @@
-"use client"
+"use client";
 
 export const Loading = () => {
   return (
     <div className="text-center block">
-      <img src="/loading.svg" className="w-10 h-10 mx-auto"></img>
+      <img
+        src="/fastlog-logo.png"
+        className="w-10 h-10 mx-auto animate-ping"
+      ></img>
     </div>
-  )
-}
+  );
+};

@@ -1,5 +1,23 @@
+import { signOut } from "./supabase";
+import { useAppContext } from "@/app/session-context";
+import { Button } from "@/components/ui/button";
 import {
-    ChevronDown,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { siteConfig } from "@/config/site";
+import {
+  ChevronDown,
   Cloud,
   CreditCard,
   Github,
@@ -16,38 +34,18 @@ import {
   User,
   UserPlus,
   Users,
-} from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useRouter } from "next/navigation"
-import { useAppContext } from "@/app/session-context"
-import { signOut } from "./supabase"
-import { siteConfig } from "@/config/site"
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function ProfileDropdown() {
-  const { session } = useAppContext()
-  const router = useRouter()
-
+  const { session } = useAppContext();
+  const router = useRouter();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost">
-        Dashboard <ChevronDown className="ml-2 h-4 w-4" />
+          Dashboard <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
@@ -98,7 +96,7 @@ export function ProfileDropdown() {
           </DropdownMenuSub>
         </DropdownMenuGroup> */}
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled>
+        <DropdownMenuItem onClick={() => window.open(siteConfig.links.discord)}>
           <LifeBuoy className="mr-2 h-4 w-4" />
           <span>Support</span>
         </DropdownMenuItem>
@@ -109,9 +107,13 @@ export function ProfileDropdown() {
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <LogOut className="mr-2 h-4 w-4" />
-          {session ? <span onClick={() => signOut()}>Sign Out</span> : <span onClick={() => router.push("/auth")}>Sign In</span>}
+          {session ? (
+            <span onClick={() => signOut()}>Sign Out</span>
+          ) : (
+            <span onClick={() => router.push("/auth")}>Sign In</span>
+          )}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

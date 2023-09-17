@@ -1,18 +1,9 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { createNewApp, deleteUserApp, fetchApps } from "@/services/apps"
-import {
-  Loader2Icon,
-  Plus,
-  Settings2,
-  Trash,
-  Trash2,
-  Trash2Icon,
-} from "lucide-react"
-
-import { App } from "@/types/App"
+import withAuth, { getAccessToken } from "../auth/auth";
+import { useAppContext } from "../session-context";
+import { Loading } from "@/components/loading";
+import { StatusBadge } from "@/components/status-badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,71 +14,79 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
-import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { StatusBadge } from "@/components/status-badge"
-
-import withAuth, { getAccessToken } from "../auth/auth"
-import { useAppContext } from "../session-context"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { createNewApp, deleteUserApp, fetchApps } from "@/services/apps";
+import { App } from "@/types/App";
+import {
+  Loader2Icon,
+  Plus,
+  Settings2,
+  Trash,
+  Trash2,
+  Trash2Icon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 function AppsPage() {
-  const [apps, setApps] = useState<App[]>([])
-  const [newApp, setNewApp] = useState<string>("")
-  const [loading, setLoading] = useState<boolean>(true)
-  const { userId } = useAppContext()
-  const router = useRouter()
+  const [apps, setApps] = useState<App[]>([]);
+  const [newApp, setNewApp] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const { userId } = useAppContext();
+  const router = useRouter();
 
   const getApps = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      setApps(await fetchApps())
+      setApps(await fetchApps());
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const openApp = (id: string) => {
-    router.push(`/apps/${id}`)
-  }
+    router.push(`/apps/${id}`);
+  };
 
   const createApp = async () => {
     try {
-      await createNewApp(newApp)
+      await createNewApp(newApp);
     } finally {
-      setNewApp("")
-      await getApps()
+      setNewApp("");
+      await getApps();
     }
-  }
+  };
 
   useEffect(() => {
-    if (!userId) return
+    if (!userId) return;
     const fetchData = async () => {
-      await getApps()
-    }
-    fetchData().catch(console.error)
-  }, [userId])
+      await getApps();
+    };
+    fetchData().catch(console.error);
+  }, [userId]);
 
   return (
     <div className="container mx-auto">
       {(loading && (
-        <div className="w-full mt-5 flex items-center justify-center">
-          <img src="/loading.svg" className="w-10 h-10"></img>
+        <div className="mt-5 flex w-full items-center justify-center">
+          <Loading />
         </div>
       )) || (
         <div className="flex flex-col py-5">
-          <div className="w-full flex justify-start py-3">
+          <div className="flex w-full justify-start py-3">
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="outline">
-                  <Plus className="mr-2 w-5 h-5"></Plus> New App
+                  <Plus className="mr-2 h-5 w-5"></Plus> New App
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
@@ -101,7 +100,7 @@ function AppsPage() {
                     placeholder="Name"
                     value={newApp}
                     onChange={(e) => {
-                      setNewApp(e.target.value)
+                      setNewApp(e.target.value);
                     }}
                   />
                 </AlertDialogHeader>
@@ -114,7 +113,7 @@ function AppsPage() {
               </AlertDialogContent>
             </AlertDialog>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {apps.map((app, index) => (
               <Card key={index}>
                 <CardHeader
@@ -148,7 +147,7 @@ function AppsPage() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default withAuth(AppsPage)
+export default withAuth(AppsPage);

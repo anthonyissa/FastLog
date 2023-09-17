@@ -1,29 +1,28 @@
-"use client"
-
-import { useState } from "react"
-import { User, Webhook } from "lucide-react"
-
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Button } from "@/components/ui/button"
-import { ToastAction } from "@/components/ui/toast"
-import { useToast } from "@/components/ui/use-toast"
+"use client";
 
 // Assuming Button is a part of your UI library
 
-import withAuth from "../auth/auth"
-import { useAppContext } from "../session-context"
-import { Profile } from "./profile"
-import { Webhooks } from "./webhooks"
+import withAuth from "../auth/auth";
+import { useAppContext } from "../session-context";
+import { Profile } from "./profile";
+import { Webhooks } from "./webhooks";
+import { Loading } from "@/components/loading";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/use-toast";
+import { User, Webhook } from "lucide-react";
+import { useState } from "react";
 
 const Settings = () => {
-  const { session } = useAppContext()
-  const [tab, setTab] = useState<"profile" | "webhooks">("profile")
+  const { session } = useAppContext();
+  const [tab, setTab] = useState<"profile" | "webhooks">("profile");
 
   return (
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
       {!session && (
         <div className="w-full mt-5 flex items-center justify-center">
-          <img src="/loading.svg" className="w-10 h-10"></img>
+          <Loading />
         </div>
       )}
       {session && (
@@ -53,7 +52,7 @@ const Settings = () => {
         </div>
       )}
     </section>
-  )
-}
+  );
+};
 
-export default withAuth(Settings)
+export default withAuth(Settings);
