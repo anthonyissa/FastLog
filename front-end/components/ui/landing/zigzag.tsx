@@ -18,7 +18,7 @@ export default function Zigzag() {
           {/* Items */}
           <div className="grid gap-20">
             {/* 1st item */}
-            <div className="items-center md:grid md:grid-cols-12 md:gap-6">
+            <div className="items-center lg:grid md:grid-cols-12 md:gap-6">
               {/* Image */}
               <div
                 className="mx-auto mb-8 max-w-xl md:order-1 md:col-span-5 md:mb-0 md:w-full md:max-w-none lg:col-span-6"
@@ -97,7 +97,7 @@ export default function Zigzag() {
             </div>
 
             {/* 2nd item */}
-            <div className="items-center md:grid md:grid-cols-12 md:gap-6">
+            <div className="items-center  lg:grid md:grid-cols-12 md:gap-6">
               {/* Image */}
               <div
                 className="rtl mx-auto mb-8 max-w-xl md:col-span-5 md:mb-0 md:w-full md:max-w-none lg:col-span-6"
@@ -169,7 +169,7 @@ export default function Zigzag() {
             </div>
 
             {/* 3rd item */}
-            <div className="items-center md:grid md:grid-cols-12 md:gap-6">
+            <div className="items-center  lg:grid md:grid-cols-12 md:gap-6">
               {/* Image */}
               <div
                 className="mx-auto mb-8 max-w-xl md:order-1 md:col-span-5 md:mb-0 md:w-full md:max-w-none lg:col-span-6"
