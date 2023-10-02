@@ -11,11 +11,31 @@ import { Button } from "@/components/ui/button";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
 import { User, Webhook } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Settings = () => {
   const { session } = useAppContext();
-  const [tab, setTab] = useState<"profile" | "webhooks">("profile");
+  const [tab, setCurrentTab] = useState("profile");
+
+  const setTab = (tab: string) => {
+    setCurrentTab(tab);
+    const params = new URLSearchParams(window.location.search);
+    params.set("t", tab);
+    window.history.replaceState(
+      {},
+      "",
+      `${window.location.pathname}?${params}`
+    );
+  };
+
+  useEffect(() => {
+    // query params for tabs
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get("t");
+    if (tab != "profile" && tab != "webhooks") {
+      setTab("profile");
+    } else setTab(tab ?? "profile");
+  }, []);
 
   return (
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">

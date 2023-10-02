@@ -115,11 +115,12 @@ function AppsPage() {
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {apps.map((app, index) => (
-              <Card key={index}>
-                <CardHeader
-                  onClick={() => openApp(app.id)}
-                  className="cursor-pointer"
-                >
+              <Card
+                key={index}
+                className="cursor-pointer"
+                onClick={() => openApp(app.id)}
+              >
+                <CardHeader>
                   <CardTitle>
                     {app.name.substring(0, 15)}
                     {app.name.length > 15 ? "..." : ""}
