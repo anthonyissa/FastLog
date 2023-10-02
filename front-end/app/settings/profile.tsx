@@ -1,19 +1,21 @@
-import { useState } from "react"
-
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
 
 export const Profile = ({ session }: { session: any }) => {
-  const [idCopied, setIdCopied] = useState(false)
+  const [idCopied, setIdCopied] = useState(false);
 
   const handleCopyId = () => {
-    navigator.clipboard.writeText(session.user.id)
-    setIdCopied(true)
-    setTimeout(() => setIdCopied(false), 2000)
-  }
+    navigator.clipboard.writeText(session.user.id);
+    setIdCopied(true);
+    setTimeout(() => setIdCopied(false), 2000);
+  };
 
   return (
     <div>
+      <h1 className="text-3xl ">Profile Settings</h1>
+      <Separator className="my-10" />
       <Alert>
         <AlertTitle>{session.user.email}</AlertTitle>
         <AlertDescription>
@@ -26,5 +28,5 @@ export const Profile = ({ session }: { session: any }) => {
         </Button>
       </div>
     </div>
-  )
-}
+  );
+};

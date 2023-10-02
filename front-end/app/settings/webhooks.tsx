@@ -1,19 +1,10 @@
-import { useEffect, useState } from "react"
-import {
-  createUserWebhook,
-  deleteUserWebhook,
-  editUserWebhook,
-  fetchWebhooks,
-} from "@/services/settings"
-import { Pen, PlusIcon, Trash } from "lucide-react"
-
-import { Webhook } from "@/types/Webhook"
+import { Loading } from "@/components/loading";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@/components/ui/accordion";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,9 +15,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -34,34 +26,42 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Loading } from "@/components/loading"
-import { Badge } from "@/components/ui/badge"
-import { siteConfig } from "@/config/site"
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { siteConfig } from "@/config/site";
+import {
+  createUserWebhook,
+  deleteUserWebhook,
+  editUserWebhook,
+  fetchWebhooks,
+} from "@/services/settings";
+import { Webhook } from "@/types/Webhook";
+import { Pen, PlusIcon, Trash } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const WebhookDialog = ({
   webhookToEdit,
   createFunction,
 }: {
-  webhookToEdit?: Webhook
-  createFunction: Function
+  webhookToEdit?: Webhook;
+  createFunction: Function;
 }) => {
-  const [url, setUrl] = useState<string>("")
-  const [method, setMethod] = useState<string>("GET")
-  const [body, setBody] = useState<string>("")
+  const [url, setUrl] = useState<string>("");
+  const [method, setMethod] = useState<string>("GET");
+  const [body, setBody] = useState<string>("");
 
   const isWebHookValid = () => {
-    if (url.trim().length === 0) return false
-    return method === "GET" || (method === "POST" && body.length > 0)
-  }
+    if (url.trim().length === 0) return false;
+    return method === "GET" || (method === "POST" && body.length > 0);
+  };
 
   useEffect(() => {
     if (webhookToEdit) {
-      setUrl(webhookToEdit.url)
-      setMethod(webhookToEdit.method)
-      setBody(webhookToEdit.body || "")
+      setUrl(webhookToEdit.url);
+      setMethod(webhookToEdit.method);
+      setBody(webhookToEdit.body || "");
     }
-  }, [webhookToEdit])
+  }, [webhookToEdit]);
 
   return (
     <AlertDialog>
@@ -71,7 +71,7 @@ export const WebhookDialog = ({
             <Pen width={16} />
           </Button>
         ) : (
-          <Button variant={"secondary"} className="w-full mb-3">
+          <Button variant={"secondary"} className="w-48 ml-auto mb-3 ">
             <PlusIcon className="mr-1" />
             New Webhook
           </Button>
@@ -83,8 +83,14 @@ export const WebhookDialog = ({
             {webhookToEdit ? "Edit webhook" : "Create a new webhook"}
           </AlertDialogTitle>
           <AlertDialogDescription>
-          <a href={siteConfig.links.docs+ "webhooks"} 
-           rel="noreferrer" target="_blank" className="text-blue-500 hover:underline">Learn more about webhooks</a>
+            <a
+              href={siteConfig.links.docs + "webhooks"}
+              rel="noreferrer"
+              target="_blank"
+              className="text-blue-500 hover:underline"
+            >
+              Learn more about webhooks
+            </a>
             <div className="flex gap-3 mb-3 mt-3">
               <Input
                 onChange={(e) => setUrl(e.target.value)}
@@ -95,7 +101,7 @@ export const WebhookDialog = ({
                 defaultValue="GET"
                 value={method}
                 onValueChange={(value) => {
-                  setMethod(value)
+                  setMethod(value);
                 }}
               >
                 <SelectTrigger className="w-[110px]">
@@ -114,7 +120,7 @@ export const WebhookDialog = ({
               </Select>
             </div>
             <Input
-                value={body}
+              value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder="Body"
             />
@@ -125,12 +131,15 @@ export const WebhookDialog = ({
           <AlertDialogAction
             disabled={!isWebHookValid()}
             onClick={() =>
-              createFunction({
-                id: webhookToEdit?.id,
-                url: url,
-                method: method,
-                body: body,
-              }, webhookToEdit ? true : false)
+              createFunction(
+                {
+                  id: webhookToEdit?.id,
+                  url: url,
+                  method: method,
+                  body: body,
+                },
+                webhookToEdit ? true : false
+              )
             }
           >
             {webhookToEdit ? "Save" : "Create"}
@@ -138,39 +147,41 @@ export const WebhookDialog = ({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
-}
+  );
+};
 
 export const Webhooks = ({ session }: { session: any }) => {
-  const [webhooks, setWebhooks] = useState<Webhook[]>([])
-  const [loading, setLoading] = useState(true)
+  const [webhooks, setWebhooks] = useState<Webhook[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const getWebhooks = async () => {
-    setLoading(true)
-    setWebhooks(await fetchWebhooks())
-    setLoading(false)
-  }
+    setLoading(true);
+    setWebhooks(await fetchWebhooks());
+    setLoading(false);
+  };
 
   const deleteWebhook = async (id: string) => {
-    await deleteUserWebhook(id)
-    setWebhooks(webhooks.filter((webhook) => webhook.id != id))
-  }
+    await deleteUserWebhook(id);
+    setWebhooks(webhooks.filter((webhook) => webhook.id != id));
+  };
 
   const createWebhook = async (webhook: Webhook, edit: boolean = false) => {
     if (edit) {
-        await editUserWebhook(webhook)
+      await editUserWebhook(webhook);
     } else {
-        await createUserWebhook(webhook)
+      await createUserWebhook(webhook);
     }
-    await getWebhooks()
-  }
+    await getWebhooks();
+  };
 
   useEffect(() => {
-    getWebhooks()
-  }, [])
+    getWebhooks();
+  }, []);
 
   return (
     <div className="flex flex-col w-full">
+      <h1 className="text-3xl ">Webhook Settings</h1>
+      <Separator className="my-10" />
       <WebhookDialog createFunction={createWebhook} />
       <Accordion
         type="single"
@@ -183,12 +194,14 @@ export const Webhooks = ({ session }: { session: any }) => {
             return (
               <AccordionItem key={index} value={`${`${index}`}`}>
                 <AccordionTrigger className="flex justify-between w-full">
-                    <h1 className="w-64">
-                        {
-                            webhook.url.length > 64 ? webhook.url.substring(0, 64) + "..." : webhook.url
-                        }
-                    </h1>
-                    <Badge className="ml-auto mr-3 bg-blue-500">{webhook.method}</Badge>
+                  <h1 className="w-64">
+                    {webhook.url.length > 64
+                      ? webhook.url.substring(0, 64) + "..."
+                      : webhook.url}
+                  </h1>
+                  <Badge className="ml-auto mr-3 bg-blue-500">
+                    {webhook.method}
+                  </Badge>
                 </AccordionTrigger>
                 <AccordionContent>
                   {webhook.body && "Body: " + webhook.body}
@@ -206,9 +219,9 @@ export const Webhooks = ({ session }: { session: any }) => {
                   </div>
                 </AccordionContent>
               </AccordionItem>
-            )
+            );
           })}
       </Accordion>
     </div>
-  )
-}
+  );
+};
