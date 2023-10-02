@@ -1,7 +1,6 @@
 "use client";
 
 // Assuming Button is a part of your UI library
-
 import withAuth from "../auth/auth";
 import { useAppContext } from "../session-context";
 import { Profile } from "./profile";
@@ -21,31 +20,45 @@ const Settings = () => {
   return (
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
       {!session && (
-        <div className="w-full mt-5 flex items-center justify-center">
+        <div className="mt-5 flex w-full items-center justify-center">
           <Loading />
         </div>
       )}
       {session && (
         <div className="flex w-full">
-          <div className="w-3/12 px-5 flex flex-col items-start border-r mr-8">
+          <div className="mr-5 flex w-2/12 flex-col items-start  text-gray-500">
             <Button
               variant="ghost"
-              className="mb-2 w-full flex justify-start"
+              className={`text-base mb-2 flex w-full justify-start ${
+                tab === "profile" ? "text-gray-800 dark:text-white" : ""
+              }`}
               onClick={() => setTab("profile")}
             >
-              <User className="mr-2" size={16} />
+              <User
+                className={`mr-3 ${
+                  tab === "profile" ? "text-purple-500 " : ""
+                }`}
+                size={22}
+              />
               Profile
             </Button>
             <Button
               variant="ghost"
-              className="mb-2 w-full flex justify-start"
+              className={`text-base mb-2 flex w-full justify-start ${
+                tab === "webhooks" ? "text-gray-800 dark:text-white" : ""
+              }`}
               onClick={() => setTab("webhooks")}
             >
-              <Webhook className="mr-2" size={16} />
+              <Webhook
+                className={`mr-3 ${
+                  tab === "webhooks" ? "text-purple-500 " : ""
+                }`}
+                size={22}
+              />
               Webhooks
             </Button>
           </div>
-          <div className="w-9/12">
+          <div className="w-10/12">
             {tab === "profile" && <Profile session={session} />}
             {tab === "webhooks" && <Webhooks session={session} />}
           </div>
