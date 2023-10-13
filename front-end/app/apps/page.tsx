@@ -91,9 +91,11 @@ function AppsPage() {
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="mb-3">New app</AlertDialogTitle>
+                  <AlertDialogTitle className="mb-3">
+                    Create a new app
+                  </AlertDialogTitle>
                   <AlertDialogDescription className="mb-5">
-                    Enter the name of your new app
+                    How would you like to name it?
                   </AlertDialogDescription>
                   <Input
                     type="text"
@@ -106,7 +108,10 @@ function AppsPage() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => createApp()}>
+                  <AlertDialogAction
+                    disabled={newApp.trim() === ""}
+                    onClick={() => createApp()}
+                  >
                     Create
                   </AlertDialogAction>
                 </AlertDialogFooter>

@@ -191,34 +191,51 @@ export function Settings({
 
   return (
     <div className="flex mt-6">
-      <div className="w-3/12 px-5 flex flex-col items-start border-r mr-8">
+      <div className="w-2/12 px-5 flex flex-col items-start mr-8 text-gray-500">
         <Button
           variant="ghost"
-          className="mb-2 w-full flex justify-start"
+          className={`text-base mb-2 flex w-full justify-start ${
+            tab === "general" ? "text-gray-800 dark:text-white" : ""
+          }`}
           onClick={() => setTab("general")}
         >
-          <Cog className="mr-2" size={16} />
+          <Cog
+            className={`mr-3 ${tab === "general" ? "text-purple-500 " : ""}`}
+            size={16}
+          />
           General
         </Button>
         <Button
           variant="ghost"
-          className="mb-2 w-full flex justify-start"
+          className={`text-base mb-2 flex w-full justify-start ${
+            tab === "notifications" ? "text-gray-800 dark:text-white" : ""
+          }`}
           onClick={() => setTab("notifications")}
         >
-          <Bell className="mr-2" size={16} />
+          <Bell
+            className={`mr-3 ${
+              tab === "notifications" ? "text-purple-500 " : ""
+            }`}
+            size={16}
+          />
           Notifications
         </Button>
         <Button
           variant="ghost"
-          className="mb-2 w-full flex justify-start"
+          className={`text-base mb-2 flex w-full justify-start ${
+            tab === "danger" ? "text-gray-800 dark:text-white" : ""
+          }`}
           onClick={() => setTab("danger")}
         >
-          <AlertTriangle className="mr-2" size={16} />
+          <AlertTriangle
+            className={`mr-3 ${tab === "danger" ? "text-purple-500 " : ""}`}
+            size={16}
+          />
           Danger
         </Button>
       </div>
       {tab === "general" && (
-        <div className="w-9/12">
+        <div className="w-10/12">
           <Alert variant="default">
             <AlertTitle>{app.name}</AlertTitle>
             <AlertDescription className="flex items-center">
@@ -289,7 +306,7 @@ export function Settings({
                   )}
                 />
               </div>
-              <Button type="submit" className="w-20">
+              <Button type="submit" className="w-20 mt-[-20px]">
                 Save
               </Button>
             </form>
@@ -297,7 +314,7 @@ export function Settings({
         </div>
       )}
       {tab === "danger" && (
-        <div className="w-9/12">
+        <div className="w-10/12">
           <Alert variant="destructive">
             <AlertTitle className="flex items-center">
               <AlertCircleIcon width={16} className="mr-2" /> Delete this app
@@ -334,7 +351,7 @@ export function Settings({
         </div>
       )}
       {tab === "notifications" && (
-        <div className="w-9/12 flex flex-col">
+        <div className="w-10/12 flex flex-col">
           <Alert variant="default">
             <AlertTitle className="flex items-center">
               <WebhookIcon width={16} className="mr-2" /> Notification webhook
@@ -346,7 +363,7 @@ export function Settings({
                 href={siteConfig.links.docs + "webhooks"}
                 target="_blank"
                 rel="noreferrer"
-                className="text-blue-500 hover:underline"
+                className="text-purple-500 hover:underline"
               >
                 Learn more about webhooks
               </a>

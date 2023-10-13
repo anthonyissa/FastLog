@@ -1,6 +1,45 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { siteConfig } from "@/config/site";
+import {
+  convertLogMessageToMap,
+  getTimeAgo,
+  isObjectString,
+} from "@/lib/utils";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -10,62 +49,26 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import { ArrowLeft, RefreshCcwIcon, X } from "lucide-react"
-import { DateRange } from "react-day-picker"
-
-import { siteConfig } from "@/config/site"
-import { convertLogMessageToMap, getTimeAgo, isObjectString } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Input } from "@/components/ui/input"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet"
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+} from "@tanstack/react-table";
+import { ArrowLeft, RefreshCcwIcon, X } from "lucide-react";
+import { useState } from "react";
+import { DateRange } from "react-day-picker";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
 
 export function DataTable<TData, TValue>({
   data,
   refreshFunction,
 }: {
-  data: TData[]
-  refreshFunction: Function
+  data: TData[];
+  refreshFunction: Function;
 }) {
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [filterValue, setFilterValue] = useState<string>("")
-  const [timeframe, setTimeframe] = useState<DateRange>()
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [filterValue, setFilterValue] = useState<string>("");
+  const [timeframe, setTimeframe] = useState<DateRange>();
 
   const columns: ColumnDef<TData, TValue>[] = [
     {
@@ -79,9 +82,14 @@ export function DataTable<TData, TValue>({
       filterFn: (row, filterValue) => {
         if (timeframe) {
           // @ts-ignore
-          return (new Date(row.original.timestamp).getTime() >= new Date(timeframe.from).getTime() && new Date(row.original.timestamp).getTime() <= new Date(timeframe.to).getTime())
+          return (
+            new Date(row.original.timestamp).getTime() >=
+              new Date(timeframe.from).getTime() &&
+            new Date(row.original.timestamp).getTime() <=
+              new Date(timeframe.to).getTime()
+          );
         } else {
-          return true
+          return true;
         }
       },
     },
@@ -89,7 +97,7 @@ export function DataTable<TData, TValue>({
       accessorKey: "message",
       header: "Message",
     },
-  ]
+  ];
 
   const table = useReactTable({
     data,
@@ -101,55 +109,57 @@ export function DataTable<TData, TValue>({
     state: {
       columnFilters,
     },
-  })
+  });
 
-  const [sheetOpen, setSheetOpen] = useState(false)
-  const [formattedLog, setFormattedLog] = useState<{}>({})
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [formattedLog, setFormattedLog] = useState<{}>({});
 
   const filter = (value: string) => {
-    setFilterValue(value)
-    table.setGlobalFilter(value)
-  }
+    setFilterValue(value);
+    table.setGlobalFilter(value);
+  };
 
   const openSheet = (row: Row<TData>) => {
-    setFormattedLog({})
-    let newLog = {}
+    setFormattedLog({});
+    let newLog = {};
     row.getVisibleCells().forEach((cell) => {
       newLog = {
         ...newLog,
         [cell.column.id]: cell.getValue(),
-      }
-    })
+      };
+    });
     // @ts-ignore
     if (isObjectString(newLog["message"])) {
       // @ts-ignore
-      const detailedMessage = convertLogMessageToMap(newLog["message"])
+      const detailedMessage = convertLogMessageToMap(newLog["message"]);
       detailedMessage.forEach((value, key) => {
         newLog = {
           ...newLog, // @ts-ignore
           ["log." + key]: value,
-        }
-      })
+        };
+      });
     }
-    setFormattedLog(newLog)
-    setSheetOpen(true)
-  }
+    setFormattedLog(newLog);
+    setSheetOpen(true);
+  };
 
   const changeTimeframe = (selected: DateRange | undefined) => {
-    setTimeframe(selected)
-    table.resetColumnFilters()
-    if (!selected || !selected.to) return
-    if (new Date(selected!.from!).getTime() === new Date(selected!.to!).getTime()) {
-      selected.to = new Date(selected!.from!.getTime() + 86399000)
+    setTimeframe(selected);
+    table.resetColumnFilters();
+    if (!selected || !selected.to) return;
+    if (
+      new Date(selected!.from!).getTime() === new Date(selected!.to!).getTime()
+    ) {
+      selected.to = new Date(selected!.from!.getTime() + 86399000);
     } // add 23:59:59 to the selected date
-    setTimeframe(selected)
+    setTimeframe(selected);
     table.setColumnFilters([
       {
         id: "timestamp",
         value: selected,
       },
-    ])
-  }
+    ]);
+  };
 
   return (
     <div>
@@ -167,7 +177,10 @@ export function DataTable<TData, TValue>({
               </div>
             </SheetClose>
             {/* @ts-ignore */}
-            <SheetTitle>              {formattedLog["timestamp"]} -{" "}           {getTimeAgo(new Date(formattedLog["timestamp"]).getTime())}
+            <SheetTitle>
+              {" "}
+              {formattedLog["timestamp"]} -{" "}
+              {getTimeAgo(new Date(formattedLog["timestamp"]).getTime())}
             </SheetTitle>
             <SheetDescription className="flex flex-col">
               {Object.keys(formattedLog).map((key) => (
@@ -219,7 +232,7 @@ export function DataTable<TData, TValue>({
         <Select
           defaultValue="10"
           onValueChange={(value) => {
-            table.setPageSize(parseInt(value))
+            table.setPageSize(parseInt(value));
           }}
         >
           <SelectTrigger className="w-[110px]">
@@ -275,7 +288,7 @@ export function DataTable<TData, TValue>({
                             "test"
                           )} */}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -284,7 +297,7 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  className="leading-[5px]"
+                  className=" leading-[0px] border-none hover:bg-purple-500/5 dark:hover:bg-pink-500/5"
                   onClick={() => openSheet(row)}
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
@@ -317,5 +330,5 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
     </div>
-  )
+  );
 }

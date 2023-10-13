@@ -87,7 +87,7 @@ export const WebhookDialog = ({
               href={siteConfig.links.docs + "webhooks"}
               rel="noreferrer"
               target="_blank"
-              className="text-blue-500 hover:underline"
+              className="text-purple-500 hover:underline"
             >
               Learn more about webhooks
             </a>

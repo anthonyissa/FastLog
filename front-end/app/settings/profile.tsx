@@ -16,6 +16,8 @@ export const Profile = ({ session }: { session: any }) => {
     <div>
       <h1 className="text-3xl ">Profile Settings</h1>
       <Separator className="my-10" />
+      <h1 className="text-xl font-bold">General Informations</h1>
+      <div>{/* <Input></Input> */}</div>
       <Alert>
         <AlertTitle>{session.user.email}</AlertTitle>
         <AlertDescription>
