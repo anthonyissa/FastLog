@@ -34,6 +34,7 @@ import {
   Trash2,
   Trash2Icon,
 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -51,10 +52,6 @@ function AppsPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const openApp = (id: string) => {
-    router.push(`/apps/${id}`);
   };
 
   const createApp = async () => {
@@ -120,24 +117,21 @@ function AppsPage() {
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {apps.map((app, index) => (
-              <Card
-                key={index}
-                className="cursor-pointer"
-                onClick={() => openApp(app.id)}
-              >
-                <CardHeader>
-                  <CardTitle>
-                    {app.name.substring(0, 15)}
-                    {app.name.length > 15 ? "..." : ""}
-                  </CardTitle>
-                </CardHeader>
-                <CardFooter className="flex justify-between">
-                  <StatusBadge status={app.status} />
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="outline-none">
-                      <Settings2 className="h-6 w-6 dark:text-gray-300" />
-                    </DropdownMenuTrigger>
-                    {/* <DropdownMenuContent>
+              <Link href={`/apps/${app.id}`}>
+                <Card key={index}>
+                  <CardHeader>
+                    <CardTitle>
+                      {app.name.substring(0, 15)}
+                      {app.name.length > 15 ? "..." : ""}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardFooter className="flex justify-between">
+                    <StatusBadge status={app.status} />
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="outline-none">
+                        <Settings2 className="h-6 w-6 dark:text-gray-300" />
+                      </DropdownMenuTrigger>
+                      {/* <DropdownMenuContent>
                       <DropdownMenuItem
                         onClick={() => deleteApp(app.id)}
                         className="cursor-pointer"
@@ -145,9 +139,10 @@ function AppsPage() {
                         <Trash2 className="mr-2 w-4 h-4 z-50"></Trash2>Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent> */}
-                  </DropdownMenu>
-                </CardFooter>
-              </Card>
+                    </DropdownMenu>
+                  </CardFooter>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>

@@ -1,6 +1,8 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { CopyIcon } from "lucide-react";
 import { useState } from "react";
 
 export const Profile = ({ session }: { session: any }) => {
@@ -16,18 +18,22 @@ export const Profile = ({ session }: { session: any }) => {
     <div>
       <h1 className="text-3xl ">Profile Settings</h1>
       <Separator className="my-10" />
-      <h1 className="text-xl font-bold">General Informations</h1>
-      <div>{/* <Input></Input> */}</div>
-      <Alert>
-        <AlertTitle>{session.user.email}</AlertTitle>
-        <AlertDescription>
-          Manage your account settings and set e-mail preferences.
-        </AlertDescription>
-      </Alert>
-      <div className="mt-3">
-        <Button onClick={handleCopyId} variant="ghost" className="w-32">
-          {idCopied ? "Copied ✅" : "Copy User ID"}
-        </Button>
+      <div className="mt-3 grid grid-cols-2">
+        <div>
+          <h1 className="font-bold text-sm pb-2">User Email</h1>
+          <p className="border rounded-md px-4 w-96 py-2 flex items-center text-center">
+            {session.user.email}
+          </p>
+        </div>
+        <div>
+          <h1 className="font-bold text-sm pb-2">User Id</h1>
+          <p className="border rounded-md px-5 w-fit py-2 flex items-center">
+            {"•••••••••••••••••••••••••••••••••"}
+            <button onClick={handleCopyId} className="ml-3 text-xs">
+              {idCopied ? "✅" : <CopyIcon className="w-3 h-3"></CopyIcon>}
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );

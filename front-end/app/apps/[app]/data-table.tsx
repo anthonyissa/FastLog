@@ -297,14 +297,25 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  className=" leading-[0px] border-none hover:bg-purple-500/5 dark:hover:bg-pink-500/5"
+                  className="leading-[0px] border-none hover:bg-purple-500/5 dark:hover:bg-pink-500/5"
                   onClick={() => openSheet(row)}
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell: any, index) => (
-                    <TableCell key={cell.id} className="w-2 cursor-pointer">
-                      {cell.getValue()}
+                    <TableCell
+                      key={cell.id}
+                      className={`${
+                        index == 2 ? "full" : index == 1 ? "w-2/12" : "w-10"
+                      } cursor-pointer truncate`}
+                    >
+                      {index == 1 ? (
+                        cell.getValue().split("+")[0]
+                      ) : index == 2 ? (
+                        <pre className="w-64">{cell.getValue()}</pre>
+                      ) : (
+                        cell.getValue()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
