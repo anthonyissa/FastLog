@@ -42,7 +42,7 @@ export const Supabase = () => {
           extend: true,
           className: {
             button: "dark:auth-btn-dark auth-btn",
-            input: "dark:auth-input-dark auth-input",
+            input: "dark:text-white auth-input",
           },
           theme: ThemeSupa,
         }}
