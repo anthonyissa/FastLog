@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
@@ -38,6 +44,7 @@ import { siteConfig } from "@/config/site";
 import {
   convertLogMessageToMap,
   getTimeAgo,
+  isJsonString,
   isObjectString,
 } from "@/lib/utils";
 import {
@@ -298,7 +305,7 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   className="leading-[0px] border-none hover:bg-purple-500/5 dark:hover:bg-pink-500/5"
-                  onClick={() => openSheet(row)}
+                  // onClick={() => openSheet(row)}
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
@@ -307,12 +314,29 @@ export function DataTable<TData, TValue>({
                       key={cell.id}
                       className={`${
                         index == 2 ? "full" : index == 1 ? "w-2/12" : "w-10"
-                      } cursor-pointer truncate`}
+                      } cursor-pointer overflow-hidden`}
                     >
                       {index == 1 ? (
                         cell.getValue().split("+")[0]
                       ) : index == 2 ? (
-                        <pre className="w-64">{cell.getValue()}</pre>
+                        <Accordion type="single" collapsible>
+                          <AccordionItem value="1" className="border-none">
+                            <AccordionTrigger className="m-0 h-0 p-0 text-left no-chevron">
+                              <pre className="w-64">{cell.getValue()}</pre>
+                            </AccordionTrigger>
+                            <AccordionContent className="mt-5">
+                              <pre className="w-full text-ellipsis whitespace-pre-wrap">
+                                {JSON.stringify(
+                                  isJsonString(cell.getValue())
+                                    ? JSON.parse(cell.getValue())
+                                    : cell.getValue(),
+                                  undefined,
+                                  2
+                                )}
+                              </pre>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
                       ) : (
                         cell.getValue()
                       )}
