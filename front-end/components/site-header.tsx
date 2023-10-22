@@ -5,14 +5,13 @@ import { useAppContext } from "@/app/session-context";
 import { MainNav } from "@/components/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function SiteHeader() {
   const { session } = useAppContext();
-  const router = useRouter();
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-transparent mb-5">
+    <header className="sticky top-0 z-40 w-full bg-transparent mb-5 header">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
         <MainNav />
         <div className="flex flex-1 items-center justify-end space-x-4">
@@ -26,9 +25,9 @@ export function SiteHeader() {
             {session ? (
               <ProfileDropdown />
             ) : (
-              <Button variant="outline" onClick={() => router.push("/auth")}>
-                Login
-              </Button>
+              <Link href={"/auth"}>
+                <Button variant="outline">Login</Button>
+              </Link>
             )}
           </nav>
         </div>

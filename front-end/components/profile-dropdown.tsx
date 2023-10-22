@@ -35,6 +35,7 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export function ProfileDropdown() {
@@ -52,18 +53,22 @@ export function ProfileDropdown() {
         <DropdownMenuLabel>{session.user.email}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push("/apps")}>
-            <LayoutDashboard className="mr-2 h-4 w-4" />
-            <span>Applications</span>
-          </DropdownMenuItem>
+          <Link href={"/apps"}>
+            <DropdownMenuItem>
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              <span>Applications</span>
+            </DropdownMenuItem>
+          </Link>
           <DropdownMenuItem disabled>
             <CreditCard className="mr-2 h-4 w-4" />
             <span>Billing</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push("/settings")}>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
-          </DropdownMenuItem>
+          <Link href={"/settings"}>
+            <DropdownMenuItem>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+            </DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
         {/* <DropdownMenuSeparator />
         <DropdownMenuGroup>

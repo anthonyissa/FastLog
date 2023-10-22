@@ -13,20 +13,24 @@ export const launchStatusWatcher = async () => {
 
       const thresholdsMap = new Map<
         string,
-        { status_threshold: number; status: "UP" | "DOWN", name: string, user_webhooks: { url: string, method: string, body: string }}
+        {
+          status_threshold: number;
+          status: "UP" | "DOWN";
+          name: string;
+          user_webhooks: { url: string; method: string; body: string };
+        }
       >();
       for (const app of apps) {
         thresholdsMap.set(app.id, {
           status_threshold: app.status_threshold,
           status: app.status,
           name: app.name,
-          user_webhooks: app.user_webhooks
+          user_webhooks: app.user_webhooks,
         });
       }
-      
-      const { data: logs, error: logsError } = await supabase.rpc(
-        "get_latest_logs"
-      );
+
+      const { data: logs, error: logsError } =
+        await supabase.rpc("get_latest_logs");
       if (logsError) throw logsError;
 
       const downApps: string[] = [];
@@ -35,18 +39,20 @@ export const launchStatusWatcher = async () => {
           !thresholdsMap.has(log.app) ||
           !thresholdsMap.get(log.app).status_threshold
         )
+          // Ignore these apps, because they're still being set up
           continue;
         const timestamp = new Date(log.timestamp).getTime();
         const timeSince = Date.now() - timestamp;
         const app = thresholdsMap.get(log.app);
         if (timeSince > app.status_threshold) {
           downApps.push(log.app);
-          if (app.status === "UP") await sendStatusNotification({
-            app: app.name,
-            url: app.user_webhooks.url,
-            method: app.user_webhooks.method,
-            body: app.user_webhooks.body
-          })
+          if (app.status === "UP")
+            await sendStatusNotification({
+              app: app.name,
+              url: app.user_webhooks.url,
+              method: app.user_webhooks.method,
+              body: app.user_webhooks.body,
+            });
         }
       }
       const upApps = apps
