@@ -87,14 +87,29 @@ export function DataTable<TData, TValue>({
       accessorKey: "timestamp",
       header: "Timestamp",
       filterFn: (row, filterValue) => {
+        // @ts-ignore
+        const timestamp = new Date(row.original.timestamp).getTime();
         if (timeframe) {
-          // @ts-ignore
-          return (
-            new Date(row.original.timestamp).getTime() >=
+          const isInTimeframe = // @ts-ignore
+            timestamp >=
+              // @ts-ignore
               new Date(timeframe.from).getTime() &&
-            new Date(row.original.timestamp).getTime() <=
-              new Date(timeframe.to).getTime()
-          );
+            // @ts-ignore
+            timestamp <=
+              // @ts-ignore
+              new Date(timeframe.to).getTime() + 86399000;
+          // if (isInTimeframe) {
+          //   console.log({
+          //     row_date: row.original.timestamp,
+          //     row_timestamp_plus_2: timestamp,
+          //     from_date: timeframe.from,
+          //     to_date: timeframe.to,
+          //     from_timestamp: new Date(timeframe.from).getTime(),
+          //     to_timestamp: new Date(timeframe.to).getTime() + 86399000,
+          //   });
+          // }
+
+          return isInTimeframe;
         } else {
           return true;
         }
@@ -154,11 +169,6 @@ export function DataTable<TData, TValue>({
     setTimeframe(selected);
     table.resetColumnFilters();
     if (!selected || !selected.to) return;
-    if (
-      new Date(selected!.from!).getTime() === new Date(selected!.to!).getTime()
-    ) {
-      selected.to = new Date(selected!.from!.getTime() + 86399000);
-    } // add 23:59:59 to the selected date
     setTimeframe(selected);
     table.setColumnFilters([
       {
@@ -170,7 +180,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <Sheet open={sheetOpen}>
+      {/* <Sheet open={sheetOpen}>
         <SheetContent size={"lg"}>
           <SheetHeader>
             <SheetClose className=""></SheetClose>
@@ -183,7 +193,6 @@ export function DataTable<TData, TValue>({
                 <span className="sr-only">Close</span>
               </div>
             </SheetClose>
-            {/* @ts-ignore */}
             <SheetTitle>
               {" "}
               {formattedLog["timestamp"]} -{" "}
@@ -195,14 +204,13 @@ export function DataTable<TData, TValue>({
                   <span className="font-bold">
                     {key === "---------message---------" ? "message" : key}
                   </span>
-                  {/* @ts-ignore */}
                   <span>{formattedLog[key]}</span>
                 </div>
               ))}
             </SheetDescription>
           </SheetHeader>
         </SheetContent>
-      </Sheet>
+      </Sheet> */}
 
       <div className="w-full flex justify-end py-3 gap-3 items-center">
         <Input

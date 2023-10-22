@@ -299,7 +299,7 @@ export function Settings({
                       <FormDescription>
                         Select the status threshold, if we don&apos;t receive a
                         status update within this time, we will consider the app
-                        as down.
+                        as down. 0 to disable.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
