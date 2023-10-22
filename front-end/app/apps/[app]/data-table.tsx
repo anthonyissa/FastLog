@@ -313,7 +313,11 @@ export function DataTable<TData, TValue>({
                     <TableCell
                       key={cell.id}
                       className={`${
-                        index == 2 ? "full" : index == 1 ? "w-2/12" : "w-10"
+                        index == 2
+                          ? "full"
+                          : index == 1
+                          ? "min-w-[200px] w-2/12"
+                          : "w-10"
                       } cursor-pointer overflow-hidden`}
                     >
                       {index == 1 ? (
