@@ -12,17 +12,17 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-app.use(cors({ origin: [process.env.FRONT_URL], credientials: true }));
+app.use(cors({ origin: [process.env.FRONT_URL], credientials:true }));
 (async () => {
   await launchStatusWatcher();
 })();
 
 app.use("/logs", logRouter);
-app.use("/events", eventRouter);
+app.use("/events", eventRouter)
 app.use("/apps", verifyJwt, rateLimiter, appRouter);
 app.use("/notifications", verifyJwt, rateLimiter, notificationRouter);
 
-app.get("/", rateLimiter, (req: Request, res: Response) => {
+app.get("/", verifyJwt, rateLimiter, (req: Request, res: Response) => {
   res.send("Hello from FastLog!");
 });
 
