@@ -146,7 +146,7 @@ export function Settings({
   };
 
   const handleWebhookSelect = (currentValue: string) => {
-    const toReset = currentValue.toLowerCase() === webhookStatus.toLowerCase();
+    const toReset = currentValue.toLowerCase() === webhookStatus?.toLowerCase();
     if (toReset) {
       setWebhookStatus("");
       setWebhook(app.id, null);
