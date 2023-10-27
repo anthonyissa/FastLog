@@ -1,12 +1,13 @@
 "use client";
 
+import { Command } from "./command";
 import { ProfileDropdown } from "./profile-dropdown";
 import { useAppContext } from "@/app/session-context";
 import { MainNav } from "@/components/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@radix-ui/react-dropdown-menu";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, SearchIcon } from "lucide-react";
 import Link from "next/link";
 
 export function SiteHeader() {
@@ -21,8 +22,8 @@ export function SiteHeader() {
             {/* <Button variant={"outline"}>
               <SearchIcon className="mr-5 w-4 h-4"></SearchIcon>{" "}
               <span>Ctrl K</span>
-            </Button>
-            <Command /> */}
+            </Button> */}
+            {/* <Command /> */}
             {session ? (
               <div className="flex items-center">
                 {/* <Link href={"/apps"}>
