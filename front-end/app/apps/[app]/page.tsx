@@ -88,7 +88,6 @@ function AppPage({ params }: { params: { app: string } }) {
     // query params for tabs
     const params = new URLSearchParams(window.location.search);
     const tab = params.get("t");
-    console.log(tab);
     if (tab != "logs" && tab != "webhooks" && tab != "settings") {
       setCurrentTab("logs");
     } else setCurrentTab(tab ?? "logs");
