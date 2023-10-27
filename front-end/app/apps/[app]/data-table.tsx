@@ -58,6 +58,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowLeft, RefreshCcwIcon, X } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 
@@ -363,13 +364,15 @@ export function DataTable<TData, TValue>({
                   className="h-24 text-center"
                 >
                   No logs for now.<br></br>
-                  <Button
-                    variant={"outline"}
-                    className="mt-3"
-                    onClick={() => window.open(siteConfig.links.docs)}
-                  >
-                    Get Started
-                  </Button>
+                  <Link href={siteConfig.links.docs}>
+                    <Button
+                      variant={"outline"}
+                      className="mt-3"
+                      onClick={() => window.open(siteConfig.links.docs)}
+                    >
+                      Get Started
+                    </Button>
+                  </Link>
                 </TableCell>
               </TableRow>
             )}
