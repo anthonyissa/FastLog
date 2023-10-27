@@ -5,6 +5,8 @@ import { useAppContext } from "@/app/session-context";
 import { MainNav } from "@/components/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@radix-ui/react-dropdown-menu";
+import { LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 
 export function SiteHeader() {
@@ -21,9 +23,15 @@ export function SiteHeader() {
               <span>Ctrl K</span>
             </Button>
             <Command /> */}
-            <ThemeToggle />
             {session ? (
-              <ProfileDropdown />
+              <div className="flex items-center">
+                {/* <Link href={"/apps"}>
+                  <Button variant={"link"} className="text-primary">
+                    Apps
+                  </Button>
+                </Link> */}
+                <ProfileDropdown />
+              </div>
             ) : (
               <Link href={"/auth"}>
                 <Button variant="outline">Login</Button>

@@ -1,4 +1,5 @@
 import { signOut } from "./supabase";
+import { ThemeToggle } from "./theme-toggle";
 import { useAppContext } from "@/app/session-context";
 import { Button } from "@/components/ui/button";
 import {
@@ -129,14 +130,17 @@ export function ProfileDropdown() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <LogOut className="mr-2 h-4 w-4" />
-          {session ? (
-            <span onClick={() => signOut()}>Sign Out</span>
-          ) : (
-            <span onClick={() => router.push("/auth")}>Sign In</span>
-          )}
-        </DropdownMenuItem>
+        <DropdownMenuGroup className="flex items-center justify-between">
+          <DropdownMenuItem className="flex">
+            <LogOut className="mr-2 h-4 w-4" />
+            {session ? (
+              <span onClick={() => signOut()}>Sign Out</span>
+            ) : (
+              <span onClick={() => router.push("/auth")}>Sign In</span>
+            )}
+          </DropdownMenuItem>
+          <ThemeToggle />
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

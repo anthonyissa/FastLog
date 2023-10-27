@@ -26,6 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { createNewApp, deleteUserApp, fetchApps } from "@/services/apps";
 import { App } from "@/types/App";
+import { Settings } from "lucide-react";
 import {
   Loader2Icon,
   Plus,
@@ -127,19 +128,9 @@ function AppsPage() {
                   </CardHeader>
                   <CardFooter className="flex justify-between">
                     <StatusBadge status={app.status} />
-                    <DropdownMenu>
-                      <DropdownMenuTrigger className="outline-none">
-                        <Settings2 className="h-6 w-6 dark:text-gray-300" />
-                      </DropdownMenuTrigger>
-                      {/* <DropdownMenuContent>
-                      <DropdownMenuItem
-                        onClick={() => deleteApp(app.id)}
-                        className="cursor-pointer"
-                      >
-                        <Trash2 className="mr-2 w-4 h-4 z-50"></Trash2>Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent> */}
-                    </DropdownMenu>
+                    <Link href={`/apps/${app.id}?t=settings`}>
+                      <Settings className="h-5 w-5 dark:text-gray-300" />
+                    </Link>
                   </CardFooter>
                 </Card>
               </Link>
