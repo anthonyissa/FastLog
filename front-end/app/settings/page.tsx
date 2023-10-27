@@ -6,10 +6,7 @@ import { useAppContext } from "../session-context";
 import { Profile } from "./profile";
 import { Webhooks } from "./webhooks";
 import { Loading } from "@/components/loading";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { ToastAction } from "@/components/ui/toast";
-import { useToast } from "@/components/ui/use-toast";
 import { User, Webhook } from "lucide-react";
 import { useEffect, useState } from "react";
 

@@ -1,7 +1,8 @@
 export type Webhook = {
-    id?: string,
-    url: string,
-    method: string,
-    body?: string,
-    user: string,
-}
+  id?: string;
+  name: string;
+  url: string;
+  method: string;
+  body?: string;
+  user: string;
+};

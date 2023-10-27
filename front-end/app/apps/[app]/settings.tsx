@@ -146,7 +146,7 @@ export function Settings({
   };
 
   const handleWebhookSelect = (currentValue: string) => {
-    const toReset = currentValue === webhookStatus;
+    const toReset = currentValue.toLowerCase() === webhookStatus?.toLowerCase();
     if (toReset) {
       setWebhookStatus("");
       setWebhook(app.id, null);
@@ -155,7 +155,7 @@ export function Settings({
       setWebhookStatus(currentValue);
       const newWebhookdId =
         webhooks.find(
-          (webhook) => webhook.url.toLowerCase() === currentValue.toLowerCase()
+          (webhook) => webhook.name.toLowerCase() === currentValue.toLowerCase()
         )?.id || null;
       setWebhook(app.id, newWebhookdId);
       app.webhook_id = newWebhookdId;
@@ -166,7 +166,7 @@ export function Settings({
   const testNotification = async () => {
     setTestDone(true);
     const newWebhookdId = webhooks.find(
-      (webhook) => webhook.url.toLowerCase() === webhookStatus?.toLowerCase()
+      (webhook) => webhook.name.toLowerCase() === webhookStatus?.toLowerCase()
     )!.id;
     try {
       // @ts-ignore
@@ -184,7 +184,7 @@ export function Settings({
   useEffect(() => {
     if (app.webhook_id) {
       setWebhookStatus(
-        webhooks.find((webhook) => webhook.id === app.webhook_id)?.url || ""
+        webhooks.find((webhook) => webhook.id === app.webhook_id)?.name || ""
       );
     }
   }, [webhooks]);
@@ -377,11 +377,7 @@ export function Settings({
                     aria-expanded={open}
                     className="w-[200px] justify-between"
                   >
-                    {webhookStatus
-                      ? webhookStatus.length > 20
-                        ? webhookStatus.substring(0, 20) + "..."
-                        : webhookStatus
-                      : "Select a webhook"}
+                    {webhookStatus ? webhookStatus : "Select a webhook"}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
@@ -401,7 +397,7 @@ export function Settings({
                     <CommandGroup>
                       {webhooks.map((webhook) => (
                         <CommandItem
-                          key={webhook.url}
+                          key={webhook.name}
                           onSelect={(currentValue) =>
                             handleWebhookSelect(currentValue)
                           }
@@ -409,12 +405,12 @@ export function Settings({
                           <Check
                             className={cn(
                               "mr-2 h-4 w-4",
-                              webhookStatus === webhook.url
+                              webhookStatus === webhook.name
                                 ? "opacity-100"
                                 : "opacity-0"
                             )}
                           />
-                          {webhook.url}
+                          {webhook.name}
                         </CommandItem>
                       ))}
                     </CommandGroup>

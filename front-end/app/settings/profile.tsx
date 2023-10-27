@@ -19,16 +19,16 @@ export const Profile = ({ session }: { session: any }) => {
       <h1 className="text-3xl ">Profile Settings</h1>
       <Separator className="my-10" />
       <div className="mt-3 grid grid-cols-2">
-        <div>
+        <div className="w-full">
           <h1 className="font-bold text-sm pb-2">User Email</h1>
           <p className="border rounded-md px-4 w-96 py-2 flex items-center text-center">
             {session.user.email}
           </p>
         </div>
-        <div>
+        <div className="w-full">
           <h1 className="font-bold text-sm pb-2">User Id</h1>
-          <p className="border rounded-md px-5 w-fit py-2 flex items-center">
-            {"•••••••••••••••••••••••••••••••••"}
+          <p className="border rounded-md px-5 w-full py-2 flex items-center justify-between">
+            {"•••••••••••••••••••••••••••••••••••••••••••••••••••••••"}
             <button onClick={handleCopyId} className="ml-3 text-xs">
               {idCopied ? "✅" : <CopyIcon className="w-3 h-3"></CopyIcon>}
             </button>

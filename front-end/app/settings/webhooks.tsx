@@ -46,6 +46,7 @@ export const WebhookDialog = ({
   webhookToEdit?: Webhook;
   createFunction: Function;
 }) => {
+  const [name, setName] = useState<string>("");
   const [url, setUrl] = useState<string>("");
   const [method, setMethod] = useState<string>("GET");
   const [body, setBody] = useState<string>("");
@@ -58,6 +59,7 @@ export const WebhookDialog = ({
   useEffect(() => {
     if (webhookToEdit) {
       setUrl(webhookToEdit.url);
+      setName(webhookToEdit.name);
       setMethod(webhookToEdit.method);
       setBody(webhookToEdit.body || "");
     }
@@ -91,7 +93,14 @@ export const WebhookDialog = ({
             >
               Learn more about webhooks
             </a>
-            <div className="flex gap-3 mb-3 mt-3">
+
+            <Input
+              className="my-3"
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Name"
+              value={name}
+            />
+            <div className="flex gap-3 mb-3">
               <Input
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="URL"
@@ -134,9 +143,10 @@ export const WebhookDialog = ({
               createFunction(
                 {
                   id: webhookToEdit?.id,
-                  url: url,
-                  method: method,
-                  body: body,
+                  name,
+                  url,
+                  method,
+                  body,
                 },
                 webhookToEdit ? true : false
               )
@@ -194,28 +204,44 @@ export const Webhooks = ({ session }: { session: any }) => {
             return (
               <AccordionItem key={index} value={`${`${index}`}`}>
                 <AccordionTrigger className="flex justify-between w-full">
-                  <h1 className="w-64">
-                    {webhook.url.length > 64
-                      ? webhook.url.substring(0, 64) + "..."
-                      : webhook.url}
-                  </h1>
+                  <h1>{webhook.name}</h1>
                   <Badge className="ml-auto mr-3 bg-blue-500">
                     {webhook.method}
                   </Badge>
                 </AccordionTrigger>
-                <AccordionContent>
+                <AccordionContent className="break-words">
+                  {webhook.url}
                   {webhook.body && "Body: " + webhook.body}
                   <div className="flex gap-3 justify-end">
                     <WebhookDialog
                       createFunction={createWebhook}
                       webhookToEdit={webhook}
                     />
-                    <Button
-                      variant={"destructive"}
-                      onClick={() => deleteWebhook(webhook.id!)}
-                    >
-                      <Trash width={16} />
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant={"destructive"}>
+                          <Trash width={16} />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="">
+                            Delete webhook
+                          </AlertDialogTitle>
+                          <AlertDialogDescription className="mb-5">
+                            Are you sure you want to delete this webhook?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => deleteWebhook(webhook.id!)}
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </AccordionContent>
               </AccordionItem>

@@ -1,4 +1,5 @@
 import { signOut } from "./supabase";
+import { ThemeToggle } from "./theme-toggle";
 import { useAppContext } from "@/app/session-context";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,6 +36,7 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -45,8 +47,16 @@ export function ProfileDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost">
-          Dashboard <ChevronDown className="ml-2 h-4 w-4" />
+        <Button variant="ghost" className="flex items-center">
+          {session &&
+            // <Image
+            //   width={30}
+            //   height={30}
+            //   src={"https://robohash.org/" + session.user.email}
+            //   alt="user-icon"
+            // />
+            session.user.email.split("@")[0]}
+          <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
@@ -101,23 +111,36 @@ export function ProfileDropdown() {
           </DropdownMenuSub>
         </DropdownMenuGroup> */}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => window.open(siteConfig.links.discord)}>
-          <LifeBuoy className="mr-2 h-4 w-4" />
-          <span>Support</span>
+        <DropdownMenuItem>
+          <Link
+            href={siteConfig.links.discord}
+            className="flex items-center w-full"
+          >
+            <LifeBuoy className="mr-2 h-4 w-4" />
+            <span>Support</span>
+          </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => window.open(siteConfig.links.docs)}>
-          <Paperclip className="mr-2 h-4 w-4" />
-          <span>Docs</span>
+        <DropdownMenuItem>
+          <Link
+            href={siteConfig.links.docs}
+            className="flex items-center w-full"
+          >
+            <Paperclip className="mr-2 h-4 w-4" />
+            <span>Docs</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <LogOut className="mr-2 h-4 w-4" />
-          {session ? (
-            <span onClick={() => signOut()}>Sign Out</span>
-          ) : (
-            <span onClick={() => router.push("/auth")}>Sign In</span>
-          )}
-        </DropdownMenuItem>
+        <DropdownMenuGroup className="flex items-center justify-between">
+          <DropdownMenuItem className="flex">
+            <LogOut className="mr-2 h-4 w-4" />
+            {session ? (
+              <span onClick={() => signOut()}>Sign Out</span>
+            ) : (
+              <span onClick={() => router.push("/auth")}>Sign In</span>
+            )}
+          </DropdownMenuItem>
+          <ThemeToggle />
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
