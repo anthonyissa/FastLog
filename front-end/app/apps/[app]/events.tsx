@@ -1,18 +1,13 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { ArrowLeft, ChevronDown, ChevronUp, RefreshCcwIcon } from "lucide-react"
-
-import { Event } from "@/types/Event"
-import { getTimeAgo } from "@/lib/utils"
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetClose,
@@ -20,7 +15,7 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet"
+} from "@/components/ui/sheet";
 import {
   Table,
   TableBody,
@@ -29,98 +24,109 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
+import { siteConfig } from "@/config/site";
+import { getTimeAgo } from "@/lib/utils";
+import { Event } from "@/types/Event";
+import {
+  ArrowLeft,
+  ChevronDown,
+  ChevronUp,
+  RefreshCcwIcon,
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export const Events = ({
   events,
   refreshFunction,
 }: {
-  events: Event[]
-  refreshFunction: Function
+  events: Event[];
+  refreshFunction: Function;
 }) => {
-  const [groupedEvents, setGroupedEvents] = useState<Event[][]>([])
-  const [allGroupedEvents, setAllGroupedEvents] = useState<Event[][]>([])
-  const [orderBy, setOrderBy] = useState<"asc" | "desc">("desc")
-  const [orderKey, setOrderKey] = useState<"count" | "lastSeen">("lastSeen")
-  const [sheetOpen, setSheetOpen] = useState(false)
-  const [selectedEvents, setSelectedEvents] = useState<Event[]>([])
-  const [allSelectedEvents, setAllSelectedEvents] = useState<Event[]>([])
+  const [groupedEvents, setGroupedEvents] = useState<Event[][]>([]);
+  const [allGroupedEvents, setAllGroupedEvents] = useState<Event[][]>([]);
+  const [orderBy, setOrderBy] = useState<"asc" | "desc">("desc");
+  const [orderKey, setOrderKey] = useState<"count" | "lastSeen">("lastSeen");
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [selectedEvents, setSelectedEvents] = useState<Event[]>([]);
+  const [allSelectedEvents, setAllSelectedEvents] = useState<Event[]>([]);
 
   const groupEvents = () => {
-    const grp: Event[][] = []
+    const grp: Event[][] = [];
     // group by event.title
     events.forEach((event) => {
-      const index = grp.findIndex((g) => g[0].title === event.title)
+      const index = grp.findIndex((g) => g[0].title === event.title);
       if (index === -1) {
-        grp.push([event])
+        grp.push([event]);
       } else {
-        grp[index].push(event)
+        grp[index].push(event);
       }
-    })
+    });
     grp.sort(
       (a, b) =>
         new Date(b[b.length - 1].timestamp).getTime() -
         new Date(a[a.length - 1].timestamp).getTime()
-    )
-    setGroupedEvents(grp)
-    setAllGroupedEvents(grp)
-  }
+    );
+    setGroupedEvents(grp);
+    setAllGroupedEvents(grp);
+  };
 
   const toggleOrderBy = (key: "count" | "lastSeen") => {
-    setOrderKey(key)
-    setOrderBy(orderBy === "asc" ? "desc" : "asc")
+    setOrderKey(key);
+    setOrderBy(orderBy === "asc" ? "desc" : "asc");
     if (key === "count") {
-      const grp = [...groupedEvents]
-      if (orderBy === "asc") grp.sort((a, b) => b.length - a.length)
-      else grp.sort((a, b) => a.length - b.length)
-      setGroupedEvents(grp)
+      const grp = [...groupedEvents];
+      if (orderBy === "asc") grp.sort((a, b) => b.length - a.length);
+      else grp.sort((a, b) => a.length - b.length);
+      setGroupedEvents(grp);
     } else if (key === "lastSeen") {
-      const grp = [...groupedEvents]
+      const grp = [...groupedEvents];
       if (orderBy === "asc")
         grp.sort(
           (a, b) =>
             new Date(b[b.length - 1].timestamp).getTime() -
             new Date(a[a.length - 1].timestamp).getTime()
-        )
+        );
       else
         grp.sort(
           (a, b) =>
             new Date(a[a.length - 1].timestamp).getTime() -
             new Date(b[b.length - 1].timestamp).getTime()
-        )
-      setGroupedEvents(grp)
+        );
+      setGroupedEvents(grp);
     }
-  }
+  };
 
   const openSheet = (events: Event[]) => {
-    setSheetOpen(true)
+    setSheetOpen(true);
     const selected = events.sort(
       (a, b) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    )
-    setSelectedEvents(selected)
-    setAllSelectedEvents(selected)
-  }
+    );
+    setSelectedEvents(selected);
+    setAllSelectedEvents(selected);
+  };
 
   const filterSelectedEvents = (value: string) => {
     setSelectedEvents(
       allSelectedEvents.filter((event) =>
         event.message.toLowerCase().includes(value.toLowerCase())
       )
-    )
-  }
+    );
+  };
 
   const filterEvents = (value: string) => {
     setGroupedEvents(
       allGroupedEvents.filter((events) =>
         events[0].title.toLowerCase().includes(value.toLowerCase())
       )
-    )
-  }
+    );
+  };
 
   useEffect(() => {
-    groupEvents()
-  }, [events])
+    groupEvents();
+  }, [events]);
 
   return (
     <div>
@@ -158,7 +164,7 @@ export const Events = ({
                       </AccordionTrigger>
                       <AccordionContent>{event.message}</AccordionContent>
                     </AccordionItem>
-                  )
+                  );
                 })}
               </Accordion>
             </SheetDescription>
@@ -230,8 +236,20 @@ export const Events = ({
               </TableCell>
             </TableRow>
           ))}
+          {groupedEvents.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={4} className="text-center">
+                No events for now.<br></br>
+                <Link href={siteConfig.links.docs + "features/events"}>
+                  <Button variant={"outline"} className="mt-3">
+                    Get Started
+                  </Button>
+                </Link>
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </div>
-  )
-}
+  );
+};

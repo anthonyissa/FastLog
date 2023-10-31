@@ -1,6 +1,52 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { siteConfig } from "@/config/site";
+import {
+  convertLogMessageToMap,
+  getTimeAgo,
+  isJsonString,
+  isObjectString,
+} from "@/lib/utils";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -10,62 +56,27 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import { ArrowLeft, RefreshCcwIcon, X } from "lucide-react"
-import { DateRange } from "react-day-picker"
-
-import { siteConfig } from "@/config/site"
-import { convertLogMessageToMap, getTimeAgo, isObjectString } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Input } from "@/components/ui/input"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet"
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+} from "@tanstack/react-table";
+import { ArrowLeft, RefreshCcwIcon, X } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { DateRange } from "react-day-picker";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
 
 export function DataTable<TData, TValue>({
   data,
   refreshFunction,
 }: {
-  data: TData[]
-  refreshFunction: Function
+  data: TData[];
+  refreshFunction: Function;
 }) {
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [filterValue, setFilterValue] = useState<string>("")
-  const [timeframe, setTimeframe] = useState<DateRange>()
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [filterValue, setFilterValue] = useState<string>("");
+  const [timeframe, setTimeframe] = useState<DateRange>();
 
   const columns: ColumnDef<TData, TValue>[] = [
     {
@@ -77,11 +88,31 @@ export function DataTable<TData, TValue>({
       accessorKey: "timestamp",
       header: "Timestamp",
       filterFn: (row, filterValue) => {
+        // @ts-ignore
+        const timestamp = new Date(row.original.timestamp).getTime();
         if (timeframe) {
-          // @ts-ignore
-          return (new Date(row.original.timestamp).getTime() >= new Date(timeframe.from).getTime() && new Date(row.original.timestamp).getTime() <= new Date(timeframe.to).getTime())
+          const isInTimeframe = // @ts-ignore
+            timestamp >=
+              // @ts-ignore
+              new Date(timeframe.from).getTime() &&
+            // @ts-ignore
+            timestamp <=
+              // @ts-ignore
+              new Date(timeframe.to).getTime() + 86399000;
+          // if (isInTimeframe) {
+          //   console.log({
+          //     row_date: row.original.timestamp,
+          //     row_timestamp_plus_2: timestamp,
+          //     from_date: timeframe.from,
+          //     to_date: timeframe.to,
+          //     from_timestamp: new Date(timeframe.from).getTime(),
+          //     to_timestamp: new Date(timeframe.to).getTime() + 86399000,
+          //   });
+          // }
+
+          return isInTimeframe;
         } else {
-          return true
+          return true;
         }
       },
     },
@@ -89,7 +120,7 @@ export function DataTable<TData, TValue>({
       accessorKey: "message",
       header: "Message",
     },
-  ]
+  ];
 
   const table = useReactTable({
     data,
@@ -101,59 +132,56 @@ export function DataTable<TData, TValue>({
     state: {
       columnFilters,
     },
-  })
+  });
 
-  const [sheetOpen, setSheetOpen] = useState(false)
-  const [formattedLog, setFormattedLog] = useState<{}>({})
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [formattedLog, setFormattedLog] = useState<{}>({});
 
   const filter = (value: string) => {
-    setFilterValue(value)
-    table.setGlobalFilter(value)
-  }
+    setFilterValue(value);
+    table.setGlobalFilter(value);
+  };
 
   const openSheet = (row: Row<TData>) => {
-    setFormattedLog({})
-    let newLog = {}
+    setFormattedLog({});
+    let newLog = {};
     row.getVisibleCells().forEach((cell) => {
       newLog = {
         ...newLog,
         [cell.column.id]: cell.getValue(),
-      }
-    })
+      };
+    });
     // @ts-ignore
     if (isObjectString(newLog["message"])) {
       // @ts-ignore
-      const detailedMessage = convertLogMessageToMap(newLog["message"])
+      const detailedMessage = convertLogMessageToMap(newLog["message"]);
       detailedMessage.forEach((value, key) => {
         newLog = {
           ...newLog, // @ts-ignore
           ["log." + key]: value,
-        }
-      })
+        };
+      });
     }
-    setFormattedLog(newLog)
-    setSheetOpen(true)
-  }
+    setFormattedLog(newLog);
+    setSheetOpen(true);
+  };
 
   const changeTimeframe = (selected: DateRange | undefined) => {
-    setTimeframe(selected)
-    table.resetColumnFilters()
-    if (!selected || !selected.to) return
-    if (new Date(selected!.from!).getTime() === new Date(selected!.to!).getTime()) {
-      selected.to = new Date(selected!.from!.getTime() + 86399000)
-    } // add 23:59:59 to the selected date
-    setTimeframe(selected)
+    setTimeframe(selected);
+    table.resetColumnFilters();
+    if (!selected || !selected.to) return;
+    setTimeframe(selected);
     table.setColumnFilters([
       {
         id: "timestamp",
         value: selected,
       },
-    ])
-  }
+    ]);
+  };
 
   return (
     <div>
-      <Sheet open={sheetOpen}>
+      {/* <Sheet open={sheetOpen}>
         <SheetContent size={"lg"}>
           <SheetHeader>
             <SheetClose className=""></SheetClose>
@@ -166,8 +194,10 @@ export function DataTable<TData, TValue>({
                 <span className="sr-only">Close</span>
               </div>
             </SheetClose>
-            {/* @ts-ignore */}
-            <SheetTitle>              {formattedLog["timestamp"]} -{" "}           {getTimeAgo(new Date(formattedLog["timestamp"]).getTime())}
+            <SheetTitle>
+              {" "}
+              {formattedLog["timestamp"]} -{" "}
+              {getTimeAgo(new Date(formattedLog["timestamp"]).getTime())}
             </SheetTitle>
             <SheetDescription className="flex flex-col">
               {Object.keys(formattedLog).map((key) => (
@@ -175,14 +205,13 @@ export function DataTable<TData, TValue>({
                   <span className="font-bold">
                     {key === "---------message---------" ? "message" : key}
                   </span>
-                  {/* @ts-ignore */}
                   <span>{formattedLog[key]}</span>
                 </div>
               ))}
             </SheetDescription>
           </SheetHeader>
         </SheetContent>
-      </Sheet>
+      </Sheet> */}
 
       <div className="w-full flex justify-end py-3 gap-3 items-center">
         <Input
@@ -219,7 +248,7 @@ export function DataTable<TData, TValue>({
         <Select
           defaultValue="10"
           onValueChange={(value) => {
-            table.setPageSize(parseInt(value))
+            table.setPageSize(parseInt(value));
           }}
         >
           <SelectTrigger className="w-[110px]">
@@ -275,7 +304,7 @@ export function DataTable<TData, TValue>({
                             "test"
                           )} */}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -284,14 +313,46 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  className="leading-[5px]"
-                  onClick={() => openSheet(row)}
+                  className="leading-[0px] border-none hover:bg-purple-500/5 dark:hover:bg-pink-500/5"
+                  // onClick={() => openSheet(row)}
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell: any, index) => (
-                    <TableCell key={cell.id} className="w-2 cursor-pointer">
-                      {cell.getValue()}
+                    <TableCell
+                      key={cell.id}
+                      className={`${
+                        index == 2
+                          ? "full"
+                          : index == 1
+                          ? "min-w-[200px] w-2/12"
+                          : "w-10"
+                      } cursor-pointer overflow-hidden`}
+                    >
+                      {index == 1 ? (
+                        cell.getValue().split("+")[0]
+                      ) : index == 2 ? (
+                        <Accordion type="single" collapsible>
+                          <AccordionItem value="1" className="border-none">
+                            <AccordionTrigger className="m-0 h-0 p-0 text-left no-chevron">
+                              <pre className="w-64">{cell.getValue()}</pre>
+                            </AccordionTrigger>
+                            <AccordionContent className="mt-5">
+                              <pre className="w-full text-ellipsis whitespace-pre-wrap">
+                                {JSON.stringify(
+                                  isJsonString(cell.getValue())
+                                    ? JSON.parse(cell.getValue())
+                                    : cell.getValue(),
+                                  undefined,
+                                  2
+                                )}
+                              </pre>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+                      ) : (
+                        cell.getValue()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -303,13 +364,15 @@ export function DataTable<TData, TValue>({
                   className="h-24 text-center"
                 >
                   No logs for now.<br></br>
-                  <Button
-                    variant={"outline"}
-                    className="mt-3"
-                    onClick={() => window.open(siteConfig.links.docs)}
-                  >
-                    Get Started
-                  </Button>
+                  <Link href={siteConfig.links.docs}>
+                    <Button
+                      variant={"outline"}
+                      className="mt-3"
+                      onClick={() => window.open(siteConfig.links.docs)}
+                    >
+                      Get Started
+                    </Button>
+                  </Link>
                 </TableCell>
               </TableRow>
             )}
@@ -317,5 +380,5 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
     </div>
-  )
+  );
 }

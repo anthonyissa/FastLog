@@ -1,6 +1,6 @@
 "use client"
 
-import { Supabase, supabase } from "@/components/supabase"
+import { Supabase } from "@/components/supabase"
 
 export default function AuthPage() {
   return (

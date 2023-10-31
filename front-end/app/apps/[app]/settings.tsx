@@ -1,12 +1,51 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Head from "next/head"
-import { useRouter } from "next/navigation"
-import { deleteUserApp, editUserApp, setWebhook } from "@/services/apps"
-import { fetchWebhooks, testUserWebhook } from "@/services/settings"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { DialogDescription } from "@radix-ui/react-dialog"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { siteConfig } from "@/config/site";
+import { cn } from "@/lib/utils";
+import { deleteUserApp, editUserApp, setWebhook } from "@/services/apps";
+import { fetchWebhooks, testUserWebhook } from "@/services/settings";
+import { App } from "@/types/App";
+import { Webhook } from "@/types/Webhook";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import {
   AlertCircle,
   AlertCircleIcon,
@@ -20,70 +59,32 @@ import {
   Plus,
   Terminal,
   Webhook as WebhookIcon,
-} from "lucide-react"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-
-import { App } from "@/types/App"
-import { Webhook } from "@/types/Webhook"
-import { siteConfig } from "@/config/site"
-import { cn } from "@/lib/utils"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Button } from "@/components/ui/button"
-import {
-  Command,
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "lucide-react";
+import Head from "next/head";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 export function Settings({
   app,
   changeSettingsCallback,
 }: {
-  app: App
-  changeSettingsCallback: Function
+  app: App;
+  changeSettingsCallback: Function;
 }) {
   const [tab, setTab] = useState<"general" | "danger" | "notifications">(
     "general"
-  )
-  const [idCopied, setIdCopied] = useState(false)
-  const [open, setOpen] = useState(false)
-  const [webhookStatus, setWebhookStatus] = useState<string | null>("")
-  const [webhooks, setWebhooks] = useState<Webhook[]>([])
-  const [testDone, setTestDone] = useState(false)
-  const [testResult, setTestResult] = useState<null | "success" | "error">(null)
-  const router = useRouter()
+  );
+  const [idCopied, setIdCopied] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [webhookStatus, setWebhookStatus] = useState<string | null>("");
+  const [webhooks, setWebhooks] = useState<Webhook[]>([]);
+  const [testDone, setTestDone] = useState(false);
+  const [testResult, setTestResult] = useState<null | "success" | "error">(
+    null
+  );
+  const router = useRouter();
 
   const FormSchema = z.object({
     "app-name": z
@@ -101,115 +102,140 @@ export function Settings({
         message: "Status threshold must be at least 30 seconds.",
       })
       .default(app.status_threshold / 1000),
-  })
+  });
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-  })
+  });
 
-  const { register } = form
+  const { register } = form;
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     if (
       data["app-name"] === app.name &&
       data["status-threshold"] === app.status_threshold / 1000
     ) {
-      return
+      return;
     }
-    await editUserApp(app.id, data["app-name"], data["status-threshold"] * 1000)
-    await changeSettingsCallback()
+    await editUserApp(
+      app.id,
+      data["app-name"],
+      data["status-threshold"] * 1000
+    );
+    await changeSettingsCallback();
   }
 
   const deleteApp = async (id: string) => {
     try {
-      await deleteUserApp(id)
+      await deleteUserApp(id);
     } finally {
-      router.push("/apps")
+      router.push("/apps");
     }
-  }
+  };
 
   const copyId = () => {
-    navigator.clipboard.writeText(app.id)
-    setIdCopied(true)
+    navigator.clipboard.writeText(app.id);
+    setIdCopied(true);
     setTimeout(() => {
-      setIdCopied(false)
-    }, 2000)
-  }
+      setIdCopied(false);
+    }, 2000);
+  };
 
   const getWebhooks = async () => {
-    setWebhooks(await fetchWebhooks())
-  }
+    setWebhooks(await fetchWebhooks());
+  };
 
   const handleWebhookSelect = (currentValue: string) => {
-    const toReset = currentValue === webhookStatus
+    const toReset = currentValue.toLowerCase() === webhookStatus?.toLowerCase();
     if (toReset) {
-      setWebhookStatus("")
-      setWebhook(app.id, null)
-      app.webhook_id = null
+      setWebhookStatus("");
+      setWebhook(app.id, null);
+      app.webhook_id = null;
     } else {
-      setWebhookStatus(currentValue)
+      setWebhookStatus(currentValue);
       const newWebhookdId =
-        webhooks.find((webhook) => webhook.url.toLowerCase() === currentValue.toLowerCase())?.id || null
-      setWebhook(app.id, newWebhookdId)
-      app.webhook_id = newWebhookdId
+        webhooks.find(
+          (webhook) => webhook.name.toLowerCase() === currentValue.toLowerCase()
+        )?.id || null;
+      setWebhook(app.id, newWebhookdId);
+      app.webhook_id = newWebhookdId;
     }
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
   const testNotification = async () => {
-    setTestDone(true)
-    const newWebhookdId = webhooks.find((webhook) => webhook.url.toLowerCase() === webhookStatus?.toLowerCase())!.id
+    setTestDone(true);
+    const newWebhookdId = webhooks.find(
+      (webhook) => webhook.name.toLowerCase() === webhookStatus?.toLowerCase()
+    )!.id;
     try {
       // @ts-ignore
-      await testUserWebhook(newWebhookdId)
-      setTestResult("success")
+      await testUserWebhook(newWebhookdId);
+      setTestResult("success");
     } catch (e) {
-      setTestResult("error")
+      setTestResult("error");
     }
-  }
+  };
 
   useEffect(() => {
-    getWebhooks()
-  }, [])
+    getWebhooks();
+  }, []);
 
   useEffect(() => {
     if (app.webhook_id) {
       setWebhookStatus(
-        webhooks.find((webhook) => webhook.id === app.webhook_id)?.url || ""
-      )
+        webhooks.find((webhook) => webhook.id === app.webhook_id)?.name || ""
+      );
     }
-  }, [webhooks])
+  }, [webhooks]);
 
   return (
     <div className="flex mt-6">
-      <div className="w-3/12 px-5 flex flex-col items-start border-r mr-8">
+      <div className="w-2/12 px-5 flex flex-col items-start mr-8 text-gray-500">
         <Button
           variant="ghost"
-          className="mb-2 w-full flex justify-start"
+          className={`text-base mb-2 flex w-full justify-start ${
+            tab === "general" ? "text-gray-800 dark:text-white" : ""
+          }`}
           onClick={() => setTab("general")}
         >
-          <Cog className="mr-2" size={16} />
+          <Cog
+            className={`mr-3 ${tab === "general" ? "text-purple-500 " : ""}`}
+            size={16}
+          />
           General
         </Button>
         <Button
           variant="ghost"
-          className="mb-2 w-full flex justify-start"
+          className={`text-base mb-2 flex w-full justify-start ${
+            tab === "notifications" ? "text-gray-800 dark:text-white" : ""
+          }`}
           onClick={() => setTab("notifications")}
         >
-          <Bell className="mr-2" size={16} />
+          <Bell
+            className={`mr-3 ${
+              tab === "notifications" ? "text-purple-500 " : ""
+            }`}
+            size={16}
+          />
           Notifications
         </Button>
         <Button
           variant="ghost"
-          className="mb-2 w-full flex justify-start"
+          className={`text-base mb-2 flex w-full justify-start ${
+            tab === "danger" ? "text-gray-800 dark:text-white" : ""
+          }`}
           onClick={() => setTab("danger")}
         >
-          <AlertTriangle className="mr-2" size={16} />
+          <AlertTriangle
+            className={`mr-3 ${tab === "danger" ? "text-purple-500 " : ""}`}
+            size={16}
+          />
           Danger
         </Button>
       </div>
       {tab === "general" && (
-        <div className="w-9/12">
+        <div className="w-10/12">
           <Alert variant="default">
             <AlertTitle>{app.name}</AlertTitle>
             <AlertDescription className="flex items-center">
@@ -273,14 +299,14 @@ export function Settings({
                       <FormDescription>
                         Select the status threshold, if we don&apos;t receive a
                         status update within this time, we will consider the app
-                        as down.
+                        as down. 0 to disable.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              <Button type="submit" className="w-20">
+              <Button type="submit" className="w-20 mt-[-20px]">
                 Save
               </Button>
             </form>
@@ -288,7 +314,7 @@ export function Settings({
         </div>
       )}
       {tab === "danger" && (
-        <div className="w-9/12">
+        <div className="w-10/12">
           <Alert variant="destructive">
             <AlertTitle className="flex items-center">
               <AlertCircleIcon width={16} className="mr-2" /> Delete this app
@@ -325,7 +351,7 @@ export function Settings({
         </div>
       )}
       {tab === "notifications" && (
-        <div className="w-9/12 flex flex-col">
+        <div className="w-10/12 flex flex-col">
           <Alert variant="default">
             <AlertTitle className="flex items-center">
               <WebhookIcon width={16} className="mr-2" /> Notification webhook
@@ -335,8 +361,9 @@ export function Settings({
               this app.<br></br>
               <a
                 href={siteConfig.links.docs + "webhooks"}
-                target="_blank" rel="noreferrer"
-                className="text-blue-500 hover:underline"
+                target="_blank"
+                rel="noreferrer"
+                className="text-purple-500 hover:underline"
               >
                 Learn more about webhooks
               </a>
@@ -350,11 +377,7 @@ export function Settings({
                     aria-expanded={open}
                     className="w-[200px] justify-between"
                   >
-                    {webhookStatus
-                      ? webhookStatus.length > 20
-                        ? webhookStatus.substring(0, 20) + "..."
-                        : webhookStatus
-                      : "Select a webhook"}
+                    {webhookStatus ? webhookStatus : "Select a webhook"}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
@@ -374,7 +397,7 @@ export function Settings({
                     <CommandGroup>
                       {webhooks.map((webhook) => (
                         <CommandItem
-                          key={webhook.url}
+                          key={webhook.name}
                           onSelect={(currentValue) =>
                             handleWebhookSelect(currentValue)
                           }
@@ -382,12 +405,12 @@ export function Settings({
                           <Check
                             className={cn(
                               "mr-2 h-4 w-4",
-                              webhookStatus === webhook.url
+                              webhookStatus === webhook.name
                                 ? "opacity-100"
                                 : "opacity-0"
                             )}
                           />
-                          {webhook.url}
+                          {webhook.name}
                         </CommandItem>
                       ))}
                     </CommandGroup>
@@ -397,7 +420,7 @@ export function Settings({
               <Button
                 variant="outline"
                 className="ml-3"
-                onClick={() => router.push("/settings")}
+                onClick={() => router.push("/settings?t=webhooks")}
               >
                 <Plus size={16} />
               </Button>
@@ -405,7 +428,7 @@ export function Settings({
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                    <Button
+                      <Button
                         disabled={testDone}
                         variant="outline"
                         className="ml-3"
@@ -414,27 +437,24 @@ export function Settings({
                         <Bell size={16} />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>
-                    Send a test notification
-                    </TooltipContent>
+                    <TooltipContent>Send a test notification</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               )}
-              {
-                testDone && testResult === "success" && (
-                  <p className="ml-3 text-sm text-green-500">
+              {(testDone && testResult === "success" && (
+                <p className="ml-3 text-sm text-green-500">
                   Notification sent successfully!
-                  </p>
-                ) || testDone && testResult === "error" && (
+                </p>
+              )) ||
+                (testDone && testResult === "error" && (
                   <p className="ml-3 text-sm text-red-500">
-                  Failed to send notification, check your webhook.
+                    Failed to send notification, check your webhook.
                   </p>
-                )                
-              }
+                ))}
             </div>
           </Alert>
         </div>
       )}
     </div>
-  )
+  );
 }

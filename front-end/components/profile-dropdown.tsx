@@ -1,5 +1,24 @@
+import { signOut } from "./supabase";
+import { ThemeToggle } from "./theme-toggle";
+import { useAppContext } from "@/app/session-context";
+import { Button } from "@/components/ui/button";
 import {
-    ChevronDown,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { siteConfig } from "@/config/site";
+import {
+  ChevronDown,
   Cloud,
   CreditCard,
   Github,
@@ -16,56 +35,50 @@ import {
   User,
   UserPlus,
   Users,
-} from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useRouter } from "next/navigation"
-import { useAppContext } from "@/app/session-context"
-import { signOut } from "./supabase"
-import { siteConfig } from "@/config/site"
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function ProfileDropdown() {
-  const { session } = useAppContext()
-  const router = useRouter()
-
+  const { session } = useAppContext();
+  const router = useRouter();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost">
-        Dashboard <ChevronDown className="ml-2 h-4 w-4" />
+        <Button variant="ghost" className="flex items-center">
+          {session &&
+            // <Image
+            //   width={30}
+            //   height={30}
+            //   src={"https://robohash.org/" + session.user.email}
+            //   alt="user-icon"
+            // />
+            session.user.email.split("@")[0]}
+          <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>{session.user.email}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push("/apps")}>
-            <LayoutDashboard className="mr-2 h-4 w-4" />
-            <span>Applications</span>
-          </DropdownMenuItem>
+          <Link href={"/apps"}>
+            <DropdownMenuItem>
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              <span>Applications</span>
+            </DropdownMenuItem>
+          </Link>
           <DropdownMenuItem disabled>
             <CreditCard className="mr-2 h-4 w-4" />
             <span>Billing</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push("/settings")}>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
-          </DropdownMenuItem>
+          <Link href={"/settings"}>
+            <DropdownMenuItem>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+            </DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
         {/* <DropdownMenuSeparator />
         <DropdownMenuGroup>
@@ -98,20 +111,37 @@ export function ProfileDropdown() {
           </DropdownMenuSub>
         </DropdownMenuGroup> */}
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled>
-          <LifeBuoy className="mr-2 h-4 w-4" />
-          <span>Support</span>
+        <DropdownMenuItem>
+          <Link
+            href={siteConfig.links.discord}
+            className="flex items-center w-full"
+          >
+            <LifeBuoy className="mr-2 h-4 w-4" />
+            <span>Support</span>
+          </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => window.open(siteConfig.links.docs)}>
-          <Paperclip className="mr-2 h-4 w-4" />
-          <span>Docs</span>
+        <DropdownMenuItem>
+          <Link
+            href={siteConfig.links.docs}
+            className="flex items-center w-full"
+          >
+            <Paperclip className="mr-2 h-4 w-4" />
+            <span>Docs</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <LogOut className="mr-2 h-4 w-4" />
-          {session ? <span onClick={() => signOut()}>Sign Out</span> : <span onClick={() => router.push("/auth")}>Sign In</span>}
-        </DropdownMenuItem>
+        <DropdownMenuGroup className="flex items-center justify-between">
+          <DropdownMenuItem className="flex">
+            <LogOut className="mr-2 h-4 w-4" />
+            {session ? (
+              <span onClick={() => signOut()}>Sign Out</span>
+            ) : (
+              <span onClick={() => router.push("/auth")}>Sign In</span>
+            )}
+          </DropdownMenuItem>
+          <ThemeToggle />
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
