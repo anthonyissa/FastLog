@@ -96,9 +96,8 @@ export const handleSocketStatusUpdate = async ({
   app_id: string;
   user_id: string;
   status: "UP" | "DOWN";
-}) => {
-  if (!app_id || !user_id || !status)
-    throw new Error("Invalid handleSocketStatusUpdate data");
+}): Promise<boolean> => {
+  if (!app_id || !user_id || !status) return false;
 
   const { error } = await supabase
     .from("apps")
@@ -106,4 +105,5 @@ export const handleSocketStatusUpdate = async ({
     .eq("id", app_id)
     .eq("user", user_id);
   if (error) throw error;
+  return true;
 };
