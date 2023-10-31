@@ -87,3 +87,18 @@ export const updateAppsStatus = async (
     console.error("Error in updateAppsStatus - statusWatcher.ts :", error);
   }
 };
+
+export const handleSocketStatusUpdate = async ({
+  app_id,
+  user_id,
+  status,
+}: {
+  app_id: string;
+  user_id: string;
+  status: "UP" | "DOWN";
+}) => {
+  if (!app_id || !user_id || !status)
+    throw new Error("Invalid handleSocketStatusUpdate data");
+  // TODO
+  console.log("handleSocketStatusUpdate");
+};
