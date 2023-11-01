@@ -313,7 +313,10 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  className="leading-[0px] border-none hover:bg-purple-500/5 dark:hover:bg-pink-500/5"
+                  className={`leading-[0px] border-none hover:bg-purple-500/5 dark:hover:bg-pink-500/5 ${
+                    row.getVisibleCells()[0].getValue() == "ERROR" &&
+                    "text-destructive"
+                  }`}
                   // onClick={() => openSheet(row)}
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}

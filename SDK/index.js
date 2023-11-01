@@ -1,2 +1,2 @@
-export * from "./src/logs.js";
-export * from "./src/events.js";
+export { activateFastLog } from "./src/logs.js";
+export { monitor } from "./src/events.js";
