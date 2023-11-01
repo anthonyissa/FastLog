@@ -1,12 +1,13 @@
 import axios from "axios";
 import { apiUrl } from "./utils.js";
 import { activateHealthCheck } from "./healthcheck.js";
+import "./error.js";
 
 export const originalLogger = console.log;
 export let id = undefined;
 export let userId = undefined;
 
-function sendToFastLog(level, ...args) {
+export function sendToFastLog(level, ...args) {
   const body = JSON.stringify({
     ...args,
     id,
@@ -21,7 +22,7 @@ function sendToFastLog(level, ...args) {
       "Content-Type": "application/json",
     },
   }).catch((err) => {
-    originalLogger("Error sending log to fastlog", err);
+    originalLogger("Error sending log to Fastlog", err);
   });
 }
 
