@@ -4,6 +4,7 @@ import { WebSocket } from "ws";
 import { sendNotificationToUser } from "./lib/notifications";
 
 const statusCache = new Map<string, string>(); // switch to redis to avoid memory usage
+const heartbeatInterval = 60 * 1000 * 3; // 3 minute
 
 export const initWebsocket = (http: any) => {
   const wss = new WebSocket.Server({ server: http });
@@ -11,6 +12,15 @@ export const initWebsocket = (http: any) => {
   wss.on("connection", (ws: WebSocket, req: any) => {
     const id = req.headers["sec-websocket-key"];
     console.log("New connection: " + id);
+
+    const heartbeat = setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.ping();
+      } else {
+        clearInterval(heartbeat);
+      }
+    }, heartbeatInterval);
+
     ws.on("message", async (message: string) => {
       try {
         console.log("Message received: " + message);
@@ -32,6 +42,7 @@ export const initWebsocket = (http: any) => {
     ws.on("close", async () => {
       try {
         console.log("Connection closed: " + id);
+        clearInterval(heartbeat);
         const [userId, appId] = statusCache.get(id).split(":");
         await handleSocketStatusUpdate({
           user_id: userId,
