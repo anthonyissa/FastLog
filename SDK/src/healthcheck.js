@@ -11,7 +11,7 @@ export const activateHealthCheck = ({ app_id, user_id }) => {
   };
 
   socket.onclose = () => {
-    console.log(
+    console.error(
       "Fastlog healthcheck failed, please check your internet connection or try again later."
     );
     retry({ app_id, user_id });

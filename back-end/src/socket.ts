@@ -31,6 +31,7 @@ export const initWebsocket = (http: any) => {
 
     ws.on("close", async () => {
       try {
+        console.log("Connection closed: " + id);
         const [userId, appId] = statusCache.get(id).split(":");
         await handleSocketStatusUpdate({
           user_id: userId,
