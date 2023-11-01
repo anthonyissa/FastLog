@@ -14,10 +14,10 @@ const app = express();
 
 app.use(express.json());
 
-app.use(cors({ origin: [process.env.FRONT_URL], credientials: true }));
-(async () => {
-  await launchStatusWatcher();
-})();
+app.use(cors({ origin: [process.env.FRONT_URL], credentials: true }));
+// (async () => {
+//   await launchStatusWatcher();
+// })();
 
 app.use("/logs", logRouter);
 app.use("/events", eventRouter);

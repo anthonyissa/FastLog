@@ -1,5 +1,6 @@
 import axios from "axios";
 import { apiUrl } from "./utils.js";
+import { activateHealthCheck } from "./healthcheck.js";
 
 export const originalLogger = console.log;
 export let id = undefined;
@@ -13,7 +14,7 @@ function sendToFastLog(level, ...args) {
     userId,
     timestamp: new Date().toISOString(),
   });
-  axios(apiUrl+"/logs/add", {
+  axios(apiUrl + "/logs/add", {
     method: "POST",
     data: body,
     headers: {
@@ -24,7 +25,6 @@ function sendToFastLog(level, ...args) {
   });
 }
 
-
 function fastLogger(level) {
   return function (...args) {
     originalLogger.apply(console, arguments);
@@ -32,19 +32,16 @@ function fastLogger(level) {
   };
 }
 
-export const activateFastLog = ({
-  app_id,
-  user_id,
-}) => {
-  if(!app_id) throw new Error("App ID is required");
-  if(!user_id) throw new Error("User ID is required");
+export const activateFastLog = ({ app_id, user_id }) => {
+  if (!app_id) throw new Error("App ID is required");
+  if (!user_id) throw new Error("User ID is required");
   userId = user_id;
   id = app_id;
+  activateHealthCheck({ app_id, user_id });
   console.log = fastLogger("INFO");
   console.error = fastLogger("ERROR");
   console.warn = fastLogger("WARN");
   console.info = fastLogger("INFO");
   console.debug = fastLogger("DEBUG");
   console.trace = fastLogger("TRACE");
-}
-
+};
