@@ -6,7 +6,7 @@ activateFastLog({
   user_id: "431edb30-e4c5-42bf-8a09-741292c3085a",
 });
 
-setInterval(() => {}, 1000);
+// setInterval(() => {}, 1000);
 console.log({ test: "test" }, "hello", "nice");
 monitor({
   title: "Hello",

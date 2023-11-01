@@ -53,7 +53,3 @@ export const initWebsocket = (http: any) => {
 
   return wss;
 };
-
-setInterval(() => {
-  console.log(statusCache);
-}, 2000);
