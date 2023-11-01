@@ -7,9 +7,9 @@ activateFastLog({
 });
 
 setInterval(() => {}, 1000);
-// console.log({ test: "test"}, "hello", "nice")
-// monitor({
-//     title: "Hello",
-//     message: "World",
-//     notify: true,
-// })
+console.log({ test: "test" }, "hello", "nice");
+monitor({
+  title: "Hello",
+  message: "World",
+  notify: true,
+});

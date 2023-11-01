@@ -1,5 +1,9 @@
 import axios from "axios";
 import dotenv from "dotenv";
+import {
+  getAppFromSupabase,
+  getAppWebhook,
+} from "../services/apps/appServices";
 dotenv.config();
 
 export const sendStatusNotification = async ({
@@ -43,4 +47,42 @@ export const sendEventNotification = async ({
     method,
     data: body,
   });
+};
+
+export const sendNotificationToUser = async ({
+  app_id,
+  type,
+  title,
+  message,
+  user_id,
+}: {
+  app_id: string;
+  type: "status" | "event";
+  title?: string;
+  message?: string;
+  user_id?: string;
+}) => {
+  if (type === "event" && (!title || !message)) return;
+  if (type === "status" && !user_id) return;
+
+  const webhook: any = await getAppWebhook(app_id);
+  if (!webhook) return;
+
+  if (type === "status") {
+    const app = await getAppFromSupabase(user_id, app_id);
+    await sendStatusNotification({
+      app: app.name,
+      url: webhook.url,
+      method: webhook.method,
+      body: webhook.body,
+    });
+  } else if (type === "event") {
+    await sendEventNotification({
+      title,
+      message,
+      url: webhook.url,
+      method: webhook.method,
+      body: webhook.body,
+    });
+  }
 };

@@ -1,6 +1,7 @@
 import { status } from "./model/socket-types";
 import { handleSocketStatusUpdate } from "./lib/statusWatcher";
 import { WebSocket } from "ws";
+import { sendNotificationToUser } from "./lib/notifications";
 
 const statusCache = new Map<string, string>(); // switch to redis to avoid memory usage
 
@@ -35,6 +36,11 @@ export const initWebsocket = (http: any) => {
           user_id: userId,
           app_id: appId,
           status: "DOWN",
+        });
+        await sendNotificationToUser({
+          app_id: appId,
+          type: "status",
+          user_id: userId,
         });
         statusCache.delete(id);
       } catch (error) {
