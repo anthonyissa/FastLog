@@ -18,7 +18,7 @@ export const activateHealthCheck = ({ app_id, user_id }) => {
   };
 
   socket.onmessage = (event) => {
-    console.log(event.data);
+    console.error(event.data);
   };
 
   socket.onerror = (error) => {
