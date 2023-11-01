@@ -32,12 +32,12 @@ function fastLogger(level) {
   };
 }
 
-export const activateFastLog = ({ app_id, user_id }) => {
+export const activateFastLog = ({ app_id, user_id, runHealthCheck = true }) => {
   if (!app_id) throw new Error("App ID is required");
   if (!user_id) throw new Error("User ID is required");
   userId = user_id;
   id = app_id;
-  activateHealthCheck({ app_id, user_id });
+  if (runHealthCheck) activateHealthCheck({ app_id, user_id });
   console.log = fastLogger("INFO");
   console.error = fastLogger("ERROR");
   console.warn = fastLogger("WARN");

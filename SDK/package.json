@@ -1,6 +1,6 @@
 {
   "name": "fastlog-sdk",
-  "version": "1.0.3",
+  "version": "1.0.31",
   "description": "FastLog SDK for Node.js",
   "main": "index.js",
   "type": "module",

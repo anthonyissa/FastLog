@@ -4,8 +4,7 @@ import { WebSocket } from "ws";
 let retrying = false;
 
 export const activateHealthCheck = ({ app_id, user_id }) => {
-  //   const socket = new WebSocket(`${apiUrl.replace("https", "wss")}`);
-  const socket = new WebSocket(`ws://localhost:3000`);
+  const socket = new WebSocket(`${apiUrl.replace("https", "ws")}`);
 
   socket.onopen = () => {
     socket.send(JSON.stringify({ app_id, user_id }));
