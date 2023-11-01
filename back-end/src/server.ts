@@ -7,18 +7,20 @@ import { rateLimiter, verifyJwt } from "./lib/middlewares";
 import dotenv from "dotenv";
 import eventRouter from "./routes/eventRoutes";
 import notificationRouter from "./routes/notificationController";
+import { initWebsocket } from "./socket";
 dotenv.config();
 
 const app = express();
+
 app.use(express.json());
 
-app.use(cors({ origin: [process.env.FRONT_URL], credientials:true }));
-(async () => {
-  await launchStatusWatcher();
-})();
+app.use(cors({ origin: [process.env.FRONT_URL], credentials: true }));
+// (async () => {
+//   await launchStatusWatcher();
+// })();
 
 app.use("/logs", logRouter);
-app.use("/events", eventRouter)
+app.use("/events", eventRouter);
 app.use("/apps", verifyJwt, rateLimiter, appRouter);
 app.use("/notifications", verifyJwt, rateLimiter, notificationRouter);
 
@@ -28,6 +30,8 @@ app.get("/", verifyJwt, rateLimiter, (req: Request, res: Response) => {
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
+const http = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+const wsServer = initWebsocket(http);

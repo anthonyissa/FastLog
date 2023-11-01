@@ -87,3 +87,23 @@ export const updateAppsStatus = async (
     console.error("Error in updateAppsStatus - statusWatcher.ts :", error);
   }
 };
+
+export const handleSocketStatusUpdate = async ({
+  app_id,
+  user_id,
+  status,
+}: {
+  app_id: string;
+  user_id: string;
+  status: "UP" | "DOWN";
+}): Promise<boolean> => {
+  if (!app_id || !user_id || !status) return false;
+
+  const { error } = await supabase
+    .from("apps")
+    .update({ status })
+    .eq("id", app_id)
+    .eq("user", user_id);
+  if (error) throw error;
+  return true;
+};

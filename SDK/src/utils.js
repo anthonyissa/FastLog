@@ -1,1 +1,1 @@
-export const apiUrl = "https://fastlog-production.up.railway.app"
+export const apiUrl = "https://fastlog-production.up.railway.app";
