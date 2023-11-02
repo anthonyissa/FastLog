@@ -4,7 +4,7 @@ import { WebSocket } from "ws";
 import { sendNotificationToUser } from "./lib/notifications";
 
 const statusCache = new Map<string, string>(); // switch to redis to avoid memory usage
-const heartbeatInterval = 60 * 1000 * 3; // 3 minute
+const heartbeatInterval = 60 * 1000; // 3 minute
 
 export const initWebsocket = (http: any) => {
   const wss = new WebSocket.Server({ server: http });
@@ -15,6 +15,7 @@ export const initWebsocket = (http: any) => {
 
     const heartbeat = setInterval(() => {
       if (ws.readyState === WebSocket.OPEN) {
+        console.log("Sending heartbeat to: " + id);
         ws.ping();
       } else {
         clearInterval(heartbeat);
