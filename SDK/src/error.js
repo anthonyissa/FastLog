@@ -8,6 +8,8 @@ process.on("uncaughtException", (error) => {
       name: error.name,
       error: error.message,
       stack: error.stack,
+      code: error.code,
+      reason: error.reason,
     })
   );
 });
@@ -20,6 +22,8 @@ process.on("unhandledRejection", (error) => {
       name: error.name,
       error: error.message,
       stack: error.stack,
+      code: error.code,
+      reason: error.reason,
     })
   );
 });
