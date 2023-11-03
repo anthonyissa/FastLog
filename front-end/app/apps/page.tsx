@@ -119,7 +119,10 @@ function AppsPage() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {apps.map((app, index) => (
               <Link href={`/apps/${app.id}`}>
-                <Card key={index}>
+                <Card
+                  key={index}
+                  className="hover:bg-muted-foreground/10 transition-all"
+                >
                   <CardHeader>
                     <CardTitle>
                       {app.name.substring(0, 15)}
@@ -128,8 +131,10 @@ function AppsPage() {
                   </CardHeader>
                   <CardFooter className="flex justify-between">
                     <StatusBadge status={app.status} />
-                    <Link href={`/apps/${app.id}?t=settings`}>
-                      <Settings className="h-5 w-5 dark:text-gray-300" />
+                    <Link href={`/apps/${app.id}?t=settings`} className="pt-1">
+                      <Button variant={"ghost"}>
+                        <Settings className="h-5 w-5 dark:text-gray-300" />
+                      </Button>
                     </Link>
                   </CardFooter>
                 </Card>

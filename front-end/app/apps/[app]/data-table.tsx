@@ -57,9 +57,15 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowLeft, RefreshCcwIcon, X } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  RefreshCcwIcon,
+  X,
+} from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 
 interface DataTableProps<TData, TValue> {
@@ -133,6 +139,25 @@ export function DataTable<TData, TValue>({
       columnFilters,
     },
   });
+
+  const [showDiv, setShowDiv] = useState(false);
+
+  // Function to handle scroll event
+  const handleScroll = () => {
+    // Set a specific scroll amount after which the div will be shown
+    const showDivScrollAmount = 100; // for example, 100px scroll amount
+    const currentScrollPosition = window.scrollY;
+
+    if (currentScrollPosition > showDivScrollAmount) {
+      setShowDiv(true);
+    } else {
+      setShowDiv(false);
+    }
+  };
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    table.setPageSize(50);
+  }, []);
 
   const [sheetOpen, setSheetOpen] = useState(false);
   const [formattedLog, setFormattedLog] = useState<{}>({});
@@ -246,7 +271,7 @@ export function DataTable<TData, TValue>({
         </Popover>
 
         <Select
-          defaultValue="10"
+          defaultValue="50"
           onValueChange={(value) => {
             table.setPageSize(parseInt(value));
           }}
@@ -256,14 +281,14 @@ export function DataTable<TData, TValue>({
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="10" className="cursor-pointer">
-                10
-              </SelectItem>
               <SelectItem value="50" className="cursor-pointer">
                 50
               </SelectItem>
               <SelectItem value="100" className="cursor-pointer">
                 100
+              </SelectItem>
+              <SelectItem value="500" className="cursor-pointer">
+                500
               </SelectItem>
             </SelectGroup>
           </SelectContent>
@@ -281,6 +306,24 @@ export function DataTable<TData, TValue>({
         >
           Next
         </Button>
+        {showDiv && (
+          <div className="fixed bottom-0 opacity-80 gap-5 flex m-5">
+            <Button variant={"secondary"} onClick={() => table.previousPage()}>
+              <ChevronLeft className="w-4 h-4"></ChevronLeft>
+            </Button>
+            <Button
+              variant={"secondary"}
+              onClick={() =>
+                table.getState().pagination.pageIndex + 1 !=
+                table.getPageCount()
+                  ? table.nextPage()
+                  : ""
+              }
+            >
+              <ChevronRight className="w-4 h-4"></ChevronRight>
+            </Button>
+          </div>
+        )}
         <span className="text-gray-500 whitespace-nowrap">
           Page {table.getState().pagination.pageIndex + 1} /{" "}
           {table.getPageCount()}
@@ -313,7 +356,7 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  className={`leading-[0px] border-none hover:bg-purple-500/5 dark:hover:bg-pink-500/5 ${
+                  className={`leading-[0px] border-none hover:bg-purple-500/5 dark:hover:bg-pink-500/5 text-[12px] p-0 ${
                     row.getVisibleCells()[0].getValue() == "ERROR" &&
                     "text-destructive"
                   }`}
@@ -330,17 +373,17 @@ export function DataTable<TData, TValue>({
                           : index == 1
                           ? "min-w-[200px] w-2/12"
                           : "w-10"
-                      } cursor-pointer overflow-hidden`}
+                      } cursor-pointer overflow-hidden p-0 px-4`}
                     >
                       {index == 1 ? (
                         cell.getValue().split("+")[0]
                       ) : index == 2 ? (
                         <Accordion type="single" collapsible>
-                          <AccordionItem value="1" className="border-none">
-                            <AccordionTrigger className="m-0 h-0 p-0 text-left no-chevron">
+                          <AccordionItem value="1" className="border-none p-0">
+                            <AccordionTrigger className="m-0 p-0.5 text-left no-chevron ">
                               <pre className="w-64">{cell.getValue()}</pre>
                             </AccordionTrigger>
-                            <AccordionContent className="mt-5">
+                            <AccordionContent className="text-xs mt-1">
                               <pre className="w-full text-ellipsis whitespace-pre-wrap">
                                 {JSON.stringify(
                                   isJsonString(cell.getValue())

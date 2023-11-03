@@ -1,12 +1,9 @@
 import { status } from "./model/socket-types";
 import { handleSocketStatusUpdate } from "./lib/statusWatcher";
 import { WebSocket } from "ws";
-import { sendNotificationToUser } from "./lib/notifications";
 import {
   handleClosedConnection,
   heartbeatInterval,
-  isAppInStatusCache,
-  removeFromStatusCache,
   statusCache,
 } from "./lib/socketHandler";
 
