@@ -3,6 +3,7 @@ import { handleSocketStatusUpdate } from "./lib/statusWatcher";
 import { WebSocket } from "ws";
 import { sendNotificationToUser } from "./lib/notifications";
 import {
+  handleClosedConnection,
   heartbeatInterval,
   isAppInStatusCache,
   removeFromStatusCache,
@@ -19,7 +20,7 @@ export const initWebsocket = (http: any) => {
     const heartbeat = setInterval(() => {
       if (ws.readyState === WebSocket.OPEN) {
         console.log("Sending heartbeat to: " + id);
-        // ws.ping();
+        ws.ping();
       } else {
         clearInterval(heartbeat);
       }
@@ -44,30 +45,7 @@ export const initWebsocket = (http: any) => {
     });
 
     ws.on("close", async () => {
-      try {
-        console.log("Connection closed: " + id);
-        clearInterval(heartbeat);
-        const [userId, appId] = statusCache.get(id).split(":");
-        removeFromStatusCache(id);
-
-        setTimeout(async () => {
-          if (isAppInStatusCache(appId, userId)) return;
-
-          await sendNotificationToUser({
-            app_id: appId,
-            type: "status",
-            user_id: userId,
-          });
-          await handleSocketStatusUpdate({
-            user_id: userId,
-            app_id: appId,
-            status: "DOWN",
-          });
-          statusCache.delete(id);
-        }, heartbeatInterval);
-      } catch (error) {
-        console.log({ error });
-      }
+      await handleClosedConnection({ id, heartbeat });
     });
 
     ws.send("Connected to FastLog!");
