@@ -2,9 +2,12 @@ import { status } from "./model/socket-types";
 import { handleSocketStatusUpdate } from "./lib/statusWatcher";
 import { WebSocket } from "ws";
 import { sendNotificationToUser } from "./lib/notifications";
-
-const statusCache = new Map<string, string>(); // switch to redis to avoid memory usage
-const heartbeatInterval = 60 * 1000; // 3 minute
+import {
+  heartbeatInterval,
+  isAppInStatusCache,
+  removeFromStatusCache,
+  statusCache,
+} from "./lib/socketHandler";
 
 export const initWebsocket = (http: any) => {
   const wss = new WebSocket.Server({ server: http });
@@ -16,7 +19,7 @@ export const initWebsocket = (http: any) => {
     const heartbeat = setInterval(() => {
       if (ws.readyState === WebSocket.OPEN) {
         console.log("Sending heartbeat to: " + id);
-        ws.ping();
+        // ws.ping();
       } else {
         clearInterval(heartbeat);
       }
@@ -43,19 +46,25 @@ export const initWebsocket = (http: any) => {
     ws.on("close", async () => {
       try {
         console.log("Connection closed: " + id);
+        removeFromStatusCache(id);
         clearInterval(heartbeat);
         const [userId, appId] = statusCache.get(id).split(":");
-        await handleSocketStatusUpdate({
-          user_id: userId,
-          app_id: appId,
-          status: "DOWN",
-        });
-        await sendNotificationToUser({
-          app_id: appId,
-          type: "status",
-          user_id: userId,
-        });
-        statusCache.delete(id);
+
+        setTimeout(async () => {
+          if (isAppInStatusCache(appId, userId)) return;
+
+          await sendNotificationToUser({
+            app_id: appId,
+            type: "status",
+            user_id: userId,
+          });
+          await handleSocketStatusUpdate({
+            user_id: userId,
+            app_id: appId,
+            status: "DOWN",
+          });
+          statusCache.delete(id);
+        }, heartbeatInterval);
       } catch (error) {
         console.log({ error });
       }
