@@ -46,9 +46,9 @@ export const initWebsocket = (http: any) => {
     ws.on("close", async () => {
       try {
         console.log("Connection closed: " + id);
-        removeFromStatusCache(id);
         clearInterval(heartbeat);
         const [userId, appId] = statusCache.get(id).split(":");
+        removeFromStatusCache(id);
 
         setTimeout(async () => {
           if (isAppInStatusCache(appId, userId)) return;
