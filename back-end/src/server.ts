@@ -22,7 +22,7 @@ app.use(cors({ origin: [process.env.FRONT_URL], credentials: true }));
 
 app.use("/logs", logRouter);
 app.use("/events", eventRouter);
-app.use("/apps", verifyJwt, rateLimiter, appRouter);
+app.use("/apps", rateLimiter, appRouter);
 app.use("/notifications", verifyJwt, rateLimiter, notificationRouter);
 
 app.get("/", verifyJwt, rateLimiter, (req: Request, res: Response) => {
@@ -35,4 +35,4 @@ const http = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-const wsServer = initWebsocket(http);
+// const wsServer = initWebsocket(http);

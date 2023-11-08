@@ -1,7 +1,6 @@
 import axios from "axios";
 import { apiUrl } from "./utils.js";
-import { activateHealthCheck } from "./healthcheck.js";
-import "./error.js";
+import { activateHealthCheck } from "./error.js";
 
 export const originalLogger = console.log;
 export let id = undefined;
