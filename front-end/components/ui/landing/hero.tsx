@@ -1,4 +1,6 @@
 import { Button } from "../button";
+import { Github } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -81,16 +83,21 @@ export default function Hero() {
               <br /> Let us take care of the complexity while you focus on
               building your app.
             </p>
-            <div className="mx-auto max-w-xs sm:flex sm:max-w-none sm:justify-center">
-              <a
-                onClick={() => router.push("/apps")}
-                data-aos="fade-up"
-                data-aos-delay="400"
-              >
+            <div className="gap-5 mx-auto max-w-xs sm:flex sm:max-w-none sm:justify-center">
+              <Link href="/apps" data-aos="fade-up" data-aos-delay="400">
                 <Button className="text-md bg-gradient-to-r from-purple-500 to-purple-700 px-8 py-6 text-white transition-all hover:opacity-80">
-                  Start for free
+                  Get Started
                 </Button>
-              </a>
+              </Link>
+              <Link href="/apps" data-aos="fade-up" data-aos-delay="400">
+                <Button
+                  variant="outline"
+                  className="text-md bg-gradient-to-r  px-8 py-6 text-white transition-all hover:opacity-80 mt-5 sm:mt-0"
+                >
+                  <Github size={20} className="mr-2" />
+                  Start Free With Github
+                </Button>
+              </Link>
             </div>
           </div>
 
