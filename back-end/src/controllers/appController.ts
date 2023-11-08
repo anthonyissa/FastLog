@@ -7,7 +7,12 @@ import {
   getAppsFromSupabase,
   setWebhookOnApp,
 } from "../services/apps/appServices";
-import { MissingRequiredFieldsError } from "../model/errors";
+import {
+  InvalidStatusError,
+  MissingRequiredFieldsError,
+} from "../model/errors";
+import { handleSocketStatusUpdate } from "../lib/statusWatcher";
+import { sendNotificationToUser } from "../lib/notifications";
 
 export const createApp = async (req: Request, res: Response) => {
   try {
@@ -50,11 +55,7 @@ export const editApp = async (req: Request, res: Response) => {
     const { id, name, threshold } = req.body;
     if (!id || !name || !threshold) throw new MissingRequiredFieldsError();
 
-    await editAppInSupabase(
-      id as string,
-      name as string,
-      threshold as number
-    );
+    await editAppInSupabase(id as string, name as string, threshold as number);
     res.json(true);
   } catch (error) {
     console.error(error);
@@ -73,7 +74,7 @@ export const getApp = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({ error });
   }
-}
+};
 
 export const setWebhook = async (req: Request, res: Response) => {
   try {
@@ -86,4 +87,28 @@ export const setWebhook = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({ error });
   }
-}
+};
+
+export const setStatus = async (req: Request, res: Response) => {
+  try {
+    const { app_id, user_id, status } = req.body;
+    if (!app_id || !user_id) throw new MissingRequiredFieldsError();
+    if (!["UP", "DOWN"].includes(status)) throw new InvalidStatusError();
+
+    const result = await handleSocketStatusUpdate({
+      app_id,
+      user_id,
+      status,
+    });
+    if (status === "DOWN")
+      await sendNotificationToUser({
+        app_id,
+        user_id,
+        type: "status",
+      });
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error });
+  }
+};
