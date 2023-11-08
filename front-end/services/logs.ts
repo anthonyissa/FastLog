@@ -1,15 +1,17 @@
-import axios from "axios"
+import { getAccessToken } from "@/app/auth/auth";
+import { siteConfig } from "@/config/site";
+import axios from "axios";
 
-import { siteConfig } from "@/config/site"
-import { getAccessToken } from "@/app/auth/auth"
-
-export const fetchLogs = async (id: string) => {
+export const fetchLogs = async (id: string, search?: string) => {
   const res = await axios.get(
-    `${siteConfig.api.baseUrl}/logs?id=${id}`,  {
-      headers:{
-        "x-api-key": getAccessToken()
-      }
+    `${siteConfig.api.baseUrl}/logs?id=${id}${
+      search ? `&search=${search}` : ""
+    }`,
+    {
+      headers: {
+        "x-api-key": getAccessToken(),
+      },
     }
-  )
-  return res.data
-}
+  );
+  return res.data;
+};

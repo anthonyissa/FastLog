@@ -1,5 +1,6 @@
 "use client";
 
+import { Loading } from "@/components/loading";
 import {
   Accordion,
   AccordionContent,
@@ -23,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetClose,
@@ -31,6 +33,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -62,6 +65,7 @@ import {
   ChevronLeft,
   ChevronRight,
   RefreshCcwIcon,
+  Search,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -76,13 +80,16 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   data,
   refreshFunction,
+  searchFunction,
 }: {
   data: TData[];
   refreshFunction: Function;
+  searchFunction: Function;
 }) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [filterValue, setFilterValue] = useState<string>("");
   const [timeframe, setTimeframe] = useState<DateRange>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const columns: ColumnDef<TData, TValue>[] = [
     {
@@ -162,9 +169,12 @@ export function DataTable<TData, TValue>({
   const [sheetOpen, setSheetOpen] = useState(false);
   const [formattedLog, setFormattedLog] = useState<{}>({});
 
-  const filter = (value: string) => {
-    setFilterValue(value);
-    table.setGlobalFilter(value);
+  const filter = async () => {
+    // table.setGlobalFilter(value);
+    setLoading(true);
+    console.log("test");
+    await searchFunction(filterValue);
+    setLoading(false);
   };
 
   const openSheet = (row: Row<TData>) => {
@@ -243,9 +253,16 @@ export function DataTable<TData, TValue>({
           type="text"
           placeholder="Search logs"
           value={filterValue}
-          onChange={(e) => filter(e.target.value)}
+          onChange={(e) => setFilterValue(e.target.value)}
         />
-
+        <Button variant={"outline"} onClick={() => filter()}>
+          {loading ? (
+            <Loading classname="w-4 h-4"></Loading>
+          ) : (
+            <Search className="w-4 h-4"></Search>
+          )}
+        </Button>
+        <Separator className="h-5 w-[1px]"></Separator>
         <Button variant={"outline"} onClick={() => refreshFunction()}>
           <RefreshCcwIcon className="w-4 h-4"></RefreshCcwIcon>
         </Button>
@@ -294,7 +311,7 @@ export function DataTable<TData, TValue>({
           </SelectContent>
         </Select>
         <Button variant={"secondary"} onClick={() => table.previousPage()}>
-          Previous
+          <ChevronLeft className="w-4 h-4"></ChevronLeft>
         </Button>
         <Button
           variant={"secondary"}
@@ -304,7 +321,7 @@ export function DataTable<TData, TValue>({
               : ""
           }
         >
-          Next
+          <ChevronRight className="w-4 h-4"></ChevronRight>
         </Button>
         {showDiv && (
           <div className="fixed bottom-0 opacity-80 gap-5 flex m-5">
@@ -353,75 +370,90 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  className={`leading-[0px] border-none hover:bg-purple-500/5 dark:hover:bg-pink-500/5 text-[12px] p-0 ${
-                    row.getVisibleCells()[0].getValue() == "ERROR" &&
-                    "text-destructive"
-                  }`}
-                  // onClick={() => openSheet(row)}
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell: any, index) => (
-                    <TableCell
-                      key={cell.id}
-                      className={`${
-                        index == 2
-                          ? "full"
-                          : index == 1
-                          ? "min-w-[200px] w-2/12"
-                          : "w-10"
-                      } cursor-pointer overflow-hidden p-0 px-4`}
-                    >
-                      {index == 1 ? (
-                        cell.getValue().split("+")[0]
-                      ) : index == 2 ? (
-                        <Accordion type="single" collapsible>
-                          <AccordionItem value="1" className="border-none p-0">
-                            <AccordionTrigger className="m-0 p-0.5 text-left no-chevron ">
-                              <pre className="w-64">{cell.getValue()}</pre>
-                            </AccordionTrigger>
-                            <AccordionContent className="text-xs mt-1">
-                              <pre className="w-full text-ellipsis whitespace-pre-wrap">
-                                {JSON.stringify(
-                                  isJsonString(cell.getValue())
-                                    ? JSON.parse(cell.getValue())
-                                    : cell.getValue(),
-                                  undefined,
-                                  2
-                                )}
-                              </pre>
-                            </AccordionContent>
-                          </AccordionItem>
-                        </Accordion>
-                      ) : (
-                        cell.getValue()
-                      )}
-                    </TableCell>
-                  ))}
+            {loading &&
+              [1, 2, 3, 4, 5].map((row) => (
+                <TableRow className="border-none w-full">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="p-2 py-3 h-5 w-full"
+                  >
+                    <Skeleton className="h-5 w-full" />
+                  </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No logs for now.<br></br>
-                  <Link href={siteConfig.links.docs}>
-                    <Button
-                      variant={"outline"}
-                      className="mt-3"
-                      onClick={() => window.open(siteConfig.links.docs)}
+              ))}
+
+            {!loading && table.getRowModel().rows?.length
+              ? table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    className={`leading-[0px] border-none hover:bg-purple-500/5 dark:hover:bg-pink-500/5 text-[12px] p-0 ${
+                      row.getVisibleCells()[0].getValue() == "ERROR" &&
+                      "text-destructive"
+                    }`}
+                    // onClick={() => openSheet(row)}
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell: any, index) => (
+                      <TableCell
+                        key={cell.id}
+                        className={`${
+                          index == 2
+                            ? "full"
+                            : index == 1
+                            ? "min-w-[200px] w-2/12"
+                            : "w-10"
+                        } cursor-pointer overflow-hidden p-0 px-4`}
+                      >
+                        {index == 1 ? (
+                          cell.getValue().split("+")[0]
+                        ) : index == 2 ? (
+                          <Accordion type="single" collapsible>
+                            <AccordionItem
+                              value="1"
+                              className="border-none p-0"
+                            >
+                              <AccordionTrigger className="m-0 p-0.5 text-left no-chevron ">
+                                <pre className="w-64">{cell.getValue()}</pre>
+                              </AccordionTrigger>
+                              <AccordionContent className="text-xs mt-1">
+                                <pre className="w-full text-ellipsis whitespace-pre-wrap">
+                                  {JSON.stringify(
+                                    isJsonString(cell.getValue())
+                                      ? JSON.parse(cell.getValue())
+                                      : cell.getValue(),
+                                    undefined,
+                                    2
+                                  )}
+                                </pre>
+                              </AccordionContent>
+                            </AccordionItem>
+                          </Accordion>
+                        ) : (
+                          cell.getValue()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              : !loading && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
                     >
-                      Get Started
-                    </Button>
-                  </Link>
-                </TableCell>
-              </TableRow>
-            )}
+                      No logs for now.<br></br>
+                      <Link href={siteConfig.links.docs}>
+                        <Button
+                          variant={"outline"}
+                          className="mt-3"
+                          onClick={() => window.open(siteConfig.links.docs)}
+                        >
+                          Get Started
+                        </Button>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                )}
           </TableBody>
         </Table>
       </div>

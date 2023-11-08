@@ -15,11 +15,13 @@ export const addLogToSupabase = async ({
   [key: string]: any;
 }) => {
   const message =
-    Object.keys(args).length === 1 ? args[Object.keys(args)[0]] : concatLogArgs(args);
+    Object.keys(args).length === 1
+      ? args[Object.keys(args)[0]]
+      : concatLogArgs(args);
   const { error } = await supabase.from("logs").insert({
     timestamp,
     level,
-    app:id,
+    app: id,
     user,
     message,
   });
@@ -28,13 +30,18 @@ export const addLogToSupabase = async ({
   }
 };
 
-export const getLogsFromSupabase = async (user: string, id: string) => {
+export const getLogsFromSupabase = async (
+  user: string,
+  id: string,
+  search: string
+) => {
   const { data, error } = await supabase
     .from("logs")
     .select("*")
     .eq("user", user)
     .eq("app", id)
-    .order("timestamp", { ascending: false })
+    .ilike("message", `%${search ?? ""}%`)
+    .order("timestamp", { ascending: false });
   if (error) {
     throw error;
   }

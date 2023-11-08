@@ -39,8 +39,8 @@ function AppPage({ params }: { params: { app: string } }) {
     setEvents(data);
   };
 
-  const getLogs = async () => {
-    const data = await fetchLogs(params.app);
+  const getLogs = async (search?: string) => {
+    const data = await fetchLogs(params.app, search);
     setLogs(data);
     // // calculate how many logs per minute (use log.timestamp)
     // const logCountMap = data.reduce((countMap: any, log: any) => {
@@ -126,6 +126,7 @@ function AppPage({ params }: { params: { app: string } }) {
                       new Date(a.timestamp).getTime()
                   )}
                   refreshFunction={fetchData}
+                  searchFunction={getLogs}
                 />
               )}
             </TabsContent>

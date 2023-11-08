@@ -1,11 +1,15 @@
 import { Request, Response } from "express";
-import { addLogToSupabase, getLogsFromSupabase } from "../services/logs/logServices";
+import {
+  addLogToSupabase,
+  getLogsFromSupabase,
+} from "../services/logs/logServices";
 import { MissingRequiredFieldsError } from "../model/errors";
 
 export const addLog = async (req: Request, res: Response) => {
   try {
     const { timestamp, level, userId, id, ...args } = req.body;
-    if (!timestamp || !level || !id || !userId) throw new MissingRequiredFieldsError();
+    if (!timestamp || !level || !id || !userId)
+      throw new MissingRequiredFieldsError();
     await addLogToSupabase({
       timestamp,
       level,
@@ -22,10 +26,14 @@ export const addLog = async (req: Request, res: Response) => {
 
 export const getLogs = async (req: Request, res: Response) => {
   try {
-    const { id } = req.query;
+    const { id, search } = req.query;
     if (!id) throw new MissingRequiredFieldsError();
 
-    const logs = await getLogsFromSupabase(req["userId"], id as string);
+    const logs = await getLogsFromSupabase(
+      req["userId"],
+      id as string,
+      search as string
+    );
     res.json(logs);
   } catch (error) {
     console.error(error);
