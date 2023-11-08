@@ -24,7 +24,7 @@ export default function Hero() {
 
   return (
     <section
-      className="w-full overflow-hidden flex items-center"
+      className="w-full overflow-hidden flex items-center mt-[-5rem]"
       style={{ height: "100dvh" }}
     >
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
@@ -98,7 +98,7 @@ export default function Hero() {
               <Link href="/apps" data-aos="fade-up" data-aos-delay="400">
                 <Button
                   variant="outline"
-                  className="text-md bg-gradient-to-r  px-8 py-6 text-white transition-all hover:opacity-80 mt-5 sm:mt-0"
+                  className="text-md bg-gradient-to-r px-8 py-6 transition-all hover:opacity-80 mt-5 sm:mt-0"
                 >
                   <Github size={20} className="mr-2" />
                   Start Free With Github

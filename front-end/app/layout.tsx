@@ -62,7 +62,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <AppWrapper>
               <div className="relative flex min-h-screen flex-col">
                 <SiteHeader />
-                <div className="flex-1">{children}</div>
+                <div className="flex-1 pt-20">{children}</div>
               </div>
             </AppWrapper>
           </ThemeProvider>

@@ -27,14 +27,7 @@ import { Input } from "@/components/ui/input";
 import { createNewApp, deleteUserApp, fetchApps } from "@/services/apps";
 import { App } from "@/types/App";
 import { Settings } from "lucide-react";
-import {
-  Loader2Icon,
-  Plus,
-  Settings2,
-  Trash,
-  Trash2,
-  Trash2Icon,
-} from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -117,29 +110,33 @@ function AppsPage() {
             </AlertDialog>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
-            {apps.map((app, index) => (
-              <Link href={`/apps/${app.id}`}>
-                <Card
-                  key={index}
-                  className="hover:bg-muted-foreground/10 transition-all"
-                >
-                  <CardHeader>
-                    <CardTitle>
-                      {app.name.substring(0, 15)}
-                      {app.name.length > 15 ? "..." : ""}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardFooter className="flex justify-between">
-                    <StatusBadge status={app.status} />
-                    <Link href={`/apps/${app.id}?t=settings`} className="pt-1">
-                      <Button variant={"ghost"}>
-                        <Settings className="h-5 w-5 dark:text-gray-300" />
-                      </Button>
-                    </Link>
-                  </CardFooter>
-                </Card>
-              </Link>
-            ))}
+            {apps.length > 0 &&
+              apps.map((app, index) => (
+                <Link href={`/apps/${app.id}`}>
+                  <Card
+                    key={index}
+                    className="hover:bg-muted-foreground/10 transition-all"
+                  >
+                    <CardHeader>
+                      <CardTitle>
+                        {app.name.substring(0, 15)}
+                        {app.name.length > 15 ? "..." : ""}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardFooter className="flex justify-between">
+                      <StatusBadge status={app.status} />
+                      <Link
+                        href={`/apps/${app.id}?t=settings`}
+                        className="pt-1"
+                      >
+                        <Button variant={"ghost"}>
+                          <Settings className="h-5 w-5 dark:text-gray-300" />
+                        </Button>
+                      </Link>
+                    </CardFooter>
+                  </Card>
+                </Link>
+              ))}
           </div>
         </div>
       )}
