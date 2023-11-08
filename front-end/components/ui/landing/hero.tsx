@@ -23,23 +23,28 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className=" w-full overflow-hidden">
-      <div className="relative mx-auto h-screen max-w-6xl px-4 sm:px-6">
+    <section
+      className="w-full overflow-hidden flex items-center"
+      style={{ height: "100dvh" }}
+    >
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         {/* Illustration behind hero content */}
         <div
+          data-aos="fade-in"
           id="pulse-image"
-          className="pointer-events-none absolute left-0 top-0 -ml-20 hidden lg:block"
+          className="pointer-events-none absolute left-0 top-0 -ml-80 hidden lg:block"
           aria-hidden="true"
         >
           {" "}
           <img
             src="/hero.svg"
-            className="relative top-0 max-w-full animate-pulse opacity-20"
+            className="relative top-[-150px] max-w-full animate-pulse opacity-20"
             width="564"
             height="552"
           ></img>
         </div>
         <div
+          data-aos="fade-in"
           id="graph-image"
           className="pointer-events-none absolute left-0 top-0 -ml-20 hidden lg:block"
           aria-hidden="true"
@@ -47,12 +52,13 @@ export default function Hero() {
           {" "}
           <img
             src="/screenshot-dark.png"
-            className="relative left-[75%] top-64 max-w-full  dark:opacity-20 opacity-0"
+            className="relative left-[75%] top-32 max-w-full  dark:opacity-20 opacity-0"
             width="800"
             height="552"
           ></img>
         </div>
         <div
+          data-aos="fade-in"
           id="graph-image-light"
           className="pointer-events-none visible absolute left-0 top-0 -ml-20 lg:block"
           aria-hidden="true"
@@ -67,7 +73,7 @@ export default function Hero() {
         </div>
 
         {/* Hero content */}
-        <div className="relative pb-10 pt-32 md:pb-16 md:pt-40">
+        <div className="relative pb-10  md:pb-16">
           {/* Section header */}
           <div className="mx-auto max-w-3xl pb-12 text-center md:pb-16">
             <h1 className="h1 mb-4 text-6xl font-bold" data-aos="fade-up">
