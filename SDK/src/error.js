@@ -5,41 +5,34 @@ import { apiUrl } from "./utils.js";
 export const activateHealthCheck = () => {
   setStatus("UP");
 
-  process.on("uncaughtException", (error) => {
-    originalLogger(error);
-    sendToFastLog(
-      "ERROR",
-      JSON.stringify({
-        name: error.name,
-        error: error.message,
-        stack: error.stack,
-        code: error.code,
-        reason: error.reason,
-      })
-    );
+  process.on("beforeExit", () => {
     setStatus("DOWN");
     setTimeout(() => {
-      process.exit(1);
-    }, 500);
+      process.exit();
+    }, 100);
+  });
+
+  process.on("uncaughtException", (error) => {
+    handleError(error);
   });
 
   process.on("unhandledRejection", (error) => {
-    originalLogger(error);
-    sendToFastLog(
-      "ERROR",
-      JSON.stringify({
-        name: error.name,
-        error: error.message,
-        stack: error.stack,
-        code: error.code,
-        reason: error.reason,
-      })
-    );
-    setStatus("DOWN");
-    setTimeout(() => {
-      process.exit(1);
-    }, 500);
+    handleError(error);
   });
+};
+
+const handleError = (error) => {
+  originalLogger(error);
+  sendToFastLog(
+    "ERROR",
+    JSON.stringify({
+      name: error.name,
+      error: error.message,
+      stack: error.stack,
+      code: error.code,
+      reason: error.reason,
+    })
+  );
 };
 
 export const setStatus = (status) => {

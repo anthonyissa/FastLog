@@ -15,6 +15,6 @@ console.log({ test: "test" }, "hello", "nice");
 //   message: "World",
 //   notify: true,
 // });
-setTimeout(() => {
-  throw new Error("Test");
-}, 10000);
+// setTimeout(() => {
+// throw new Error("Test");
+// }, 10000);
