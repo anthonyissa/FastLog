@@ -52,10 +52,9 @@ export const deleteApp = async (req: Request, res: Response) => {
 
 export const editApp = async (req: Request, res: Response) => {
   try {
-    const { id, name, threshold } = req.body;
-    if (!id || !name || !threshold) throw new MissingRequiredFieldsError();
-
-    await editAppInSupabase(id as string, name as string, threshold as number);
+    const { id, name } = req.body;
+    if (!id || !name) throw new MissingRequiredFieldsError();
+    await editAppInSupabase(id as string, name as string);
     res.json(true);
   } catch (error) {
     console.error(error);

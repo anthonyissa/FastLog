@@ -111,17 +111,10 @@ export function Settings({
   const { register } = form;
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    if (
-      data["app-name"] === app.name &&
-      data["status-threshold"] === app.status_threshold / 1000
-    ) {
+    if (data["app-name"] === app.name) {
       return;
     }
-    await editUserApp(
-      app.id,
-      data["app-name"],
-      data["status-threshold"] * 1000
-    );
+    await editUserApp(app.id, data["app-name"], 0);
     await changeSettingsCallback();
   }
 
@@ -254,7 +247,7 @@ export function Settings({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="mt-3 grid grid-cols-2 gap-10"
+              className="mt-3 grid grid-cols-1 gap-10"
             >
               <div>
                 <FormField
@@ -267,6 +260,7 @@ export function Settings({
                         <Input
                           defaultValue={app.name}
                           placeholder="App name"
+                          className="w-6/12"
                           {...register("app-name")}
                         />
                       </FormControl>
@@ -279,7 +273,7 @@ export function Settings({
                   )}
                 />
               </div>
-              <div>
+              {/* <div>
                 <FormField
                   control={form.control}
                   name="status-threshold"
@@ -305,8 +299,8 @@ export function Settings({
                     </FormItem>
                   )}
                 />
-              </div>
-              <Button type="submit" className="w-20 mt-[-20px]">
+              </div> */}
+              <Button type="submit" className="w-20">
                 Save
               </Button>
             </form>
