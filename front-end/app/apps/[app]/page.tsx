@@ -14,7 +14,6 @@ import { fetchEvents } from "@/services/events";
 import { fetchLogs } from "@/services/logs";
 import { App } from "@/types/App";
 import { Log } from "@/types/Log";
-import { Loader2Icon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -39,31 +38,42 @@ function AppPage({ params }: { params: { app: string } }) {
     setEvents(data);
   };
 
-  const getLogs = async (search?: string) => {
-    const data = await fetchLogs(params.app, search);
+  const getLogs = async ({
+    search,
+    page,
+  }: {
+    search?: string;
+    page?: number;
+  }) => {
+    const data = await fetchLogs({
+      id: params.app,
+      search,
+      page: page === -1 ? 0 : page,
+    });
     setLogs(data);
-    // // calculate how many logs per minute (use log.timestamp)
-    // const logCountMap = data.reduce((countMap: any, log: any) => {
-    //   // Extract the minute from the timestamp
-    //   const minute = new Date(log.timestamp).getMinutes()
-
-    //   // Increment the log count for the corresponding minute
-    //   countMap[minute] = (countMap[minute] || 0) + 1
-
-    //   return countMap
-    // }, {})
-
-    // const orderedLogCount = Object.entries(logCountMap)
-    //   .sort((a, b) => Number(a[0]) - Number(b[0]))
-    //   .map(([minute, count]) => ({ minute: Number(minute), count }))
+    if (page == -1 || search) {
+      const chartLogs = await fetchLogs({ id: params.app, page: -1, search });
+      setChartData(chartLogs);
+    }
   };
 
   const fetchData = async () => {
     setLoadingTable(true);
-    await getLogs();
+    await getLogs({ page: -1 });
     await getEvents();
     await getApp();
     setLoadingTable(false);
+  };
+
+  const loadMore = async ({
+    page,
+    search,
+  }: {
+    page: number;
+    search: string;
+  }) => {
+    const data = await fetchLogs({ id: params.app, page, search });
+    setLogs([...logs, ...data]);
   };
 
   useEffect(() => {
@@ -97,7 +107,7 @@ function AppPage({ params }: { params: { app: string } }) {
     <div className="container mx-auto py-5">
       {(loading && <Loading />) || (
         <div>
-          {logs.length != 0 && <ActivityChart logs={logs}></ActivityChart>}
+          {logs.length != 0 && <ActivityChart logs={chartData}></ActivityChart>}
           {app && <AppHeader app={app} />}
           <Tabs defaultValue={currentTab} className="w-full">
             <TabsList className="grid w-auto grid-cols-4 mb-3">
@@ -127,6 +137,7 @@ function AppPage({ params }: { params: { app: string } }) {
                   )}
                   refreshFunction={fetchData}
                   searchFunction={getLogs}
+                  loadMoreFunction={loadMore}
                 />
               )}
             </TabsContent>

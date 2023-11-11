@@ -62,8 +62,10 @@ import {
 } from "@tanstack/react-table";
 import {
   ArrowLeft,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
   RefreshCcwIcon,
   Search,
   X,
@@ -81,15 +83,19 @@ export function DataTable<TData, TValue>({
   data,
   refreshFunction,
   searchFunction,
+  loadMoreFunction,
 }: {
   data: TData[];
   refreshFunction: Function;
   searchFunction: Function;
+  loadMoreFunction: Function;
 }) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [filterValue, setFilterValue] = useState<string>("");
   const [timeframe, setTimeframe] = useState<DateRange>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
 
   const columns: ColumnDef<TData, TValue>[] = [
     {
@@ -147,6 +153,28 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const scroll = (direction: "UP" | "DOWN") => {
+    const div = document.querySelector(".data-table")!;
+    if (direction == "UP") {
+      div.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } else {
+      div.scrollTo({
+        top: div.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const loadMore = async () => {
+    setLoadingMore(true);
+    await loadMoreFunction({ search: filterValue, page: page + 1 });
+    setPage(page + 1);
+    setLoadingMore(false);
+  };
+
   const [showDiv, setShowDiv] = useState(false);
 
   // Function to handle scroll event
@@ -163,17 +191,19 @@ export function DataTable<TData, TValue>({
   };
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
-    table.setPageSize(50);
+    table.setPageSize(10000000);
   }, []);
 
   const [sheetOpen, setSheetOpen] = useState(false);
   const [formattedLog, setFormattedLog] = useState<{}>({});
 
   const filter = async () => {
-    // table.setGlobalFilter(value);
+    setPage(0);
     setLoading(true);
-    console.log("test");
-    await searchFunction(filterValue);
+    await searchFunction({
+      search: filterValue.length > 0 ? filterValue : undefined,
+      page: filterValue.length > 0 ? 0 : -1,
+    });
     setLoading(false);
   };
 
@@ -292,7 +322,7 @@ export function DataTable<TData, TValue>({
           </PopoverContent>
         </Popover>
 
-        <Select
+        {/* <Select
           defaultValue="50"
           onValueChange={(value) => {
             table.setPageSize(parseInt(value));
@@ -314,8 +344,8 @@ export function DataTable<TData, TValue>({
               </SelectItem>
             </SelectGroup>
           </SelectContent>
-        </Select>
-        <Button variant={"secondary"} onClick={() => table.previousPage()}>
+        </Select> */}
+        {/* <Button variant={"secondary"} onClick={() => table.previousPage()}>
           <ChevronLeft className="w-4 h-4"></ChevronLeft>
         </Button>
         <Button
@@ -327,31 +357,35 @@ export function DataTable<TData, TValue>({
           }
         >
           <ChevronRight className="w-4 h-4"></ChevronRight>
-        </Button>
-        {showDiv && (
-          <div className="fixed bottom-0 opacity-80 gap-5 flex m-5">
-            <Button variant={"secondary"} onClick={() => table.previousPage()}>
-              <ChevronLeft className="w-4 h-4"></ChevronLeft>
+        </Button> */}
+        {showDiv && table.getRowModel().rows.length > 0 && (
+          <div className="fixed bottom-0 opacity-80 gap-3 flex m-5 mb-8">
+            <Button
+              variant={"secondary"}
+              size={"thin"}
+              onClick={() => scroll("DOWN")}
+            >
+              <ChevronDown className="w-4 h-4"></ChevronDown>
             </Button>
             <Button
               variant={"secondary"}
-              onClick={() =>
-                table.getState().pagination.pageIndex + 1 !=
-                table.getPageCount()
-                  ? table.nextPage()
-                  : ""
-              }
+              size={"thin"}
+              onClick={() => scroll("UP")}
             >
-              <ChevronRight className="w-4 h-4"></ChevronRight>
+              <ChevronUp className="w-4 h-4"></ChevronUp>
             </Button>
           </div>
         )}
-        <span className="text-gray-500 whitespace-nowrap">
+        {/* <span className="text-gray-500 whitespace-nowrap">
           Page {table.getState().pagination.pageIndex + 1} /{" "}
           {table.getPageCount()}
-        </span>
+        </span> */}
       </div>
-      <div className="rounded-md border h-96 overflow-hidden overflow-y-auto data-table">
+      <div
+        className={`rounded-md border ${
+          table.getRowModel().rows.length > 0 && "h-96"
+        } overflow-hidden overflow-y-auto data-table`}
+      >
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -459,6 +493,21 @@ export function DataTable<TData, TValue>({
                     </TableCell>
                   </TableRow>
                 )}
+            {!loading && table.getRowModel().rows?.length > 0 && (
+              <div>
+                {!loadingMore && (
+                  <Button
+                    className="w-24 text-xs m-3"
+                    size={"thin"}
+                    variant={"outline"}
+                    onClick={() => loadMore()}
+                  >
+                    Load More
+                  </Button>
+                )}
+                {loadingMore && <Loading classname="m-3 mx-auto" />}
+              </div>
+            )}
           </TableBody>
         </Table>
       </div>
