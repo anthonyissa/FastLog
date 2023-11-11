@@ -111,21 +111,23 @@
 }
 
 .header {
-  /* background: rgb(255, 255, 255);
-  background: -moz-linear-gradient(
-    0deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.24135591736694673) 100%
-  );
-  background: -webkit-linear-gradient(
-    0deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.24135591736694673) 100%
-  );
-  background: linear-gradient(
-    0deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.24135591736694673) 100%
-  );
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff",endColorstr="#ffffff",GradientType=1); */
+  background: white;
+}
+
+.header-dark {
+  background: #040817 !important;
+}
+
+.data-table::-webkit-scrollbar {
+  width: 8px;
+}
+
+.data-table::-webkit-scrollbar-thumb {
+  background-color: rgb(168 85 247 / 0.05);
+
+  border-radius: 10px;
+}
+
+html::-webkit-scrollbar {
+  width: 8px;
 }

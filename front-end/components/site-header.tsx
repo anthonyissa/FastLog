@@ -2,10 +2,13 @@
 
 import { Command } from "./command";
 import { ProfileDropdown } from "./profile-dropdown";
+import ResponsiveMenu from "./responsive-menu";
 import { useAppContext } from "@/app/session-context";
 import { MainNav } from "@/components/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/config/site";
+import { cn } from "@/lib/utils";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { LayoutDashboard, SearchIcon } from "lucide-react";
 import Link from "next/link";
@@ -13,8 +16,13 @@ import Link from "next/link";
 export function SiteHeader() {
   const { session } = useAppContext();
 
+  const isHome = () => {
+    if (typeof window === "undefined") return false;
+    return window.location.pathname === "/";
+  };
+
   return (
-    <header className="fixed top-0 z-40 w-full bg-transparent header">
+    <header className="fixed top-0 z-40 w-full bg-white/80 dark:bg-[#040817]/80">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
         <MainNav />
         <div className="flex flex-1 items-center justify-end space-x-4">
@@ -34,9 +42,33 @@ export function SiteHeader() {
                 <ProfileDropdown />
               </div>
             ) : (
-              <Link href={"/auth"}>
-                <Button variant="outline">Login</Button>
-              </Link>
+              <div className="flex items-center gap-3">
+                <ResponsiveMenu />
+                {siteConfig.mainNav.length ? (
+                  <nav className="hidden sm:flex gap-6">
+                    {siteConfig.mainNav?.map(
+                      (item, index) =>
+                        item.href && (
+                          <Link
+                            key={index}
+                            href={item.href}
+                            className={cn(
+                              "flex items-center text-sm font-medium opacity-80"
+                            )}
+                          >
+                            {item.title}
+                          </Link>
+                        )
+                    )}
+                  </nav>
+                ) : null}
+                <div className="hidden sm:flex">
+                  <ThemeToggle />
+                </div>
+                <Link href={"/auth"} className="hidden sm:flex">
+                  <Button variant="outline">Login</Button>
+                </Link>
+              </div>
             )}
           </nav>
         </div>
