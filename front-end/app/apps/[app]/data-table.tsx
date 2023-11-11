@@ -200,7 +200,10 @@ export function DataTable<TData, TValue>({
   const filter = async () => {
     setPage(0);
     setLoading(true);
-    await searchFunction({ search: filterValue });
+    await searchFunction({
+      search: filterValue.length > 0 ? filterValue : undefined,
+      page: filterValue.length > 0 ? 0 : -1,
+    });
     setLoading(false);
   };
 
