@@ -360,10 +360,18 @@ export function DataTable<TData, TValue>({
         </Button> */}
         {showDiv && table.getRowModel().rows.length > 0 && (
           <div className="fixed bottom-0 opacity-80 gap-3 flex m-5 mb-8">
-            <Button variant={"secondary"} onClick={() => scroll("DOWN")}>
+            <Button
+              variant={"secondary"}
+              size={"thin"}
+              onClick={() => scroll("DOWN")}
+            >
               <ChevronDown className="w-4 h-4"></ChevronDown>
             </Button>
-            <Button variant={"secondary"} onClick={() => scroll("UP")}>
+            <Button
+              variant={"secondary"}
+              size={"thin"}
+              onClick={() => scroll("UP")}
+            >
               <ChevronUp className="w-4 h-4"></ChevronUp>
             </Button>
           </div>
@@ -490,6 +498,7 @@ export function DataTable<TData, TValue>({
                 {!loadingMore && (
                   <Button
                     className="w-24 text-xs m-3"
+                    size={"thin"}
                     variant={"outline"}
                     onClick={() => loadMore()}
                   >
