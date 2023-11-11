@@ -254,6 +254,11 @@ export function DataTable<TData, TValue>({
           placeholder="Search logs"
           value={filterValue}
           onChange={(e) => setFilterValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              filter();
+            }
+          }}
         />
         <Button variant={"outline"} onClick={() => filter()}>
           {loading ? (
@@ -346,7 +351,7 @@ export function DataTable<TData, TValue>({
           {table.getPageCount()}
         </span>
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-md border h-96 overflow-hidden overflow-y-auto data-table">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
