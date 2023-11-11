@@ -2,6 +2,7 @@
 
 import { Command } from "./command";
 import { ProfileDropdown } from "./profile-dropdown";
+import ResponsiveMenu from "./responsive-menu";
 import { useAppContext } from "@/app/session-context";
 import { MainNav } from "@/components/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -42,8 +43,9 @@ export function SiteHeader() {
               </div>
             ) : (
               <div className="flex items-center gap-3">
+                <ResponsiveMenu />
                 {siteConfig.mainNav.length ? (
-                  <nav className="flex gap-6">
+                  <nav className="hidden sm:flex gap-6">
                     {siteConfig.mainNav?.map(
                       (item, index) =>
                         item.href && (
@@ -60,8 +62,10 @@ export function SiteHeader() {
                     )}
                   </nav>
                 ) : null}
-                <ThemeToggle />
-                <Link href={"/auth"}>
+                <div className="hidden sm:flex">
+                  <ThemeToggle />
+                </div>
+                <Link href={"/auth"} className="hidden sm:flex">
                   <Button variant="outline">Login</Button>
                 </Link>
               </div>
