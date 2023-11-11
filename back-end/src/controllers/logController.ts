@@ -26,13 +26,14 @@ export const addLog = async (req: Request, res: Response) => {
 
 export const getLogs = async (req: Request, res: Response) => {
   try {
-    const { id, search } = req.query;
+    const { id, search, page } = req.query;
     if (!id) throw new MissingRequiredFieldsError();
 
     const logs = await getLogsFromSupabase(
       req["userId"],
       id as string,
-      search as string
+      search as string,
+      parseInt(page as string)
     );
     res.json(logs);
   } catch (error) {

@@ -33,7 +33,8 @@ export const addLogToSupabase = async ({
 export const getLogsFromSupabase = async (
   user: string,
   id: string,
-  search: string
+  search: string,
+  page: number = 0
 ) => {
   const { data, error } = await supabase
     .from("logs")
@@ -41,6 +42,7 @@ export const getLogsFromSupabase = async (
     .eq("user", user)
     .eq("app", id)
     .ilike("message", `%${search ?? ""}%`)
+    .range(page * 100, (page + 1) * 100 - 1)
     .order("timestamp", { ascending: false });
   if (error) {
     throw error;

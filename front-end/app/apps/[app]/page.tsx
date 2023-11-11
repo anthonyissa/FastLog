@@ -39,8 +39,14 @@ function AppPage({ params }: { params: { app: string } }) {
     setEvents(data);
   };
 
-  const getLogs = async (search?: string) => {
-    const data = await fetchLogs(params.app, search);
+  const getLogs = async ({
+    search,
+    page,
+  }: {
+    search?: string;
+    page?: number;
+  }) => {
+    const data = await fetchLogs({ id: params.app, search, page });
     setLogs(data);
     // // calculate how many logs per minute (use log.timestamp)
     // const logCountMap = data.reduce((countMap: any, log: any) => {
@@ -60,10 +66,21 @@ function AppPage({ params }: { params: { app: string } }) {
 
   const fetchData = async () => {
     setLoadingTable(true);
-    await getLogs();
+    await getLogs({});
     await getEvents();
     await getApp();
     setLoadingTable(false);
+  };
+
+  const loadMore = async ({
+    page,
+    search,
+  }: {
+    page: number;
+    search: string;
+  }) => {
+    const data = await fetchLogs({ id: params.app, page, search });
+    setLogs([...logs, ...data]);
   };
 
   useEffect(() => {
@@ -127,6 +144,7 @@ function AppPage({ params }: { params: { app: string } }) {
                   )}
                   refreshFunction={fetchData}
                   searchFunction={getLogs}
+                  loadMoreFunction={loadMore}
                 />
               )}
             </TabsContent>
