@@ -6,15 +6,22 @@ export const fetchLogs = async ({
   id,
   search,
   page = 0,
+  timeStart,
+  timeEnd,
 }: {
   id: string;
   search?: string;
   page?: number;
+  timeStart?: string;
+  timeEnd?: string;
 }) => {
   const res = await axios.get(
     `${siteConfig.api.baseUrl}/logs?id=${id}${
       search ? `&search=${search}` : ""
-    }&page=${page}`,
+    }&page=${page}
+    ${timeStart ? `&timeStart=${timeStart}` : ""}${
+      timeEnd ? `&timeEnd=${timeEnd}` : ""
+    }`,
     {
       headers: {
         "x-api-key": getAccessToken(),

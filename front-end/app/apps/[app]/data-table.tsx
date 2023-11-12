@@ -93,6 +93,8 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [filterValue, setFilterValue] = useState<string>("");
   const [timeframe, setTimeframe] = useState<DateRange>();
+  const [startTime, setStartTime] = useState<number>();
+  const [endTime, setEndTime] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
@@ -170,7 +172,12 @@ export function DataTable<TData, TValue>({
 
   const loadMore = async () => {
     setLoadingMore(true);
-    await loadMoreFunction({ search: filterValue, page: page + 1 });
+    await loadMoreFunction({
+      search: filterValue,
+      page: page + 1,
+      timeStart: startTime,
+      timeEnd: endTime,
+    });
     setPage(page + 1);
     setLoadingMore(false);
   };
@@ -231,17 +238,20 @@ export function DataTable<TData, TValue>({
     setSheetOpen(true);
   };
 
-  const changeTimeframe = (selected: DateRange | undefined) => {
-    setTimeframe(selected);
-    table.resetColumnFilters();
+  const changeTimeframe = async (selected: DateRange | undefined) => {
     if (!selected || !selected.to) return;
     setTimeframe(selected);
-    table.setColumnFilters([
-      {
-        id: "timestamp",
-        value: selected,
-      },
-    ]);
+    // @ts-ignore
+    const timestampStart = new Date(selected.from).getTime();
+    const timestampEnd = new Date(selected.to).getTime() + 86399000;
+    setStartTime(timestampStart);
+    setEndTime(timestampEnd);
+    await searchFunction({
+      search: filterValue.length > 0 ? filterValue : undefined,
+      page: 0, // no -1 here, we want to fetch the exact amount of logs for the chart in the timeframe
+      timestampStart,
+      timestampEnd,
+    });
   };
 
   return (

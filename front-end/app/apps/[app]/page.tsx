@@ -41,14 +41,20 @@ function AppPage({ params }: { params: { app: string } }) {
   const getLogs = async ({
     search,
     page,
+    timeStart,
+    timeEnd,
   }: {
     search?: string;
     page?: number;
+    timeStart?: string;
+    timeEnd?: string;
   }) => {
     const data = await fetchLogs({
       id: params.app,
       search,
-      page: page === -1 ? 0 : page,
+      page: page === -1 ? 0 : page, // if page is -1, we want to fetch the max amount of logs to build the chart
+      timeStart,
+      timeEnd,
     });
     setLogs(data);
     if (page == -1 || search) {
@@ -68,11 +74,21 @@ function AppPage({ params }: { params: { app: string } }) {
   const loadMore = async ({
     page,
     search,
+    timeStart,
+    timeEnd,
   }: {
     page: number;
     search: string;
+    timeStart?: string;
+    timeEnd?: string;
   }) => {
-    const data = await fetchLogs({ id: params.app, page, search });
+    const data = await fetchLogs({
+      id: params.app,
+      page,
+      search,
+      timeStart,
+      timeEnd,
+    });
     setLogs([...logs, ...data]);
   };
 

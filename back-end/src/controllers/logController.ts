@@ -26,15 +26,19 @@ export const addLog = async (req: Request, res: Response) => {
 
 export const getLogs = async (req: Request, res: Response) => {
   try {
-    const { id, search, page } = req.query;
+    const { id, search, page, timeStart, timeEnd } = req.query;
     if (!id) throw new MissingRequiredFieldsError();
+    if ((timeStart || timeEnd) && !(timeStart && timeEnd))
+      throw new Error("Must provide both timeStart and timeEnd or neither");
 
-    const logs = await getLogsFromSupabase(
-      req["userId"],
-      id as string,
-      search as string,
-      parseInt(page as string)
-    );
+    const logs = await getLogsFromSupabase({
+      user: req["userId"],
+      id: id as string,
+      search: search as string,
+      page: parseInt(page as string),
+      timeStart: timeStart as string,
+      timeEnd: timeEnd as string,
+    });
     res.json(logs);
   } catch (error) {
     console.error(error);
