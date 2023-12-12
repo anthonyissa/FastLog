@@ -1,4 +1,4 @@
-# FastLog
+# FastLog ![Visitors](https://visitor-badge.laobi.icu/badge?page_id=anthonyissa.fastlog)
 
 _Made for developers who are tired of wasting time on monitoring.
 Let us take care of the complexity while you focus on building your app._ <br>
