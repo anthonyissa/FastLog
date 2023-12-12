@@ -10,10 +10,6 @@ export const siteConfig = {
       title: "Docs",
       href: "https://personal-88.gitbook.io/fastlog/",
     },
-    {
-      title: "Pricing",
-      href: "/pricing",
-    },
   ],
   links: {
     twitter: "https://twitter.com/fastlog_app",
