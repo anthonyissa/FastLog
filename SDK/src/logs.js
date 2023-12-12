@@ -1,5 +1,5 @@
 import axios from "axios";
-import { apiUrl } from "./utils.js";
+import { apiUrl, setApiUrl } from "./utils.js";
 import { activateHealthCheck } from "./error.js";
 
 export const originalLogger = console.log;
@@ -32,7 +32,13 @@ function fastLogger(level) {
   };
 }
 
-export const activateFastLog = ({ app_id, user_id, runHealthCheck = true }) => {
+export const activateFastLog = ({
+  app_id,
+  user_id,
+  api_url,
+  runHealthCheck = true,
+}) => {
+  if (api_url) setApiUrl(api_url);
   if (!app_id) throw new Error("App ID is required");
   if (!user_id) throw new Error("User ID is required");
   userId = user_id;
