@@ -69,10 +69,6 @@ export function ProfileDropdown() {
               <span>Applications</span>
             </DropdownMenuItem>
           </Link>
-          <DropdownMenuItem disabled>
-            <CreditCard className="mr-2 h-4 w-4" />
-            <span>Billing</span>
-          </DropdownMenuItem>
           <Link href={"/settings"}>
             <DropdownMenuItem>
               <Settings className="mr-2 h-4 w-4" />
