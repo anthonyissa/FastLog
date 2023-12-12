@@ -29,7 +29,7 @@ app.get("/", verifyJwt, rateLimiter, (req: Request, res: Response) => {
   res.send("Hello from FastLog!");
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 const http = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
