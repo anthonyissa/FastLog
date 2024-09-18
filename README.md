@@ -1,7 +1,7 @@
 # FastLog ![Visitors](https://visitor-badge.laobi.icu/badge?page_id=anthonyissa.fastlog)
 
 _Made for developers who are tired of wasting time on monitoring.
-Let us take care of the complexity while you focus on building your app._ 
+Let Fastlog take care of the complexity while you focus on building your app._ 
 
 Fastlog lets you monitor your apps using an on-premise solution. The setup is really fast and easy. <br>
 Landing page at https://fast-log.vercel.app/ to see more, signup is locked for now as I'm using this version of the app for my tests.
