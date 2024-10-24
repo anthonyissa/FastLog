@@ -2,12 +2,11 @@ import express, { Request, Response } from "express";
 import logRouter from "./routes/logRoutes";
 import appRouter from "./routes/appRoutes";
 import cors from "cors";
-import { launchStatusWatcher } from "./lib/statusWatcher";
 import { rateLimiter, verifyJwt } from "./lib/middlewares";
 import dotenv from "dotenv";
 import eventRouter from "./routes/eventRoutes";
 import notificationRouter from "./routes/notificationController";
-import { initWebsocket } from "./socket";
+import lightningRouter from "./routes/lightningRoutes";
 dotenv.config();
 
 const app = express();
@@ -22,6 +21,7 @@ app.use(cors({ origin: [process.env.FRONT_URL], credentials: true }));
 
 app.use("/logs", logRouter);
 app.use("/events", eventRouter);
+app.use("/lightning", lightningRouter);
 app.use("/apps", rateLimiter, appRouter);
 app.use("/notifications", verifyJwt, rateLimiter, notificationRouter);
 

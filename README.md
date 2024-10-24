@@ -1,3 +1,12 @@
+# 🚧 THIS IS A TEST VERSION 🚧
+
+This version is only a test of a Lightning Network Paywall implementation. DO NOT USE THIS VERSION OF FAST LOG.
+
+## How does it work
+
+Using https://demo.lnbits.com/, a wallet is ready to create invoice and receive payments. I then use their API in the backend to handle invoices.
+When a user wants to access any restricted page, he's redirected to /upgrade where he will be prompter to pay 1 sat to "activate his premium account".
+
 # FastLog ![Visitors](https://visitor-badge.laobi.icu/badge?page_id=anthonyissa.fastlog)
 
 _Made for developers who are tired of wasting time on monitoring.
